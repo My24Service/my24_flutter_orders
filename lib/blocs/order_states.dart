@@ -1,11 +1,19 @@
 import 'package:equatable/equatable.dart';
 
 import '../models/order/models.dart';
-import '../models/order/form_data.dart';
 
 abstract class OrderState extends Equatable {}
 
 class OrderInitialState extends OrderState {
+  @override
+  List<Object> get props => [];
+}
+
+class OrderNavDocumentsState extends OrderState {
+  final int orderPk;
+
+  OrderNavDocumentsState({ required this.orderPk });
+
   @override
   List<Object> get props => [];
 }
@@ -44,7 +52,7 @@ class OrderErrorSnackbarState extends OrderState {
 }
 
 class OrderLoadedState extends OrderState {
-  final OrderFormData? formData;
+  final dynamic formData;
 
   OrderLoadedState({this.formData});
 
@@ -62,7 +70,7 @@ class OrderLoadedViewState extends OrderState {
 }
 
 class OrderNewState extends OrderState {
-  final OrderFormData? formData;
+  final dynamic formData;
 
   OrderNewState({this.formData});
 
@@ -71,7 +79,7 @@ class OrderNewState extends OrderState {
 }
 
 class OrderNewEquipmentCreatedState extends OrderState {
-  final OrderFormData? formData;
+  final dynamic formData;
 
   OrderNewEquipmentCreatedState({this.formData});
 
@@ -80,7 +88,7 @@ class OrderNewEquipmentCreatedState extends OrderState {
 }
 
 class OrderNewLocationCreatedState extends OrderState {
-  final OrderFormData? formData;
+  final dynamic formData;
 
   OrderNewLocationCreatedState({this.formData});
 

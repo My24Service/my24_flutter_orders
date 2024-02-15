@@ -9,9 +9,7 @@ import 'package:my24_flutter_orders/widgets/order/shared.dart';
 
 import '../../common/widgets.dart';
 import '../../models/order/models.dart';
-import '../../pages/documents.dart';
 import '../../blocs/order_bloc.dart';
-import '../../blocs/document_bloc.dart';
 import '../../pages/detail.dart';
 
 class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListStatelessWidget {
@@ -79,32 +77,33 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   SliverList getSliverList(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-      Order order = orderList![index];
+          Order order = orderList![index];
 
-      return Column(
-        children: [
-          ListTile(
-            title: createOrderListHeader2(order, order.orderDate!),
-            subtitle: createOrderListSubtitle2(order),
-            onTap: () {
-              _navOrderDetail(context, order.id!);
-            } // onTab
-          ),
-          const SizedBox(height: 4),
-          getButtonRow(context, order),
-          if (index < orderList!.length - 1) widgets.getMy24Divider(context)
-        ],
-      );
-    }, childCount: orderList!.length));
+          return Column(
+            children: [
+              ListTile(
+                title: createOrderListHeader2(order, order.orderDate!),
+                subtitle: createOrderListSubtitle2(order),
+                onTap: () {
+                  _navOrderDetail(context, order.id!);
+                } // onTab
+              ),
+              const SizedBox(height: 4),
+              getButtonRow(context, order),
+              if (index < orderList!.length - 1) widgets.getMy24Divider(context)
+            ],
+          );
+        },
+        childCount: orderList!.length
+      )
+    );
   }
 
-  navDocuments(BuildContext context, int? orderPk) {
-    final page = OrderDocumentsPage(
-      orderId: orderPk,
-      bloc: OrderDocumentBloc(),
-    );
+  navDocuments(BuildContext context, int orderPk) {
+    final bloc = BlocProvider.of<BlocClass>(context);
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(OrderEvent(status: OrderEventStatus.navDocuments, pk: orderPk));
   }
 
   showDeleteDialog(BuildContext context, int orderPk) {

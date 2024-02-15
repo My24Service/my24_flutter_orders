@@ -7,10 +7,8 @@ import 'package:my24_flutter_core/models/models.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import '../blocs/document_bloc.dart';
 import '../blocs/order_bloc.dart';
 import '../blocs/order_states.dart';
-import '../widgets/order/form.dart';
 import '../widgets/order/list.dart';
 import '../widgets/order/error.dart';
 import '../widgets/order/empty.dart';
@@ -21,25 +19,21 @@ import '../widgets/order/past/list.dart';
 import '../widgets/order/unaccepted/empty.dart';
 import '../widgets/order/unaccepted/error.dart';
 import '../widgets/order/unaccepted/list.dart';
-import 'documents.dart';
 
 final log = Logger('orders.list');
 
 String? initialLoadMode;
 int? loadId;
 
-class OrderListPage<
-  BlocClass extends OrderBlocBase,
-  FormWidget extends BaseOrderFormWidget
-> extends StatelessWidget {
+class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
   final i18n = My24i18n(basePath: "orders");
   final OrderEventStatus fetchMode;
   final BlocClass bloc;
   final CoreWidgets widgets = CoreWidgets();
   final CoreUtils utils = CoreUtils();
 
-  OrderListPage({
-    Key? key,
+  BaseOrderListPage({
+    super.key,
     required this.bloc,
     String? initialMode,
     int? pk,
@@ -89,9 +83,9 @@ class OrderListPage<
     return bloc;
   }
 
-  FormWidget getOrderFormWidget<FormData>(
+  Widget getOrderFormWidget(
   {
-    required FormData formData,
+    required dynamic formData,
     required OrderPageMetaData orderPageMetaData,
     required OrderEventStatus fetchEvent,
     required CoreWidgets widgets
@@ -137,6 +131,10 @@ class OrderListPage<
     return orderListData.submodel == 'planning_user';
   }
 
+  void navDocuments(BuildContext context, int orderPk) {
+    throw UnimplementedError("Nav orders should be implemented");
+  }
+
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
@@ -155,15 +153,7 @@ class OrderListPage<
                 TextButton(
                   child: Text(i18n.$trans('dialog_add_documents_button_yes')),
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(
-                            builder: (context) => OrderDocumentsPage(
-                              orderId: state.order!.id,
-                              bloc: OrderDocumentBloc(),
-                            )
-                        )
-                    );
+                    navDocuments(context, state.order!.id!);
                   },
                 ),
                 TextButton(
@@ -184,6 +174,12 @@ class OrderListPage<
             );
           }
       );
+    }
+
+    if (state is OrderNavDocumentsState) {
+      if (context.mounted) {
+        navDocuments(context, state.orderPk);
+      }
     }
 
     if (state is OrderUpdatedState) {

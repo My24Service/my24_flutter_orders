@@ -36,7 +36,7 @@ enum OrderEventStatus {
   ACCEPT,
   REJECT,
 
-  ASSIGN
+  navDocuments
 }
 
 class OrderEvent {
@@ -45,7 +45,7 @@ class OrderEvent {
   final int? page;
   final String? query;
   final Order? order;
-  final OrderFormData? formData;
+  final dynamic formData;
   final List<Orderline>? orderLines;
   final List<Infoline>? infoLines;
   final List<Orderline>? deletedOrderLines;
@@ -65,7 +65,7 @@ class OrderEvent {
   });
 }
 
-class OrderBlocBase extends Bloc<OrderEvent, OrderState> {
+abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, OrderState> {
   OrderApi api = OrderApi();
   EquipmentLocationApi locationApi = EquipmentLocationApi();
   EquipmentApi equipmentApi = EquipmentApi();
@@ -81,6 +81,9 @@ class OrderBlocBase extends Bloc<OrderEvent, OrderState> {
     }
     else if (event.status == OrderEventStatus.DO_SEARCH) {
       _handleDoSearchState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.navDocuments) {
+      _handleNavDocumentsState(event, emit);
     }
     else if (event.status == OrderEventStatus.DO_REFRESH) {
       _handleDoRefreshState(event, emit);
@@ -202,18 +205,25 @@ class OrderBlocBase extends Bloc<OrderEvent, OrderState> {
     }
   }
 
-  Future<OrderFormData> fillQuickCreateSettings(OrderFormData formData) async {
+  Future<FormData> addQuickCreateSettings(FormData data) async {
     final Map<String, dynamic> memberSettings = (await privateMemberApi.fetchSettings())!;
-    formData.equipmentPlanningQuickCreate = memberSettings['equipment_planning_quick_create'];
-    formData.equipmentQuickCreate = memberSettings['equipment_quick_create'];
-    formData.equipmentLocationPlanningQuickCreate = memberSettings['equipment_location_planning_quick_create'];
-    formData.equipmentLocationQuickCreate = memberSettings['equipment_location_quick_create'];
 
-    return formData;
+    data.quickCreateSettings = QuickCreateSettings(
+        equipmentPlanningQuickCreate: memberSettings['equipment_planning_quick_create'],
+        equipmentQuickCreate: memberSettings['equipment_quick_create'],
+        equipmentLocationPlanningQuickCreate: memberSettings['equipment_location_planning_quick_create'],
+        equipmentLocationQuickCreate: memberSettings['equipment_location_quick_create']
+    );
+
+    return data;
   }
 
   void _handleDoAsyncState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadingState());
+  }
+
+  void _handleNavDocumentsState(OrderEvent event, Emitter<OrderState> emit) {
+    emit(OrderNavDocumentsState(orderPk: event.pk!));
   }
 
   void _handleDoSearchState(OrderEvent event, Emitter<OrderState> emit) {
@@ -224,15 +234,18 @@ class OrderBlocBase extends Bloc<OrderEvent, OrderState> {
     emit(OrderRefreshState());
   }
 
+  FormData createFromModel(Order order, OrderTypes orderTypes) {
+    throw UnimplementedError("create from model should be implemented");
+  }
+
   Future<void> _handleFetchState(OrderEvent event, Emitter<OrderState> emit) async {
     try {
       final OrderTypes orderTypes = await api.fetchOrderTypes();
       final bool hasBranches = (await coreUtils.getHasBranches())!;
       final Order order = await api.detail(event.pk!);
 
-      OrderFormData formData = await fillQuickCreateSettings(
-          OrderFormData.createFromModel(order, orderTypes)
-      );
+      FormData formData = createFromModel(order, orderTypes);
+      formData = await addQuickCreateSettings(formData);
 
       // fetch locations for branches
       if (hasBranches) {

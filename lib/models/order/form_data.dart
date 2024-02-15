@@ -11,7 +11,7 @@ import '../orderline/form_data.dart';
 import '../orderline/models.dart';
 import 'models.dart';
 
-class OrderFormData extends BaseFormData<Order> {
+class BaseOrderFormData extends BaseFormData<Order> {
   TextEditingController? typeAheadControllerCustomer = TextEditingController();
   TextEditingController? typeAheadControllerBranch = TextEditingController();
 
@@ -64,6 +64,8 @@ class OrderFormData extends BaseFormData<Order> {
   bool? equipmentLocationPlanningQuickCreate;
   bool? equipmentLocationQuickCreate;
 
+  QuickCreateSettings? quickCreateSettings;
+
   String _formatTime(DateTime time) {
     String timePart = '$time'.split(' ')[1];
     List<String> hoursMinutes = timePart.split(':');
@@ -110,7 +112,7 @@ class OrderFormData extends BaseFormData<Order> {
     return order;
   }
 
-  factory OrderFormData.createEmpty(OrderTypes orderTypes) {
+  factory BaseOrderFormData.createEmpty(OrderTypes orderTypes) {
     TextEditingController typeAheadControllerCustomer = TextEditingController();
     TextEditingController typeAheadControllerBranch = TextEditingController();
 
@@ -129,7 +131,7 @@ class OrderFormData extends BaseFormData<Order> {
     final OrderlineFormData orderlineFormData = OrderlineFormData.createEmpty();
     final InfolineFormData infolineFormData = InfolineFormData.createEmpty();
 
-    return OrderFormData(
+    return BaseOrderFormData(
       id: null,
       customerPk: null,
       customerId: null,
@@ -177,7 +179,7 @@ class OrderFormData extends BaseFormData<Order> {
     );
   }
 
-  factory OrderFormData.createFromModel(Order order, OrderTypes orderTypes) {
+  factory BaseOrderFormData.createFromModel(Order order, OrderTypes orderTypes) {
     final TextEditingController typeAheadControllerCustomer = TextEditingController();
     final TextEditingController typeAheadControllerBranch = TextEditingController();
 
@@ -229,7 +231,7 @@ class OrderFormData extends BaseFormData<Order> {
           '${order.endDate} ${order.endTime}');
     }
 
-    return OrderFormData(
+    return BaseOrderFormData(
       id: order.id,
       customerId: order.customerId,
       branch: order.branch,
@@ -275,7 +277,7 @@ class OrderFormData extends BaseFormData<Order> {
     );
   }
 
-  OrderFormData({
+  BaseOrderFormData({
       this.id,
       this.typeAheadControllerCustomer,
       this.typeAheadControllerBranch,

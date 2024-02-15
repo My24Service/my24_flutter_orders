@@ -18,10 +18,10 @@ import '../../models/order/models.dart';
 import '../../models/infoline/models.dart';
 import '../../models/orderline/models.dart';
 
-class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPlainStatelessWidget{
+abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends BaseSliverPlainStatelessWidget{
   final CoreWidgets widgetsIn;
   final My24i18n i18nIn = My24i18n(basePath: "orders");
-  final OrderFormData? formData;
+  final FormDataClass? formData;
   final OrderEventStatus fetchEvent;
   final OrderPageMetaData orderPageMetaData;
   final List<GlobalKey<FormState>> _formKeys = [
@@ -74,11 +74,11 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                   children: [
                     widgetsIn.createHeader(i18nIn.$trans('header_order_details')),
                     _createOrderForm(context),
-                    Divider(),
+                    const Divider(),
                     widgetsIn.createHeader(i18nIn.$trans('header_orderline_form')),
                     _buildOrderlineForm(context),
                     _buildOrderlineSection(context),
-                    Divider(),
+                    const Divider(),
                     if (!orderPageMetaData.hasBranches! && isPlanning())
                       widgetsIn.createHeader(i18nIn.$trans('header_infoline_form')),
                     if (!orderPageMetaData.hasBranches! && isPlanning())
@@ -86,17 +86,18 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                     if (!orderPageMetaData.hasBranches! && isPlanning())
                       _buildInfolineSection(context),
                     if (!orderPageMetaData.hasBranches! && isPlanning())
-                      Divider(),
-                    SizedBox(
+                      const Divider(),
+                    const SizedBox(
                       height: 20,
                     ),
                     if (!isPlanning())
                       Text(
                         i18nIn.$trans('form.notification_order_date'),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontStyle: FontStyle.italic,
-                            color: Colors.red),
+                            color: Colors.red
+                        ),
                       ),
                     widgetsIn.createSubmitSection(_getButtons(context) as Row)
                   ],
@@ -116,13 +117,13 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             children: [
               Row(
                 children: [
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   widgetsIn.createDefaultElevatedButton(
                       context,
                       i18nIn.$trans('form.button_accept'),
                           () => _doAccept(context)
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   widgetsIn.createElevatedButtonColored(
                       i18nIn.$trans('form.button_reject'),
                           () => _doReject(context),
@@ -147,11 +148,11 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
   Widget _createSubmitButton(BuildContext context) {
     return Row(
         children: [
-          Spacer(),
+          const Spacer(),
           widgetsIn.createCancelButton(() => _fetchOrders(context)),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           widgetsIn.createSubmitButton(context, () => _doSubmit(context)),
-          Spacer(),
+          const Spacer(),
         ]
     );
   }
@@ -159,27 +160,27 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
   _fetchOrders(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
     bloc.add(OrderEvent(status: fetchEvent));
   }
 
   void _doAccept(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
     bloc.add(OrderEvent(status: OrderEventStatus.ACCEPT, pk: formData!.id));
   }
 
   void _doReject(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
     bloc.add(OrderEvent(status: OrderEventStatus.REJECT, pk: formData!.id));
   }
 
-  _updateFormData(BuildContext context) {
+  updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
     bloc.add(OrderEvent(
         status: OrderEventStatus.UPDATE_FORM_DATA,
         formData: formData
@@ -230,12 +231,14 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       if (!formData!.changedEndDate!) {
         formData!.endDate = pickedDate;
       }
-      _updateFormData(context);
+      if (context.mounted) {
+        updateFormData(context);
+      }
     }
   }
 
   _selectStartTime(BuildContext context) async {
-    TimeOfDay initialTime = TimeOfDay(hour: 6, minute: 0);
+    TimeOfDay initialTime = const TimeOfDay(hour: 6, minute: 0);
 
     final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
@@ -251,7 +254,9 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           pickedTime.minute,
       );
       formData!.startTime = startTime;
-      _updateFormData(context);
+      if (context.mounted) {
+        updateFormData(context);
+      }
     }
   }
 
@@ -266,12 +271,14 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
 
     if (pickedDate != null) {
       formData!.endDate = pickedDate;
-      _updateFormData(context);
+      if (context.mounted) {
+        updateFormData(context);
+      }
     }
   }
 
   _selectEndTime(BuildContext context) async {
-    TimeOfDay initialTime = TimeOfDay(hour: 6, minute: 0);
+    TimeOfDay initialTime = const TimeOfDay(hour: 4, minute: 0);
 
     final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
@@ -287,11 +294,13 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
         pickedTime.minute,
       );
       formData!.endTime = endTime;
-      _updateFormData(context);
+      if (context.mounted) {
+        updateFormData(context);
+      }
     }
   }
 
-  TableRow _getFirstElement(BuildContext context) {
+  TableRow getFirstElement(BuildContext context) {
     // var firstElement;
     //
     // // only show the typeahead when creating a new order
@@ -308,25 +317,31 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
     //     firstElement = _getBranchNameTextField();
     //   }
     // }
-    return TableRow(
-        children: [
-          SizedBox(height: 1),
-          SizedBox(height: 1),
-        ]
-    );
+    // return TableRow(
+    //     children: [
+    //       SizedBox(height: 1),
+    //       SizedBox(height: 1),
+    //     ]
+    // );
+    throw UnimplementedError("getFirstElement should be implemented");
   }
 
   Widget _createOrderForm(BuildContext context) {
     return Form(key: _formKeys[0], child: Table(
         children: [
-          _getFirstElement(context),
+          getFirstElement(context),
           if (!orderPageMetaData.hasBranches!)
             TableRow(
                 children: [
-                  widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16),
-                      child: Text(i18nIn.$trans('info_customer_id', pathOverride: 'generic'),
-                          style: TextStyle(fontWeight: FontWeight.bold))
-                  )),
+                  widgetsIn.wrapGestureDetector(
+                      context,
+                      Padding(padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                            i18nIn.$trans('info_customer_id', pathOverride: 'generic'),
+                            style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                  ),
                   TextFormField(
                       readOnly: true,
                       controller: formData!.orderCustomerIdController,
@@ -338,10 +353,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_customer', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_customer', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderNameController,
                     validator: (value) {
@@ -355,10 +376,15 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_address', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_address', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderAddressController,
                     validator: (value) {
@@ -372,10 +398,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_postal', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_postal', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderPostalController,
                     validator: (value) {
@@ -389,10 +421,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_city', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_city', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderCityController,
                     validator: (value) {
@@ -406,32 +444,44 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_country_code', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_country_code', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 DropdownButtonFormField<String>(
                   value: formData!.orderCountryCode,
                   items: ['NL', 'BE', 'LU', 'FR', 'DE'].map((String value) {
-                    return new DropdownMenuItem<String>(
-                      child: new Text(value),
+                    return DropdownMenuItem<String>(
                       value: value,
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (newValue) {
                     formData!.orderCountryCode = newValue;
-                    _updateFormData(context);
+                    updateFormData(context);
                   },
                 )
               ]
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_contact', pathOverride: 'generic'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
-                Container(
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_contact', pathOverride: 'generic'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
+                SizedBox(
                     width: 300.0,
                     child: TextFormField(
                       controller: formData!.orderContactController,
@@ -441,7 +491,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                 ),
               ]
           ),
-          TableRow(
+          const TableRow(
               children: [
                 Divider(),
                 SizedBox(height: 10,)
@@ -449,10 +499,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_start_date'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_start_date'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 widgetsIn.createElevatedButtonColored(
                     coreUtils.formatDateDDMMYYYY(formData!.startDate!),
                     () => _selectStartDate(context),
@@ -462,10 +518,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_start_time'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_start_time'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 widgetsIn.createElevatedButtonColored(
                     formData!.startTime != null ? coreUtils.timeNoSeconds(coreUtils.formatTime(formData!.startTime!.toLocal())) : '',
                     () => _selectStartTime(context),
@@ -475,10 +537,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_end_date'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_end_date'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 widgetsIn.createElevatedButtonColored(
                     coreUtils.formatDateDDMMYYYY(formData!.endDate!),
                     () => _selectEndDate(context),
@@ -488,10 +556,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_end_time'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_end_time'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 widgetsIn.createElevatedButtonColored(
                     formData!.endTime != null ? coreUtils.timeNoSeconds(coreUtils.formatTime(formData!.endTime!.toLocal())) : '',
                     () => _selectEndTime(context),
@@ -501,22 +575,28 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_type'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_type'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 DropdownButtonFormField<String>(
                   value: formData!.orderType,
                   items: formData!.orderTypes == null ? [] : formData!.orderTypes!.orderTypes!.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      child: new Text(value),
+                    return DropdownMenuItem<String>(
                       value: value,
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (newValue) {
                     if (newValue != formData!.orderType) {
                       formData!.orderType = newValue;
-                      _updateFormData(context);
+                      updateFormData(context);
 
                     }
                   },
@@ -525,10 +605,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_reference'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_reference'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderReferenceController,
                     validator: (value) {
@@ -539,10 +625,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_email'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_email'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderEmailController,
                     validator: (value) {
@@ -553,10 +645,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_mobile'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_mobile'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderMobileController,
                     validator: (value) {
@@ -567,10 +665,16 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_tel'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_tel'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
                 TextFormField(
                     controller: formData!.orderTelController,
                     validator: (value) {
@@ -581,11 +685,17 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           ),
           TableRow(
               children: [
-                widgetsIn.wrapGestureDetector(context, Padding(padding: EdgeInsets.only(top: 16), child: Text(
-                    i18nIn.$trans('info_order_customer_remarks'),
-                    style: TextStyle(fontWeight: FontWeight.bold))
-                )),
-                Container(
+                widgetsIn.wrapGestureDetector(
+                    context,
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          i18nIn.$trans('info_order_customer_remarks'),
+                          style: const TextStyle(fontWeight: FontWeight.bold)
+                        )
+                    )
+                ),
+                SizedBox(
                     width: 300.0,
                     child: TextFormField(
                       controller: formData!.customerRemarksController,
@@ -632,12 +742,12 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                 title: Text(text),
               );
             },
-            noItemsFoundBuilder: (_context) {
+            noItemsFoundBuilder: (context) {
               return Expanded(
                   child: Column(
                     children: [
                       Text(i18nIn.$trans('form.location_not_found'),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                               color: Colors.grey
@@ -646,7 +756,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                       TextButton(
                         child: Text(
                             i18nIn.$trans('form.create_new_location'),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                             )
                         ),
@@ -666,13 +776,13 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             onSuggestionSelected: (EquipmentLocationTypeAheadModel suggestion) {
               formData!.orderlineFormData!.equipmentLocation = suggestion.id;
               formData!.orderlineFormData!.locationController!.text = suggestion.name!;
-              _updateFormData(context);
+              updateFormData(context);
             },
             validator: (value) {
               return null;
             },
           ),
-          widgetsIn.wrapGestureDetector(context, SizedBox(
+          widgetsIn.wrapGestureDetector(context, const SizedBox(
             height: 10.0,
           )),
 
@@ -680,7 +790,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
               visible: formData!.isCreatingLocation!,
               child: Text(
                 i18nIn.$trans('form.adding_location'),
-                style: TextStyle(
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
                     color: Colors.red
@@ -708,10 +818,10 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                           }
                         )
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Visibility(
                         visible: formData!.orderlineFormData!.equipmentLocation != null,
-                        child: Icon(
+                        child: const Icon(
                           Icons.check,
                           color: Colors.blue,
                           size: 24.0,
@@ -731,17 +841,17 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       items: formData!.locations == null
           ? []
           : formData!.locations!.map((EquipmentLocation location) {
-        return new DropdownMenuItem<String>(
-          child: Text(location.name!),
+        return DropdownMenuItem<String>(
           value: "${location.id}",
+          child: Text(location.name!),
         );
       }).toList(),
       onChanged: (String? locationId) {
         formData!.orderlineFormData!.equipmentLocation = int.parse(locationId!);
         EquipmentLocation location = formData!.locations!.firstWhere(
-                (_location) => _location.id == formData!.orderlineFormData!.equipmentLocation);
+                (location) => location.id == formData!.orderlineFormData!.equipmentLocation);
         formData!.orderlineFormData!.locationController!.text = location.name!;
-        _updateFormData(context);
+        updateFormData(context);
       }
     );
   }
@@ -771,38 +881,36 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
               title: Text(text),
             );
           },
-          noItemsFoundBuilder: (_context) {
-            return Container(
-                child: Expanded(
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(i18nIn.$trans('form.equipment_not_found'),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.grey
+          noItemsFoundBuilder: (context) {
+            return Expanded(
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(i18nIn.$trans('form.equipment_not_found'),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.grey
+                      )
+                  ),
+                  if ((isPlanning() && formData!.equipmentPlanningQuickCreate!) ||
+                    (!isPlanning() && formData!.equipmentQuickCreate!))
+                    TextButton(
+                      child: Text(
+                          i18nIn.$trans('form.create_new_equipment'),
+                          style: const TextStyle(
+                            fontSize: 12,
                           )
                       ),
-                      if ((isPlanning() && formData!.equipmentPlanningQuickCreate!) ||
-                        (!isPlanning() && formData!.equipmentQuickCreate!))
-                        TextButton(
-                          child: Text(
-                              i18nIn.$trans('form.create_new_equipment'),
-                              style: TextStyle(
-                                fontSize: 12,
-                              )
-                          ),
-                          onPressed: () {
-                            // create new equipment
-                            FocusScope.of(context).requestFocus(equipmentCreateFocusNode);
-                            _createSelectEquipment(context);
-                          },
-                        )
-                    ]
-                  )
-                )
-              );
+                      onPressed: () {
+                        // create new equipment
+                        FocusScope.of(context).requestFocus(equipmentCreateFocusNode);
+                        _createSelectEquipment(context);
+                      },
+                    )
+                ]
+              )
+            );
           },
           transitionBuilder: (context, suggestionsBox, controller) {
             return suggestionsBox;
@@ -816,14 +924,14 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
               formData!.orderlineFormData!.equipmentLocation = suggestion.location!.id;
               formData!.orderlineFormData!.locationController!.text = suggestion.location!.name!;
             }
-            _updateFormData(context);
+            updateFormData(context);
           },
           validator: (value) {
             return null;
           },
         ),
 
-        widgetsIn.wrapGestureDetector(context, SizedBox(
+        widgetsIn.wrapGestureDetector(context, const SizedBox(
           height: 10.0,
         )),
 
@@ -831,7 +939,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           visible: formData!.isCreatingEquipment!,
           child: Text(
             i18nIn.$trans('form.adding_equipment'),
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,
               color: Colors.red
@@ -859,10 +967,10 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
                       }
                   )
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Visibility(
                     visible: formData!.orderlineFormData!.equipment != null,
-                    child: Icon(
+                    child: const Icon(
                       Icons.check,
                       color: Colors.blue,
                       size: 24.0,
@@ -872,14 +980,14 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             )
           )
         ),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
 
         widgetsIn.wrapGestureDetector(context, Text(i18nIn.$trans('info_location', pathOverride: 'generic'))),
         _getLocationsPart(context),
 
-        widgetsIn.wrapGestureDetector(context, SizedBox(
+        widgetsIn.wrapGestureDetector(context, const SizedBox(
           height: 10.0,
         )),
 
@@ -891,7 +999,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             validator: (value) {
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         widgetsIn.createElevatedButtonColored(
@@ -916,7 +1024,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
               }
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         widgetsIn.wrapGestureDetector(context, Text(i18nIn.$trans('info_location', pathOverride: 'generic'))),
@@ -926,7 +1034,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             validator: (value) {
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         widgetsIn.wrapGestureDetector(context, Text(i18nIn.$trans('info_remarks', pathOverride: 'generic'))),
@@ -937,7 +1045,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
             validator: (value) {
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         widgetsIn.createElevatedButtonColored(
@@ -960,7 +1068,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       formData!.orderlineFormData!.locationController!.text = '';
       formData!.orderlineFormData!.productController!.text = '';
 
-      _updateFormData(context);
+      updateFormData(context);
     } else {
       widgetsIn.displayDialog(context,
           i18nIn.$trans('error_dialog_title', pathOverride: 'generic'),
@@ -977,7 +1085,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       // fill location text from selected location
       if (formData!.orderlineFormData!.locationController!.text == '') {
         EquipmentLocation location = formData!.locations!.firstWhere(
-            (_location) => _location.id == formData!.orderlineFormData!.equipmentLocation
+            (location) => location.id == formData!.orderlineFormData!.equipmentLocation
         );
 
         formData!.orderlineFormData!.locationController!.text = location.name!;
@@ -995,7 +1103,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       formData!.orderlineFormData!.equipment = null;
       formData!.orderlineFormData!.equipmentLocation = null;
 
-      _updateFormData(context);
+      updateFormData(context);
     } else {
       widgetsIn.displayDialog(context,
           i18nIn.$trans('error_dialog_title', pathOverride: 'generic'),
@@ -1049,7 +1157,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
               return null;
             }
         ),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         widgetsIn.createElevatedButtonColored(
@@ -1070,7 +1178,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
 
       // reset fields
       formData!.infolineFormData!.infoController!.text = '';
-      _updateFormData(context);
+      updateFormData(context);
     } else {
       widgetsIn.displayDialog(context,
           i18nIn.$trans('error_dialog_title', pathOverride: 'generic'),
@@ -1103,11 +1211,11 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
   }
 
   _deleteOrderLine(BuildContext context, Orderline orderLine) {
-    if (orderLine.id != null && formData!.deletedOrderLines!.indexOf(orderLine) == -1) {
+    if (orderLine.id != null && !formData!.deletedOrderLines!.contains(orderLine)) {
       formData!.deletedOrderLines!.add(orderLine);
     }
     formData!.orderLines!.removeAt(formData!.orderLines!.indexOf(orderLine));
-    _updateFormData(context);
+    updateFormData(context);
   }
 
   _showDeleteDialogOrderline(BuildContext context, Orderline orderLine) {
@@ -1120,12 +1228,12 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
   }
 
   _deleteInfoLine(BuildContext context, Infoline infoline) {
-    if (infoline.id != null && formData!.deletedInfoLines!.indexOf(infoline) == -1) {
+    if (infoline.id != null && !formData!.deletedInfoLines!.contains(infoline)) {
       formData!.deletedInfoLines!.add(infoline);
     }
 
     formData!.infoLines!.removeAt(formData!.infoLines!.indexOf(infoline));
-    _updateFormData(context);
+    updateFormData(context);
   }
 
   _showDeleteDialogInfoline(BuildContext context, Infoline infoline) {
@@ -1134,24 +1242,6 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
         i18nIn.$trans('form.delete_dialog_content_infoline'),
         () => _deleteInfoLine(context, infoline),
         context
-    );
-  }
-
-  TableRow _getCustomerNameTextField() {
-    return TableRow(
-        children: [
-          SizedBox(height: 1),
-          SizedBox(height: 1),
-        ]
-    );
-  }
-
-  TableRow _getBranchNameTextField() {
-    return TableRow(
-        children: [
-          SizedBox(height: 1),
-          SizedBox(height: 1),
-        ]
     );
   }
 
@@ -1173,7 +1263,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       final bloc = BlocProvider.of<BlocClass>(context);
       if (formData!.id != null) {
         Order updatedOrder = formData!.toModel();
-        bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+        bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
         bloc.add(OrderEvent(
           pk: updatedOrder.id,
           status: OrderEventStatus.UPDATE,
@@ -1188,7 +1278,7 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
           formData!.customerOrderAccepted = true;
         }
         Order newOrder = formData!.toModel();
-        bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+        bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
         bloc.add(OrderEvent(
           status: OrderEventStatus.INSERT,
           order: newOrder,
@@ -1198,5 +1288,4 @@ class BaseOrderFormWidget<BlocClass extends OrderBlocBase> extends BaseSliverPla
       }
     }
   }
-
 }

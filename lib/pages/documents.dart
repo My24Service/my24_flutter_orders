@@ -9,7 +9,6 @@ import 'package:my24_flutter_core/models/models.dart';
 import '../blocs/document_bloc.dart';
 import '../blocs/document_states.dart';
 import '../blocs/order_bloc.dart';
-import '../pages/list.dart';
 import '../widgets/document/error.dart';
 import '../widgets/document/form.dart';
 import '../widgets/document/list.dart';
@@ -21,7 +20,7 @@ String? initialLoadMode;
 int? loadId;
 bool customerOrderAccepted = false;
 
-class OrderDocumentsPage<OrderBlocClass extends OrderBlocBase> extends StatelessWidget {
+class BaseOrderDocumentsPage extends StatelessWidget {
   final int? orderId;
   final i18n = My24i18n(basePath: "orders.documents");
   final OrderDocumentBloc bloc;
@@ -29,7 +28,7 @@ class OrderDocumentsPage<OrderBlocClass extends OrderBlocBase> extends Stateless
   final OrderApi api = OrderApi();
   final CoreWidgets widgets = CoreWidgets();
 
-  OrderDocumentsPage({
+  BaseOrderDocumentsPage({
     Key? key,
     required this.orderId,
     required this.bloc,
@@ -77,30 +76,27 @@ class OrderDocumentsPage<OrderBlocClass extends OrderBlocBase> extends Stateless
     return bloc;
   }
 
+  void navOrders(BuildContext context, OrderEventStatus fetchMode) {
+    throw UnimplementedError("Nav orders should be implemented");
+    // final bloc = BlocProvider.of<OrderBlocClass>(context);
+    // Navigator.push(context,
+    //     MaterialPageRoute(
+    //         builder: (context) => OrderListPage(
+    //           bloc: bloc,
+    //           fetchMode: fetchMode,
+    //         )
+    //     )
+    // );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<OrderBlocClass>(context);
     return PopScope(
         onPopInvoked: (boolIn) {
           if (customerOrderAccepted) {
-
-            Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => OrderListPage(
-                      bloc: bloc,
-                      fetchMode: OrderEventStatus.FETCH_ALL,
-                    )
-                )
-            );
+            navOrders(context, OrderEventStatus.FETCH_ALL);
           } else {
-            Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => OrderListPage(
-                      fetchMode: OrderEventStatus.FETCH_UNACCEPTED,
-                      bloc: bloc,
-                    )
-                )
-            );
+            navOrders(context, OrderEventStatus.FETCH_UNACCEPTED);
           }
 
           return;

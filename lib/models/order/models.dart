@@ -52,9 +52,9 @@ class Status extends BaseModel {
   @override
   String toJson() {
     Map body = {
-      'id': this.id,
-      'order': this.orderId,
-      'status': this.status,
+      'id': id,
+      'order': orderId,
+      'status': status,
     };
 
     return json.encode(body);
@@ -80,8 +80,8 @@ class WorkOrderDocument extends BaseModel {
   @override
   String toJson() {
     Map body = {
-      'name': this.name,
-      'url': this.url,
+      'name': name,
+      'url': url,
     };
 
     return json.encode(body);
@@ -107,8 +107,8 @@ class OrderAssignedUserInfo extends BaseModel {
   @override
   String toJson() {
     Map body = {
-      'full_name': this.fullName,
-      'license_plate': this.licensePlate,
+      'full_name': fullName,
+      'license_plate': licensePlate,
     };
 
     return json.encode(body);
@@ -295,26 +295,26 @@ class Order extends BaseModel {
   @override
   String toJson() {
     final Map body = {
-      'branch': this.branch,
-      'customer_id': this.customerId,
-      'order_name': this.orderName,
-      'order_address': this.orderAddress,
-      'order_postal': this.orderPostal,
-      'order_city': this.orderCity,
-      'order_country_code': this.orderCountryCode,
-      'customer_relation': this.customerRelation,
-      'order_type': this.orderType,
-      'order_reference': this.orderReference,
-      'order_tel': this.orderTel,
-      'order_mobile': this.orderMobile,
-      'order_contact': this.orderContact,
-      'order_email': this.orderEmail,
-      'start_date': this.startDate,
-      'start_time': this.startTime,
-      'end_date': this.endDate,
-      'end_time': this.endTime,
-      'customer_remarks': this.customerRemarks,
-      'customer_order_accepted': this.customerOrderAccepted,
+      'branch': branch,
+      'customer_id': customerId,
+      'order_name': orderName,
+      'order_address': orderAddress,
+      'order_postal': orderPostal,
+      'order_city': orderCity,
+      'order_country_code': orderCountryCode,
+      'customer_relation': customerRelation,
+      'order_type': orderType,
+      'order_reference': orderReference,
+      'order_tel': orderTel,
+      'order_mobile': orderMobile,
+      'order_contact': orderContact,
+      'order_email': orderEmail,
+      'start_date': startDate,
+      'start_time': startTime,
+      'end_date': endDate,
+      'end_time': endTime,
+      'customer_remarks': customerRemarks,
+      'customer_order_accepted': customerOrderAccepted,
     };
 
     return json.encode(body);
@@ -431,9 +431,23 @@ class OrderTypes {
   });
 
   factory OrderTypes.fromJson(List<dynamic> parsedJson) {
-    List<String> orderTypes = new List<String>.from(parsedJson);
+    List<String> orderTypes = List<String>.from(parsedJson);
     return OrderTypes(
       orderTypes: orderTypes
     );
   }
+}
+
+class QuickCreateSettings {
+  final bool equipmentPlanningQuickCreate;
+  final bool equipmentQuickCreate;
+  final bool equipmentLocationPlanningQuickCreate;
+  final bool equipmentLocationQuickCreate;
+
+  QuickCreateSettings({
+    required this.equipmentPlanningQuickCreate,
+    required this.equipmentQuickCreate,
+    required this.equipmentLocationPlanningQuickCreate,
+    required this.equipmentLocationQuickCreate
+  });
 }
