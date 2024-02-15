@@ -718,8 +718,8 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
   }
 
   Widget _getLocationsPart(BuildContext context) {
-    if ((isPlanning() && formData!.equipmentLocationPlanningQuickCreate!) ||
-        (!isPlanning() && formData!.equipmentLocationQuickCreate!)) {
+    if ((isPlanning() && formData!.quickCreateSettings!.equipmentLocationPlanningQuickCreate) ||
+        (!isPlanning() && formData!.quickCreateSettings!.equipmentLocationQuickCreate)) {
       return Column(
         children: [
           TypeAheadFormField<EquipmentLocationTypeAheadModel>(
@@ -893,8 +893,8 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                           color: Colors.grey
                       )
                   ),
-                  if ((isPlanning() && formData!.equipmentPlanningQuickCreate!) ||
-                    (!isPlanning() && formData!.equipmentQuickCreate!))
+                  if ((isPlanning() && formData!.quickCreateSettings!.equipmentPlanningQuickCreate) ||
+                    (!isPlanning() && formData!.quickCreateSettings!.equipmentQuickCreate))
                     TextButton(
                       child: Text(
                           i18nIn.$trans('form.create_new_equipment'),

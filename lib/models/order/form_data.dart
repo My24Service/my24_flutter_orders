@@ -59,11 +59,6 @@ class BaseOrderFormData extends BaseFormData<Order> {
   bool? isCreatingEquipment = false;
   bool? isCreatingLocation = false;
 
-  bool? equipmentPlanningQuickCreate;
-  bool? equipmentQuickCreate;
-  bool? equipmentLocationPlanningQuickCreate;
-  bool? equipmentLocationQuickCreate;
-
   QuickCreateSettings? quickCreateSettings;
 
   String _formatTime(DateTime time) {
@@ -172,10 +167,7 @@ class BaseOrderFormData extends BaseFormData<Order> {
 
       isCreatingEquipment: false,
       isCreatingLocation: false,
-      equipmentQuickCreate: false,
-      equipmentPlanningQuickCreate: false,
-      equipmentLocationQuickCreate: false,
-      equipmentLocationPlanningQuickCreate: false,
+      quickCreateSettings: null,
     );
   }
 
@@ -270,10 +262,7 @@ class BaseOrderFormData extends BaseFormData<Order> {
       locations: [],
       isCreatingEquipment: false,
       isCreatingLocation: false,
-      equipmentQuickCreate: false,
-      equipmentPlanningQuickCreate: false,
-      equipmentLocationQuickCreate: false,
-      equipmentLocationPlanningQuickCreate: false,
+      quickCreateSettings: null,
     );
   }
 
@@ -316,10 +305,7 @@ class BaseOrderFormData extends BaseFormData<Order> {
       this.error,
       this.isCreatingEquipment,
       this.isCreatingLocation,
-      this.equipmentQuickCreate,
-      this.equipmentPlanningQuickCreate,
-      this.equipmentLocationQuickCreate,
-      this.equipmentLocationPlanningQuickCreate,
+      this.quickCreateSettings,
       this.customerBranchId
   });
 }
