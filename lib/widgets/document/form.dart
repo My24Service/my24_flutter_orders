@@ -44,27 +44,25 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
 
   @override
   Widget getBottomSection(BuildContext context) {
-    return SizedBox(height: 1);
+    return const SizedBox(height: 1);
   }
 
   @override
   Widget getContentWidget(BuildContext context) {
-    return Container(
-        child: Form(
-            key: _formKey,
-            child: Container(
-                alignment: Alignment.center,
-                child: SingleChildScrollView( // new line
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            child: _buildForm(context),
-                          ),
-                          widgetsIn.createSubmitSection(_getButtons(context) as Row)
-                        ]
-                    )
+    return Form(
+        key: _formKey,
+        child: Container(
+            alignment: Alignment.center,
+            child: SingleChildScrollView( // new line
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        child: _buildForm(context),
+                      ),
+                      widgetsIn.createSubmitSection(_getButtons(context) as Row)
+                    ]
                 )
             )
         )

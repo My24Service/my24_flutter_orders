@@ -36,7 +36,8 @@ enum OrderEventStatus {
   ACCEPT,
   REJECT,
 
-  navDocuments
+  navDocuments,
+  navDetail
 }
 
 class OrderEvent {
@@ -84,6 +85,9 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     }
     else if (event.status == OrderEventStatus.navDocuments) {
       _handleNavDocumentsState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.navDetail) {
+      _handleNavDetailState(event, emit);
     }
     else if (event.status == OrderEventStatus.DO_REFRESH) {
       _handleDoRefreshState(event, emit);
@@ -224,6 +228,10 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   void _handleNavDocumentsState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderNavDocumentsState(orderPk: event.pk!));
+  }
+
+  void _handleNavDetailState(OrderEvent event, Emitter<OrderState> emit) {
+    emit(OrderNavDetailState(orderPk: event.pk!));
   }
 
   void _handleDoSearchState(OrderEvent event, Emitter<OrderState> emit) {

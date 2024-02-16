@@ -32,6 +32,10 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  mockito: ^5.2.0
+  shared_preferences: ^2.2.2
+  network_image_mock: ^2.0.1
+  http: ^1.2.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
@@ -41,7 +45,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/icon/icon.png
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

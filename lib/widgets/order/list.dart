@@ -166,16 +166,8 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
 
   void _navOrderDetail(BuildContext context, int orderPk) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    // TODO detail also in main page as widget and this becomes a bloc call?
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => OrderDetailPage(
-                  orderId: orderPk,
-                  bloc: bloc,
-                )
-        )
-    );
+    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(OrderEvent(status: OrderEventStatus.navDetail, pk: orderPk));
   }
 }

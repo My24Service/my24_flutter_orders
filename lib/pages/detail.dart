@@ -11,14 +11,14 @@ import '../widgets/order/detail.dart';
 import '../widgets/order/error.dart';
 import '../models/order/models.dart';
 
-class OrderDetailPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
+abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
   final int? orderId;
   final BlocClass bloc;
   final CoreWidgets widgets = CoreWidgets();
   final My24i18n i18nIn = My24i18n(basePath: "orders");
   final CoreUtils utils = CoreUtils();
 
-  OrderDetailPage({
+  BaseOrderDetailPage({
     Key? key,
     required this.orderId,
     required this.bloc,

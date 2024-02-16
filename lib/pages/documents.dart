@@ -20,7 +20,7 @@ String? initialLoadMode;
 int? loadId;
 bool customerOrderAccepted = false;
 
-class BaseOrderDocumentsPage extends StatelessWidget {
+abstract class BaseOrderDocumentsPage extends StatelessWidget {
   final int? orderId;
   final i18n = My24i18n(basePath: "orders.documents");
   final OrderDocumentBloc bloc;
@@ -76,18 +76,7 @@ class BaseOrderDocumentsPage extends StatelessWidget {
     return bloc;
   }
 
-  void navOrders(BuildContext context, OrderEventStatus fetchMode) {
-    throw UnimplementedError("Nav orders should be implemented");
-    // final bloc = BlocProvider.of<OrderBlocClass>(context);
-    // Navigator.push(context,
-    //     MaterialPageRoute(
-    //         builder: (context) => OrderListPage(
-    //           bloc: bloc,
-    //           fetchMode: fetchMode,
-    //         )
-    //     )
-    // );
-  }
+  void navOrders(BuildContext context, OrderEventStatus fetchMode);
 
   @override
   Widget build(BuildContext context) {

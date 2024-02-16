@@ -18,6 +18,15 @@ class OrderNavDocumentsState extends OrderState {
   List<Object> get props => [];
 }
 
+class OrderNavDetailState extends OrderState {
+  final int orderPk;
+
+  OrderNavDetailState({ required this.orderPk });
+
+  @override
+  List<Object> get props => [];
+}
+
 class OrderLoadingState extends OrderState {
   @override
   List<Object> get props => [];

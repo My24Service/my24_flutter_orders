@@ -25,7 +25,7 @@ final log = Logger('orders.list');
 String? initialLoadMode;
 int? loadId;
 
-class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
+abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
   final i18n = My24i18n(basePath: "orders");
   final OrderEventStatus fetchMode;
   final BlocClass bloc;
@@ -38,7 +38,12 @@ class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget
     String? initialMode,
     int? pk,
     required this.fetchMode,
-  });
+  }) {
+    if (initialMode != null) {
+      initialLoadMode = initialMode;
+      loadId = pk;
+    }
+  }
 
   Future<Widget?> getDrawerForUserWithSubmodel(
       BuildContext context, String? submodel) async {
@@ -90,9 +95,7 @@ class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget
     required OrderEventStatus fetchEvent,
     required CoreWidgets widgets
   }
-  ) {
-    throw UnimplementedError("get order form needs to be implemented");
-  }
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +119,7 @@ class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget
                 )
             );
           } else if (snapshot.hasError) {
+            print("snapshot.hasError ${snapshot.error}");
             return Center(
                 child: Text("An error occurred (${snapshot.error})"));
           } else {
@@ -131,9 +135,8 @@ class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget
     return orderListData.submodel == 'planning_user';
   }
 
-  void navDocuments(BuildContext context, int orderPk) {
-    throw UnimplementedError("Nav orders should be implemented");
-  }
+  void navDocuments(BuildContext context, int orderPk);
+  void navDetail(BuildContext context, int orderPk, BlocClass bloc);
 
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
@@ -179,6 +182,12 @@ class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget
     if (state is OrderNavDocumentsState) {
       if (context.mounted) {
         navDocuments(context, state.orderPk);
+      }
+    }
+
+    if (state is OrderNavDetailState) {
+      if (context.mounted) {
+        navDetail(context, state.orderPk, bloc);
       }
     }
 
