@@ -3,20 +3,20 @@ import 'package:my24_flutter_core/models/models.dart';
 import '../../blocs/order_bloc.dart';
 
 void doRefreshCommon(dynamic bloc, OrderEventStatus fetchEvent) {
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_REFRESH));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
   bloc.add(OrderEvent(status: fetchEvent));
 }
 
 handleNew(dynamic bloc) {
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
-  bloc.add(OrderEvent(
-      status: OrderEventStatus.NEW
+  bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+  bloc.add(const OrderEvent(
+      status: OrderEventStatus.newOrder
   ));
 }
 
 nextPage(dynamic bloc, OrderEventStatus fetchEvent, PaginationInfo paginationInfo, String searchText) {
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
   bloc.add(OrderEvent(
     status: fetchEvent,
     page: paginationInfo.currentPage! + 1,
@@ -25,7 +25,7 @@ nextPage(dynamic bloc, OrderEventStatus fetchEvent, PaginationInfo paginationInf
 }
 
 previousPage(dynamic bloc, OrderEventStatus fetchEvent, PaginationInfo paginationInfo, String searchText) {
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
   bloc.add(OrderEvent(
     status: fetchEvent,
     page: paginationInfo.currentPage! - 1,
@@ -34,8 +34,8 @@ previousPage(dynamic bloc, OrderEventStatus fetchEvent, PaginationInfo paginatio
 }
 
 doSearch(dynamic bloc, OrderEventStatus fetchEvent, String searchText) {
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
-  bloc.add(OrderEvent(status: OrderEventStatus.DO_SEARCH));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+  bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
   bloc.add(OrderEvent(
       status: fetchEvent,
       query: searchText,

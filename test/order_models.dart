@@ -22,7 +22,7 @@ import 'order_document_widgets_test.dart';
 class OrderBloc extends OrderBlocBase {
   OrderBloc() : super(OrderInitialState()) {
     on<OrderEvent>((event, emit) async {
-      if (event.status == OrderEventStatus.NEW) {
+      if (event.status == OrderEventStatus.newOrder) {
         await _handleNewFormDataState(event, emit);
       } else {
         await handleEvent(event, emit);

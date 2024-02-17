@@ -46,7 +46,7 @@ void main() {
     expectLater(documentBloc.stream, emits(isA<OrderDocumentsLoadedState>()));
 
     documentBloc.add(
-        const OrderDocumentEvent(status: OrderDocumentEventStatus.FETCH_ALL, orderId: 1));
+        const OrderDocumentEvent(status: OrderDocumentEventStatus.fetchAll, orderId: 1));
   });
 
   test('Test document delete', () async {
@@ -79,7 +79,7 @@ void main() {
     expectLater(documentBloc.stream, emits(isA<OrderDocumentDeletedState>()));
 
     documentBloc.add(
-        const OrderDocumentEvent(status: OrderDocumentEventStatus.DELETE, pk: 1));
+        const OrderDocumentEvent(status: OrderDocumentEventStatus.delete, pk: 1));
   });
 
   test('Test document insert', () async {
@@ -127,7 +127,7 @@ void main() {
 
     documentBloc.add(
         const OrderDocumentEvent(
-            status: OrderDocumentEventStatus.NEW,
+            status: OrderDocumentEventStatus.newDocument,
             orderId: 1
         )
     );

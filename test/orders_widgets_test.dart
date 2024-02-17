@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
-import 'package:my24_flutter_orders/blocs/order_bloc.dart';
-import 'package:my24_flutter_orders/pages/detail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my24_flutter_core/tests/http_client.mocks.dart';
 
+import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/widgets/order/detail.dart';
 import 'package:my24_flutter_orders/widgets/order/empty.dart';
 import 'package:my24_flutter_orders/widgets/order/error.dart';
@@ -56,7 +55,7 @@ void main() async {
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_ALL);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchAll);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))
@@ -94,7 +93,7 @@ void main() async {
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_ALL);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchAll);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))
@@ -132,7 +131,7 @@ void main() async {
         )
     ).thenAnswer((_) async => http.Response(orders, 500));
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_ALL);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchAll);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))
@@ -220,7 +219,7 @@ void main() async {
     OrderListPage widget = OrderListPage(
       pk: 1,
       bloc: orderBloc,
-      initialMode: 'form', fetchMode: OrderEventStatus.FETCH_ALL
+      initialMode: 'form', fetchMode: OrderEventStatus.fetchAll
     );
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
@@ -261,7 +260,7 @@ void main() async {
     OrderListPage widget = OrderListPage(
         bloc: orderBloc,
         initialMode: 'new',
-        fetchMode: OrderEventStatus.FETCH_ALL
+        fetchMode: OrderEventStatus.fetchAll
     );
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(

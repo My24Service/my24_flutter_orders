@@ -47,10 +47,10 @@ class OrderDocument extends BaseModel {
   @override
   String toJson() {
     final Map body = {
-      'order': this.orderId,
-      'name': this.name,
-      'description': this.description,
-      'file': this.file,
+      'order': orderId,
+      'name': name,
+      'description': description,
+      'file': file,
     };
 
     return json.encode(body);

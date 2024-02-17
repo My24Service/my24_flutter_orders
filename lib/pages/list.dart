@@ -46,56 +46,50 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
   }
 
   Future<Widget?> getDrawerForUserWithSubmodel(
-      BuildContext context, String? submodel) async {
-    throw UnimplementedError("This should be implemented");
-  }
+      BuildContext context, String? submodel);
+
+  Widget getOrderFormWidget({
+        required dynamic formData,
+        required OrderPageMetaData orderPageMetaData,
+        required OrderEventStatus fetchEvent,
+        required CoreWidgets widgets
+  });
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
     bool? hasBranches = await utils.getHasBranches();
     String? memberPicture = await utils.getMemberPicture();
+    Widget? drawer = context.mounted ?
+      await getDrawerForUserWithSubmodel(context, submodel) : null;
 
-    if (context.mounted) {
-      return OrderPageMetaData(
-          drawer: await getDrawerForUserWithSubmodel(context, submodel),
-          submodel: submodel,
-          firstName: await utils.getFirstName(),
-          memberPicture: memberPicture,
-          pageSize: 20,
-          hasBranches: hasBranches
-      );
-    }
-
-    return null;
+    return OrderPageMetaData(
+        drawer: drawer,
+        submodel: submodel,
+        firstName: await utils.getFirstName(),
+        memberPicture: memberPicture,
+        pageSize: 20,
+        hasBranches: hasBranches
+    );
   }
 
   BlocClass _initialCall() {
     if (initialLoadMode == null) {
-      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(OrderEvent(status: fetchMode));
     } else if (initialLoadMode == 'form') {
-      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(OrderEvent(
-          status: OrderEventStatus.FETCH_DETAIL,
+          status: OrderEventStatus.fetchDetail,
           pk: loadId
       ));
     } else if (initialLoadMode == 'new') {
       bloc.add(const OrderEvent(
-        status: OrderEventStatus.NEW,
+        status: OrderEventStatus.newOrder,
       ));
     }
 
     return bloc;
   }
-
-  Widget getOrderFormWidget(
-  {
-    required dynamic formData,
-    required OrderPageMetaData orderPageMetaData,
-    required OrderEventStatus fetchEvent,
-    required CoreWidgets widgets
-  }
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +113,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
                 )
             );
           } else if (snapshot.hasError) {
-            print("snapshot.hasError ${snapshot.error}");
+            log.severe("snapshot.hasError ${snapshot.error}");
             return Center(
                 child: Text("An error occurred (${snapshot.error})"));
           } else {
@@ -164,12 +158,12 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
                   onPressed: () {
                     Navigator.of(context).pop();
                     if (_isPlanning(orderPageMetaData!) && !orderPageMetaData.hasBranches!) {
-                      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-                      bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+                      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+                      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
                     } else {
                       final BlocClass bloc = BlocProvider.of<BlocClass>(context);
-                      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-                      bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_UNACCEPTED));
+                      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+                      bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
                     }
                   },
                 ),
@@ -197,13 +191,13 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       }
 
       if (_isPlanning(orderPageMetaData!)) {
-        bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-        bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+        bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
       } else {
         if (context.mounted) {
           final BlocClass bloc = BlocProvider.of<BlocClass>(context);
-          bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-          bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_UNACCEPTED));
+          bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+          bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
         }
       }
     }
@@ -222,8 +216,8 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         widgets.createSnackBar(context, i18n.$trans('snackbar_deleted'));
       }
 
-      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-      bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
     }
 
     if (state is OrderAcceptedState) {
@@ -231,8 +225,8 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         widgets.createSnackBar(context, i18n.$trans('snackbar_accepted'));
       }
 
-      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-      bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
     }
 
     if (state is OrderRejectedState) {
@@ -240,8 +234,8 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         widgets.createSnackBar(context, i18n.$trans('snackbar_rejected'));
       }
 
-      bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-      bloc.add(const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
     }
 
     // if (state is AssignedMeState) {
@@ -255,7 +249,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
   Widget getBody(context, state, OrderPageMetaData orderPageMetaData) {
     if (state is OrderErrorState) {
       switch (fetchMode) {
-        case OrderEventStatus.FETCH_ALL: {
+        case OrderEventStatus.fetchAll: {
           return OrderListErrorWidget(
             widgetsIn: widgets,
             i18nIn: i18n,
@@ -264,7 +258,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
           );
         }
 
-        case OrderEventStatus.FETCH_PAST: {
+        case OrderEventStatus.fetchPast: {
           return PastListErrorWidget(
             widgetsIn: widgets,
             i18nIn: i18n,
@@ -273,7 +267,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
           );
         }
 
-        case OrderEventStatus.FETCH_UNACCEPTED: {
+        case OrderEventStatus.fetchUnaccepted: {
           return UnacceptedListErrorWidget(
             widgetsIn: widgets,
             i18nIn: i18n,

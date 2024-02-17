@@ -3,46 +3,38 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
-import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
-import 'package:my24_flutter_core/models/models.dart';
 
 import '../../blocs/document_bloc.dart';
 import '../../models/document/models.dart';
-import 'mixins.dart';
 
-class OrderDocumentListWidget extends BaseSliverListStatelessWidget with OrderDocumentMixin {
+class OrderDocumentListWidget extends BaseSliverListStatelessWidget {
+  final TextEditingController searchController = TextEditingController();
   final OrderDocuments? orderDocuments;
   final int? orderId;
-  final PaginationInfo paginationInfo;
-  final String? memberPicture;
   final String? searchQuery;
   final CoreWidgets widgetsIn;
-  final My24i18n i18nIn;
   final CoreUtils utils = CoreUtils();
 
   OrderDocumentListWidget({
     Key? key,
     required this.orderDocuments,
     required this.orderId,
-    required this.paginationInfo,
-    required this.memberPicture,
+    required super.paginationInfo,
+    required super.memberPicture,
     required this.searchQuery,
     required this.widgetsIn,
-    required this.i18nIn,
+    required super.i18n,
   }) : super(
       key: key,
-      paginationInfo: paginationInfo,
-      memberPicture: memberPicture,
       widgets: widgetsIn,
-      i18n: i18nIn
   ) {
     searchController.text = searchQuery?? '';
   }
 
   @override
   String getAppBarSubtitle(BuildContext context) {
-    return i18nIn.$trans('app_bar_subtitle',
+    return i18n.$trans('app_bar_subtitle',
         namedArgs: {'count': "${orderDocuments!.count}"}
     );
   }
@@ -56,7 +48,7 @@ class OrderDocumentListWidget extends BaseSliverListStatelessWidget with OrderDo
 
             return Column(
               children: [
-                ...widgetsIn.buildItemListKeyValueList(i18nIn.$trans('name'),
+                ...widgetsIn.buildItemListKeyValueList(i18n.$trans('name'),
                     document.name),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -67,18 +59,19 @@ class OrderDocumentListWidget extends BaseSliverListStatelessWidget with OrderDo
                           url = url.replaceAll('/api', '');
 
                           Map<String, dynamic> openResult = await coreUtils.openDocument(url);
-                          if (!openResult['result']) {
+                          if (!openResult['result'] && context.mounted) {
                             widgetsIn.createSnackBar(
                               context,
-                              i18nIn.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic'));
+                              i18n.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic')
+                            );
                           }
                         }
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     widgetsIn.createDeleteButton(
                         () { _showDeleteDialog(context, document); }
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     widgetsIn.createEditButton(
                         () => { _doEdit(context, document) }
                     )
@@ -98,9 +91,9 @@ class OrderDocumentListWidget extends BaseSliverListStatelessWidget with OrderDo
   _doDelete(BuildContext context, OrderDocument document) {
     final bloc = BlocProvider.of<OrderDocumentBloc>(context);
 
-    bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
     bloc.add(OrderDocumentEvent(
-        status: OrderDocumentEventStatus.DELETE,
+        status: OrderDocumentEventStatus.delete,
         pk: document.id,
         orderId: orderId
     ));
@@ -109,19 +102,87 @@ class OrderDocumentListWidget extends BaseSliverListStatelessWidget with OrderDo
   _doEdit(BuildContext context, OrderDocument document) {
     final bloc = BlocProvider.of<OrderDocumentBloc>(context);
 
-    bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
     bloc.add(OrderDocumentEvent(
-        status: OrderDocumentEventStatus.FETCH_DETAIL,
+        status: OrderDocumentEventStatus.fetchDetail,
         pk: document.id
     ));
   }
 
   _showDeleteDialog(BuildContext context, OrderDocument document) {
     widgetsIn.showDeleteDialogWrapper(
-        i18nIn.$trans('delete_dialog_title'),
-        i18nIn.$trans('delete_dialog_content'),
+        i18n.$trans('delete_dialog_title'),
+        i18n.$trans('delete_dialog_content'),
         () => _doDelete(context, document),
         context
     );
+  }
+
+  @override
+  void doRefresh(BuildContext context) {
+    final bloc = BlocProvider.of<OrderDocumentBloc>(context);
+
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
+    bloc.add(OrderDocumentEvent(
+        status: OrderDocumentEventStatus.fetchAll,
+        orderId: orderId
+    ));
+  }
+
+  @override
+  Widget getBottomSection(BuildContext context) {
+    return widgets.showPaginationSearchNewSection(
+      context,
+      paginationInfo,
+      searchController,
+      _nextPage,
+      _previousPage,
+      _doSearch,
+      _handleNew,
+    );
+  }
+
+  _handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<OrderDocumentBloc>(context);
+
+    bloc.add(OrderDocumentEvent(
+        status: OrderDocumentEventStatus.newDocument,
+        orderId: orderId
+    ));
+  }
+
+  _nextPage(BuildContext context) {
+    final bloc = BlocProvider.of<OrderDocumentBloc>(context);
+
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
+    bloc.add(OrderDocumentEvent(
+      status: OrderDocumentEventStatus.fetchAll,
+      page: paginationInfo!.currentPage! + 1,
+      query: searchController.text,
+    ));
+  }
+
+  _previousPage(BuildContext context) {
+    final bloc = BlocProvider.of<OrderDocumentBloc>(context);
+
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
+    bloc.add(OrderDocumentEvent(
+      status: OrderDocumentEventStatus.fetchAll,
+      page: paginationInfo!.currentPage! - 1,
+      query: searchController.text,
+    ));
+  }
+
+  _doSearch(BuildContext context) {
+    final bloc = BlocProvider.of<OrderDocumentBloc>(context);
+
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doSearch));
+    bloc.add(OrderDocumentEvent(
+        status: OrderDocumentEventStatus.fetchAll,
+        query: searchController.text,
+        page: 1,
+        orderId: orderId
+    ));
   }
 }

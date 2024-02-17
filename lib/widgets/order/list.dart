@@ -10,7 +10,6 @@ import 'package:my24_flutter_orders/widgets/order/shared.dart';
 import '../../common/widgets.dart';
 import '../../models/order/models.dart';
 import '../../blocs/order_bloc.dart';
-import '../../pages/detail.dart';
 
 class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListStatelessWidget {
   final OrderPageMetaData orderPageMetaData;
@@ -102,7 +101,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   navDocuments(BuildContext context, int orderPk) {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(status: OrderEventStatus.navDocuments, pk: orderPk));
   }
 
@@ -153,21 +152,21 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   doEdit(BuildContext context, int orderPk) {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    bloc.add(OrderEvent(status: OrderEventStatus.FETCH_DETAIL, pk: orderPk));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: OrderEventStatus.fetchDetail, pk: orderPk));
   }
 
   doDelete(BuildContext context, int orderPk) async {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    bloc.add(OrderEvent(status: OrderEventStatus.DELETE, pk: orderPk));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: OrderEventStatus.delete, pk: orderPk));
   }
 
   void _navOrderDetail(BuildContext context, int orderPk) {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(status: OrderEventStatus.navDetail, pk: orderPk));
   }
 }

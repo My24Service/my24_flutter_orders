@@ -8,8 +8,6 @@ import '../../blocs/order_bloc.dart';
 import '../../models/order/models.dart';
 
 class OrderListErrorWidget<BlocClass extends OrderBlocBase> extends BaseErrorWidget  {
-  final TextEditingController searchController = TextEditingController();
-
   OrderListErrorWidget({
     Key? key,
     required String error,

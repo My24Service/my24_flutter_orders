@@ -160,29 +160,29 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
   _fetchOrders(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(status: fetchEvent));
   }
 
   void _doAccept(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    bloc.add(OrderEvent(status: OrderEventStatus.ACCEPT, pk: formData!.id));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: OrderEventStatus.accept, pk: formData!.id));
   }
 
   void _doReject(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    bloc.add(OrderEvent(status: OrderEventStatus.REJECT, pk: formData!.id));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: OrderEventStatus.reject, pk: formData!.id));
   }
 
   updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(
-        status: OrderEventStatus.UPDATE_FORM_DATA,
+        status: OrderEventStatus.updateFormData,
         formData: formData
     ));
   }
@@ -192,12 +192,12 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
 
     formData!.isCreatingEquipment = true;
     bloc.add(OrderEvent(
-        status: OrderEventStatus.UPDATE_FORM_DATA,
+        status: OrderEventStatus.updateFormData,
         formData: formData
     ));
 
     bloc.add(OrderEvent(
-        status: OrderEventStatus.CREATE_SELECT_EQUIPMENT,
+        status: OrderEventStatus.createSelectEquipment,
         formData: formData
     ));
   }
@@ -207,12 +207,12 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
 
     formData!.isCreatingLocation = true;
     bloc.add(OrderEvent(
-        status: OrderEventStatus.UPDATE_FORM_DATA,
+        status: OrderEventStatus.updateFormData,
         formData: formData
     ));
 
     bloc.add(OrderEvent(
-        status: OrderEventStatus.CREATE_SELECT_EQUIPMENT_LOCATION,
+        status: OrderEventStatus.createSelectEquipmentLocation,
         formData: formData
     ));
   }
@@ -1263,10 +1263,10 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
       final bloc = BlocProvider.of<BlocClass>(context);
       if (formData!.id != null) {
         Order updatedOrder = formData!.toModel();
-        bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
         bloc.add(OrderEvent(
           pk: updatedOrder.id,
-          status: OrderEventStatus.UPDATE,
+          status: OrderEventStatus.update,
           order: updatedOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,
@@ -1278,9 +1278,9 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           formData!.customerOrderAccepted = true;
         }
         Order newOrder = formData!.toModel();
-        bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
+        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
         bloc.add(OrderEvent(
-          status: OrderEventStatus.INSERT,
+          status: OrderEventStatus.insert,
           order: newOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,

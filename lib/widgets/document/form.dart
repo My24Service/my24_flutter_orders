@@ -75,7 +75,7 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           widgetsIn.createCancelButton(() => _navList(context)),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           widgetsIn.createSubmitButton(context, () => _handleSubmit(context)),
         ]
     );
@@ -84,9 +84,9 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
   void _navList(BuildContext context) {
     final bloc = BlocProvider.of<OrderDocumentBloc>(context);
 
-    bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
     bloc.add(OrderDocumentEvent(
-        status: OrderDocumentEventStatus.FETCH_ALL,
+        status: OrderDocumentEventStatus.fetchAll,
         orderId: orderId
     ));
   }
@@ -100,7 +100,9 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
       formData!.documentFile = await formData!.getLocalFile(file.path!);
       formData!.documentController!.text = file.name;
       formData!.nameController!.text = file.name;
-      _updateFormData(context);
+      if (context.mounted) {
+        _updateFormData(context);
+      }
     }
   }
 
@@ -112,9 +114,9 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
 
       formData!.documentFile = await formData!.getLocalFile(pickedFile.path);
       formData!.documentController!.text = filename;
-      _updateFormData(context);
-    } else {
-      print('No image selected.');
+      if (context.mounted) {
+        _updateFormData(context);
+      }
     }
   }
 
@@ -126,9 +128,9 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
 
         formData!.documentFile = await formData!.getLocalFile(pickedFile.path);
         formData!.documentController!.text = filename;
-        _updateFormData(context);
-      } else {
-        print('No image selected.');
+        if (context.mounted) {
+          _updateFormData(context);
+        }
       }
   }
 
@@ -163,7 +165,7 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
               }
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         Text(i18nIn.$trans('info_description', pathOverride: 'generic')),
@@ -174,7 +176,7 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
             validator: (value) {
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         Text(i18nIn.$trans('info_photo')),
@@ -184,19 +186,22 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
             validator: (value) {
               return null;
             }),
-        SizedBox(
+        const SizedBox(
           height: 10.0,
         ),
         Column(children: [
           _buildOpenFileButton(context),
-          SizedBox(
+          const SizedBox(
             height: 20.0,
           ),
           _buildChooseImageButton(context),
-          Text(i18nIn.$trans('info_or', pathOverride: 'generic'), style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic
-          )),
+          Text(
+              My24i18n.tr('generic.info_or'),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic
+              )
+          ),
           _buildTakePictureButton(context),
         ]),
       ],
@@ -204,8 +209,8 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
   }
 
   Future<void> _handleSubmit(BuildContext context) async {
-    if (this._formKey.currentState!.validate()) {
-      this._formKey.currentState!.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
       if (!formData!.isValid()) {
         if (formData!.documentFile == null) {
@@ -220,18 +225,18 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
       final bloc = BlocProvider.of<OrderDocumentBloc>(context);
       if (formData!.id != null) {
         OrderDocument updatedDocument = formData!.toModel();
-        bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+        bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
         bloc.add(OrderDocumentEvent(
             pk: updatedDocument.id,
-            status: OrderDocumentEventStatus.UPDATE,
+            status: OrderDocumentEventStatus.update,
             document: updatedDocument,
             orderId: updatedDocument.orderId
         ));
       } else {
         OrderDocument newDocument = formData!.toModel();
-        bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+        bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
         bloc.add(OrderDocumentEvent(
-            status: OrderDocumentEventStatus.INSERT,
+            status: OrderDocumentEventStatus.insert,
             document: newDocument,
             orderId: newDocument.orderId
         ));
@@ -241,9 +246,9 @@ class OrderDocumentFormWidget extends BaseSliverPlainStatelessWidget{
 
   _updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<OrderDocumentBloc>(context);
-    bloc.add(OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+    bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
     bloc.add(OrderDocumentEvent(
-        status: OrderDocumentEventStatus.UPDATE_FORM_DATA,
+        status: OrderDocumentEventStatus.updateFormData,
         documentFormData: formData
     ));
   }

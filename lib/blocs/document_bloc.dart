@@ -7,16 +7,16 @@ import '../models/document/form_data.dart';
 import '../models/document/api.dart';
 
 enum OrderDocumentEventStatus {
-  DO_ASYNC,
-  FETCH_ALL,
-  DO_SEARCH,
-  FETCH_DETAIL,
-  NEW,
-  NEW_EMPTY,
-  DELETE,
-  UPDATE,
-  INSERT,
-  UPDATE_FORM_DATA
+  doAsync,
+  fetchAll,
+  doSearch,
+  fetchDetail,
+  newDocument,
+  newEmpty,
+  delete,
+  update,
+  insert,
+  updateFormData
 }
 
 class OrderDocumentEvent {
@@ -44,34 +44,34 @@ class OrderDocumentBloc extends Bloc<OrderDocumentEvent, OrderDocumentState> {
 
   OrderDocumentBloc() : super(OrderDocumentInitialState()) {
     on<OrderDocumentEvent>((event, emit) async {
-      if (event.status == OrderDocumentEventStatus.DO_ASYNC) {
+      if (event.status == OrderDocumentEventStatus.doAsync) {
         _handleDoAsyncState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.FETCH_ALL) {
+      else if (event.status == OrderDocumentEventStatus.fetchAll) {
         await _handleFetchAllState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.DO_SEARCH) {
+      else if (event.status == OrderDocumentEventStatus.doSearch) {
         _handleDoSearchState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.FETCH_DETAIL) {
+      else if (event.status == OrderDocumentEventStatus.fetchDetail) {
         await _handleFetchState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.INSERT) {
+      else if (event.status == OrderDocumentEventStatus.insert) {
         await _handleInsertState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.UPDATE) {
+      else if (event.status == OrderDocumentEventStatus.update) {
         await _handleEditState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.DELETE) {
+      else if (event.status == OrderDocumentEventStatus.delete) {
         await _handleDeleteState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.UPDATE_FORM_DATA) {
+      else if (event.status == OrderDocumentEventStatus.updateFormData) {
         _handleUpdateFormDataState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.NEW) {
+      else if (event.status == OrderDocumentEventStatus.newDocument) {
         _handleNewFormDataState(event, emit);
       }
-      else if (event.status == OrderDocumentEventStatus.NEW_EMPTY) {
+      else if (event.status == OrderDocumentEventStatus.newEmpty) {
         _handleNewEmptyFormDataState(event, emit);
       }
     },
@@ -155,7 +155,6 @@ class OrderDocumentBloc extends Bloc<OrderDocumentEvent, OrderDocumentState> {
       final bool result = await api.delete(event.pk!);
       emit(OrderDocumentDeletedState(result: result));
     } catch(e) {
-      print(e);
       emit(OrderDocumentErrorState(message: e.toString()));
     }
   }

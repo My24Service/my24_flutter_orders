@@ -2,7 +2,10 @@ import 'package:my24_flutter_core/api/base_crud.dart';
 import 'models.dart';
 
 class OrderDocumentApi extends BaseCrud<OrderDocument, OrderDocuments> {
-  final String basePath = "/order/document";
+  @override
+  get basePath {
+    return "/order/document";
+  }
 
   @override
   OrderDocument fromJsonDetail(Map<String, dynamic>? parsedJson) {

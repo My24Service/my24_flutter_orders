@@ -54,16 +54,16 @@ class Orderline extends BaseModel {
   @override
   String toJson() {
     Map body = {
-      'id': this.id,
-      'order': this.order,
-      'product': this.product,
-      'location': this.location,
-      'remarks': this.remarks,
-      'material_relation': this.materialRelation,
-      'location_relation_inventory': this.locationRelationInventory,
-      'amount': this.amount == null ? 0 : this.amount,
-      'equipment': this.equipment,
-      'equipment_location': this.equipmentLocation
+      'id': id,
+      'order': order,
+      'product': product,
+      'location': location,
+      'remarks': remarks,
+      'material_relation': materialRelation,
+      'location_relation_inventory': locationRelationInventory,
+      'amount': amount ?? 0,
+      'equipment': equipment,
+      'equipment_location': equipmentLocation
     };
 
     return json.encode(body);

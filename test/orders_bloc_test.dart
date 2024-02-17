@@ -55,7 +55,7 @@ void main() {
 
     orderBloc.add(
         const OrderEvent(
-            status: OrderEventStatus.FETCH_DETAIL,
+            status: OrderEventStatus.fetchDetail,
             pk: 1
         ));
   });
@@ -84,7 +84,7 @@ void main() {
     expectLater(orderBloc.stream, emits(isA<OrdersLoadedState>()));
 
     orderBloc.add(
-        const OrderEvent(status: OrderEventStatus.FETCH_ALL));
+        const OrderEvent(status: OrderEventStatus.fetchAll));
   });
 
   test('Test order edit', () async {
@@ -128,7 +128,7 @@ void main() {
 
     orderBloc.add(
         OrderEvent(
-            status: OrderEventStatus.UPDATE,
+            status: OrderEventStatus.update,
             order: orderModel,
             pk: 1,
             infoLines: [],
@@ -161,7 +161,7 @@ void main() {
     expectLater(orderBloc.stream, emits(isA<OrderDeletedState>()));
 
     orderBloc.add(
-        const OrderEvent(status: OrderEventStatus.DELETE, pk: 1));
+        const OrderEvent(status: OrderEventStatus.delete, pk: 1));
   });
 
   test('Test order insert', () async {
@@ -213,7 +213,7 @@ void main() {
     expectLater(orderBloc.stream, emits(isA<OrdersUnacceptedLoadedState>()));
 
     orderBloc.add(
-        const OrderEvent(status: OrderEventStatus.FETCH_UNACCEPTED));
+        const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
   });
 
 }

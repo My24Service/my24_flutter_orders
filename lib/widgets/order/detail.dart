@@ -38,7 +38,7 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
 
   @override
   Widget getBottomSection(BuildContext context) {
-    return SizedBox(height: 1);
+    return const SizedBox(height: 1);
   }
 
   @override
@@ -50,7 +50,7 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
             widgetsIn.getMy24Divider(context),
             _createAssignedInfoSection(context),
             _createOrderlinesSection(context),
-            if (!this._isCustomerOrBranch())
+            if (!_isCustomerOrBranch())
               _createInfolinesSection(context),
             _buildDocumentsSection(context),
             _buildWorkorderDocumentsSection(context),
@@ -134,7 +134,7 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
       i18nIn.$trans('header_documents'),
       order!.documents,
       (item) {
-        String nameDescKey = i18nIn.$trans('info_name', pathOverride: 'generic');
+        String nameDescKey = My24i18n.tr('generic.info_name');
         String? nameDescValue = item.name;
         if (item.description != null && item.description != "") {
           nameDescValue = "$nameDescValue (${item.description})";
@@ -152,10 +152,11 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
                     String url = await utils.getUrl(item.url);
                     url = url.replaceAll('/api', '');
                     Map<String, dynamic> openResult = await coreUtils.openDocument(url);
-                    if (!openResult['result']) {
+                    if (!openResult['result'] && context.mounted) {
                       widgetsIn.createSnackBar(
                         context,
-                        i18nIn.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic'));
+                        i18nIn.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic')
+                      );
                     }
                   }
               ),
@@ -174,7 +175,10 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
       order!.workorderDocuments,
       (WorkOrderDocument item) {
         return <Widget>[
-          ...widgetsIn.buildItemListKeyValueList(i18nIn.$trans('info_name', pathOverride: 'generic'), item.name),
+          ...widgetsIn.buildItemListKeyValueList(
+              My24i18n.tr('generic.info_name'),
+              item.name
+          ),
         ];
       },
       (item) {
@@ -187,10 +191,13 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
                     String url = await utils.getUrl(item.url);
                     url = url.replaceAll('/api', '');
                     Map<String, dynamic> openResult = await coreUtils.openDocument(url);
-                    if (!openResult['result']) {
+                    if (!openResult['result'] && context.mounted) {
                       widgetsIn.createSnackBar(
                         context,
-                        i18nIn.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic')
+                        i18nIn.$trans(
+                            'error_arg', namedArgs: {'error': openResult['message']},
+                            pathOverride: 'generic'
+                        )
                       );
                     }
                   }

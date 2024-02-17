@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my24_flutter_core/utils.dart';
 
+import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
@@ -24,26 +24,24 @@ abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends Stat
     required this.bloc,
   }) : super(key: key);
 
+  Future<Widget?> getDrawerForUserWithSubmodel(BuildContext context, String? submodel);
+
   BlocClass _initialBlocCall() {
-    bloc.add(const OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    bloc.add(OrderEvent(status: OrderEventStatus.FETCH_DETAIL_VIEW, pk: orderId));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: OrderEventStatus.fetchDetailView, pk: orderId));
 
     return bloc;
-  }
-
-  Future<Widget?> getDrawerForUserWithSubmodel(
-      BuildContext context, String? submodel) async {
-    throw UnimplementedError("This should be implemented");
   }
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
     bool? hasBranches = await utils.getHasBranches();
     String? memberPicture = await utils.getMemberPicture();
+    Widget? drawer = context.mounted ? await getDrawerForUserWithSubmodel(context, submodel) : null;
 
     if (context.mounted) {
       return OrderPageMetaData(
-          drawer: await getDrawerForUserWithSubmodel(context, submodel),
+          drawer: drawer,
           submodel: submodel,
           firstName: await utils.getFirstName(),
           memberPicture: memberPicture,

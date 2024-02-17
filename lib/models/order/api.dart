@@ -7,7 +7,10 @@ import 'package:my24_flutter_core/models/models.dart';
 import 'models.dart';
 
 class OrderApi extends BaseCrud<Order, Orders> {
-  final String basePath = "/order/order";
+  @override
+  get basePath {
+    return "/order/order";
+  }
 
   @override
   Order fromJsonDetail(Map<String, dynamic>? parsedJson) {
@@ -94,7 +97,10 @@ class OrderApi extends BaseCrud<Order, Orders> {
 }
 
 class CustomerHistoryOrderApi extends BaseCrud<CustomerHistoryOrder, CustomerHistoryOrders> {
-  final String basePath = "/order/order/all_for_customer_v2";
+  @override
+  get basePath {
+    return "/order/order/all_for_customer_v2";
+  }
 
   @override
   CustomerHistoryOrder fromJsonDetail(Map<String, dynamic>? parsedJson) {

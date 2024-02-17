@@ -24,9 +24,9 @@ class Infoline extends BaseModel {
   @override
   String toJson() {
     Map body = {
-      'id': this.id,
-      'order': this.order,
-      'info': this.info,
+      'id': id,
+      'order': order,
+      'info': info,
     };
 
     return json.encode(body);

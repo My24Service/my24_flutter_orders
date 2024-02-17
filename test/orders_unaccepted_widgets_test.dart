@@ -54,7 +54,7 @@ void main() async {
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_UNACCEPTED);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchUnaccepted);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))
@@ -93,7 +93,7 @@ void main() async {
     ).thenAnswer((_) async => http.Response(orders, 200));
 
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_UNACCEPTED);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchUnaccepted);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))
@@ -131,7 +131,7 @@ void main() async {
         )
     ).thenAnswer((_) async => http.Response(orders, 500));
 
-    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.FETCH_UNACCEPTED);
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchUnaccepted);
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
         createWidget(child: widget))

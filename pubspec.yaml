@@ -1,7 +1,8 @@
 name: my24_flutter_orders
-description: "A new Flutter package project."
+description: "My24Service shared orders package"
 version: 0.0.1
-homepage:
+homepage: https://www.my24service.com
+publish_to: none
 
 environment:
   sdk: '>=3.2.6 <4.0.0'

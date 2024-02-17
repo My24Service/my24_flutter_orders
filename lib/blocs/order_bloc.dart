@@ -17,24 +17,24 @@ import '../models/orderline/api.dart';
 import '../models/orderline/models.dart';
 
 enum OrderEventStatus {
-  DO_ASYNC,
-  DO_SEARCH,
-  DO_REFRESH,
-  FETCH_ALL,
-  FETCH_DETAIL,
-  FETCH_DETAIL_VIEW,
-  FETCH_UNACCEPTED,
-  FETCH_PAST,
+  doAsync,
+  doSearch,
+  doRefresh,
+  fetchAll,
+  fetchDetail,
+  fetchDetailView,
+  fetchUnaccepted,
+  fetchPast,
 
-  NEW,
-  DELETE,
-  UPDATE,
-  INSERT,
-  UPDATE_FORM_DATA,
-  CREATE_SELECT_EQUIPMENT,
-  CREATE_SELECT_EQUIPMENT_LOCATION,
-  ACCEPT,
-  REJECT,
+  newOrder,
+  delete,
+  update,
+  insert,
+  updateFormData,
+  createSelectEquipment,
+  createSelectEquipmentLocation,
+  accept,
+  reject,
 
   navDocuments,
   navDetail
@@ -77,10 +77,10 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
   OrderBlocBase(OrderState initialState) : super(initialState);
 
   Future<void> handleEvent(event, emit) async {
-    if (event.status == OrderEventStatus.DO_ASYNC) {
+    if (event.status == OrderEventStatus.doAsync) {
       _handleDoAsyncState(event, emit);
     }
-    else if (event.status == OrderEventStatus.DO_SEARCH) {
+    else if (event.status == OrderEventStatus.doSearch) {
       _handleDoSearchState(event, emit);
     }
     else if (event.status == OrderEventStatus.navDocuments) {
@@ -89,46 +89,46 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     else if (event.status == OrderEventStatus.navDetail) {
       _handleNavDetailState(event, emit);
     }
-    else if (event.status == OrderEventStatus.DO_REFRESH) {
+    else if (event.status == OrderEventStatus.doRefresh) {
       _handleDoRefreshState(event, emit);
     }
-    else if (event.status == OrderEventStatus.FETCH_DETAIL) {
+    else if (event.status == OrderEventStatus.fetchDetail) {
       await _handleFetchState(event, emit);
     }
-    else if (event.status == OrderEventStatus.FETCH_DETAIL_VIEW) {
+    else if (event.status == OrderEventStatus.fetchDetailView) {
       await _handleFetchViewState(event, emit);
     }
-    else if (event.status == OrderEventStatus.FETCH_ALL) {
+    else if (event.status == OrderEventStatus.fetchAll) {
       await _handleFetchAllState(event, emit);
     }
-    else if (event.status == OrderEventStatus.FETCH_UNACCEPTED) {
+    else if (event.status == OrderEventStatus.fetchUnaccepted) {
       await _handleFetchUnacceptedState(event, emit);
     }
-    else if (event.status == OrderEventStatus.FETCH_PAST) {
+    else if (event.status == OrderEventStatus.fetchPast) {
       await _handleFetchPastState(event, emit);
     }
-    else if (event.status == OrderEventStatus.INSERT) {
+    else if (event.status == OrderEventStatus.insert) {
       await _handleInsertState(event, emit);
     }
-    else if (event.status == OrderEventStatus.UPDATE) {
+    else if (event.status == OrderEventStatus.update) {
       await _handleEditState(event, emit);
     }
-    else if (event.status == OrderEventStatus.DELETE) {
+    else if (event.status == OrderEventStatus.delete) {
       await _handleDeleteState(event, emit);
     }
-    else if (event.status == OrderEventStatus.UPDATE_FORM_DATA) {
+    else if (event.status == OrderEventStatus.updateFormData) {
       _handleUpdateFormDataState(event, emit);
     }
-    else if (event.status == OrderEventStatus.CREATE_SELECT_EQUIPMENT) {
+    else if (event.status == OrderEventStatus.createSelectEquipment) {
       await _handleCreateSelectEquipment(event, emit);
     }
-    else if (event.status == OrderEventStatus.CREATE_SELECT_EQUIPMENT_LOCATION) {
+    else if (event.status == OrderEventStatus.createSelectEquipmentLocation) {
       await _handleCreateSelectEquipmentLocation(event, emit);
     }
-    else if (event.status == OrderEventStatus.ACCEPT) {
+    else if (event.status == OrderEventStatus.accept) {
       _handleAcceptState(event, emit);
     }
-    else if (event.status == OrderEventStatus.REJECT) {
+    else if (event.status == OrderEventStatus.reject) {
       _handleRejectState(event, emit);
     }
   }

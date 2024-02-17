@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my24_flutter_core/utils.dart';
 
+import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/models/models.dart';
@@ -55,20 +55,20 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
 
   OrderDocumentBloc _initialBlocCall() {
     if (initialLoadMode == null) {
-      bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+      bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.FETCH_ALL,
+          status: OrderDocumentEventStatus.fetchAll,
           orderId: orderId
       ));
     } else if (initialLoadMode == 'form') {
-      bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.DO_ASYNC));
+      bloc.add(const OrderDocumentEvent(status: OrderDocumentEventStatus.doAsync));
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.FETCH_DETAIL,
+          status: OrderDocumentEventStatus.fetchDetail,
           pk: loadId
       ));
     } else if (initialLoadMode == 'new') {
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.NEW,
+          status: OrderDocumentEventStatus.newDocument,
           orderId: orderId
       ));
     }
@@ -83,9 +83,9 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
     return PopScope(
         onPopInvoked: (boolIn) {
           if (customerOrderAccepted) {
-            navOrders(context, OrderEventStatus.FETCH_ALL);
+            navOrders(context, OrderEventStatus.fetchAll);
           } else {
-            navOrders(context, OrderEventStatus.FETCH_UNACCEPTED);
+            navOrders(context, OrderEventStatus.fetchUnaccepted);
           }
 
           return;
@@ -140,7 +140,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
       widgets.createSnackBar(context, i18n.$trans('snackbar_added'));
 
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.FETCH_ALL,
+          status: OrderDocumentEventStatus.fetchAll,
           orderId: orderId
       ));
     }
@@ -149,7 +149,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
       widgets.createSnackBar(context, i18n.$trans('snackbar_updated'));
 
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.FETCH_ALL,
+          status: OrderDocumentEventStatus.fetchAll,
           orderId: orderId
       ));
     }
@@ -158,14 +158,14 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
       widgets.createSnackBar(context, i18n.$trans('snackbar_deleted'));
 
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.FETCH_ALL,
+          status: OrderDocumentEventStatus.fetchAll,
           orderId: orderId
       ));
     }
 
     if (state is OrderDocumentsLoadedState && state.query == null && state.documents!.results!.isEmpty) {
       bloc.add(OrderDocumentEvent(
-          status: OrderDocumentEventStatus.NEW_EMPTY,
+          status: OrderDocumentEventStatus.newEmpty,
           orderId: orderId
       ));
     }
@@ -206,7 +206,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
         memberPicture: pageData.memberPicture,
         searchQuery: state.query,
         widgetsIn: widgets,
-        i18nIn: i18n,
+        i18n: i18n,
       );
     }
 
