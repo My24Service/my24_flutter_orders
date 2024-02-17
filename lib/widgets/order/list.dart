@@ -81,8 +81,8 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
           return Column(
             children: [
               ListTile(
-                title: createOrderListHeader2(order, order.orderDate!),
-                subtitle: createOrderListSubtitle2(order),
+                title: createOrderListHeader(order, order.orderDate!),
+                subtitle: createOrderListSubtitle(order),
                 onTap: () {
                   _navOrderDetail(context, order.id!);
                 } // onTab

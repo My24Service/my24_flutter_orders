@@ -42,7 +42,7 @@ Widget getOrderSubHeaderValueWidget(String text, double fontsize) {
   );
 }
 
-Widget createOrderListHeader2(Order order, String date) {
+Widget createOrderListHeader(Order order, String date) {
   double fontsizeKey = 14.0;
   double fontsizeValue = 20.0;
 
@@ -61,7 +61,7 @@ Widget createOrderListHeader2(Order order, String date) {
   );
 }
 
-Widget createOrderHistoryListHeader2(String date) {
+Widget createOrderHistoryListHeader(String date) {
   double fontsizeKey = 14.0;
   double fontsizeValue = 20.0;
 
@@ -75,7 +75,7 @@ Widget createOrderHistoryListHeader2(String date) {
   );
 }
 
-Widget createOrderListSubtitle2(Order order) {
+Widget createOrderListSubtitle(Order order) {
   double fontsizeKey = 12.0;
   double fontsizeValue = 16.0;
 
@@ -204,29 +204,6 @@ abstract class BaseOrdersAppBarFactory extends BaseGenericAppBarFactory {
     //     subtitle: Text(subtitle)
     // );
   }
-}
-
-class AssignedOrdersAppBarFactory extends BaseOrdersAppBarFactory {
-  AssignedOrdersAppBarFactory({
-    required super.orderPageMetaData,
-    required super.context,
-    required super.orders,
-    required super.count,
-    super.onStretch
-  });
-
-  @override
-  String getBaseTranslateStringForUser() {
-    return 'assigned_orders.list.app_bar_title';
-  }
-
-  @override
-  List<dynamic> getCustomerNames(List<dynamic> orders) {
-    return orders.map((assignedOrder) => {
-      assignedOrder.order.orderName
-    }).map((e) => e.first).toList().toSet().toList().take(3).toList();
-  }
-
 }
 
 class PastOrdersAppBarFactory extends BaseOrdersAppBarFactory {
