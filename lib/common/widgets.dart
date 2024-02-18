@@ -129,15 +129,6 @@ abstract class BaseOrdersAppBarFactory extends BaseGenericAppBarFactory {
       mainTitle: ''
   );
 
-  @override
-  Image getAltBackground() {
-    final Image bg1 = Image.asset("assets/bg1.jpg");
-    final Image bg2 = Image.asset("assets/bg2.jpg");
-    final int randomPos = Random().nextInt(1);
-    final bgs = [bg1, bg2];
-    return bgs[randomPos];
-  }
-
   String? getBaseTranslateStringForUser() {
     if (orderPageMetaData.submodel == 'customer_user') {
       return 'orders.list.app_title_customer_user';
