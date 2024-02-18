@@ -48,6 +48,10 @@ dev_dependencies:
 flutter:
   assets:
     - assets/icon/icon.png
+    - assets/bg1.jpg
+    - assets/bg2.jpg
+    - assets/bg3.jpg
+    - assets/bg4.jpg
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
