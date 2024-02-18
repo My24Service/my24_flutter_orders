@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
@@ -126,6 +128,15 @@ abstract class BaseOrdersAppBarFactory extends BaseGenericAppBarFactory {
       mainSubtitle: '',
       mainTitle: ''
   );
+
+  @override
+  Image getAltBackground() {
+    final Image bg1 = Image.asset("assets/bg1.jpg");
+    final Image bg2 = Image.asset("assets/bg2.jpg");
+    final int randomPos = Random().nextInt(1);
+    final bgs = [bg1, bg2];
+    return bgs[randomPos];
+  }
 
   String? getBaseTranslateStringForUser() {
     if (orderPageMetaData.submodel == 'customer_user') {
