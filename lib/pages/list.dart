@@ -207,7 +207,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrderDeletedState) {
       if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('snackbar_deleted'));
+        widgets.createSnackBar(context, i18n.$trans('list.snackbar_deleted'));
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));

@@ -149,8 +149,8 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
 
   showDeleteDialog(BuildContext context, int orderPk) {
     widgets.showDeleteDialogWrapper(
-        i18n.$trans('delete_dialog_title'),
-        i18n.$trans('delete_dialog_content'),
+        i18n.$trans('list.delete_dialog_title'),
+        i18n.$trans('list.delete_dialog_content'),
         () => doDelete(context, orderPk),
         context);
   }
