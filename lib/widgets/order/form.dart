@@ -327,7 +327,6 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
   }
 
   Widget _createOrderForm(BuildContext context) {
-    print("HAS BRANCHES? ${!orderPageMetaData.hasBranches!}");
     return Form(key: _formKeys[0], child: Table(
         children: [
           getFirstElement(context),

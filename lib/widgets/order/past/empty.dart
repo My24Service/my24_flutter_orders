@@ -39,7 +39,6 @@ class PastListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidg
 
   @override
   Widget getBottomSection(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
     return widgets.showPaginationSearchNewSection(
       context,
       null,
