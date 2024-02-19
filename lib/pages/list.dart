@@ -125,18 +125,19 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
     );
   }
 
-  bool _isPlanning(OrderPageMetaData orderListData) {
+  bool isPlanning(OrderPageMetaData orderListData) {
     return orderListData.submodel == 'planning_user';
   }
 
   void navDocuments(BuildContext context, int orderPk);
   void navDetail(BuildContext context, int orderPk, BlocClass bloc);
+  void handleCreateDocumentsCancel(BuildContext context, OrderPageMetaData? orderPageMetaData);
 
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
     if (state is OrderInsertedState) {
-      widgets.createSnackBar(context, i18n.$trans('snackbar_added'));
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
 
       // ask if we want to add documents after insert
       await showDialog<void>(
@@ -144,27 +145,20 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
           barrierDismissible: false, // user must tap button!
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(i18n.$trans('dialog_add_documents_title')),
-              content: Text(i18n.$trans('dialog_add_documents_content')),
+              title: Text(i18n.$trans('list.dialog_add_documents_title')),
+              content: Text(i18n.$trans('list.dialog_add_documents_content')),
               actions: <Widget>[
                 TextButton(
-                  child: Text(i18n.$trans('dialog_add_documents_button_yes')),
+                  child: Text(i18n.$trans('list.dialog_add_documents_button_yes')),
                   onPressed: () {
                     navDocuments(context, state.order!.id!);
                   },
                 ),
                 TextButton(
-                  child: Text(i18n.$trans('dialog_add_documents_button_no')),
+                  child: Text(i18n.$trans('list.dialog_add_documents_button_no')),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    if (_isPlanning(orderPageMetaData!) && !orderPageMetaData.hasBranches!) {
-                      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-                      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
-                    } else {
-                      final BlocClass bloc = BlocProvider.of<BlocClass>(context);
-                      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-                      bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
-                    }
+                    handleCreateDocumentsCancel(context, orderPageMetaData);
                   },
                 ),
               ],
@@ -187,10 +181,10 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrderUpdatedState) {
       if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('snackbar_updated'));
+        widgets.createSnackBar(context, i18n.$trans('list.snackbar_updated'));
       }
 
-      if (_isPlanning(orderPageMetaData!)) {
+      if (isPlanning(orderPageMetaData!)) {
         bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
         bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
       } else {
@@ -222,7 +216,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrderAcceptedState) {
       if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('snackbar_accepted'));
+        widgets.createSnackBar(context, i18n.$trans('list.snackbar_accepted'));
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
@@ -231,7 +225,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrderRejectedState) {
       if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('snackbar_rejected'));
+        widgets.createSnackBar(context, i18n.$trans('list.snackbar_rejected'));
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));

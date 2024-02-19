@@ -297,6 +297,10 @@ class OrderListPage<OrderBloc> extends BaseOrderListPage {
       widgetsIn: widgets,
     );
   }
+
+  @override
+  void handleCreateDocumentsCancel(BuildContext context, OrderPageMetaData? orderPageMetaData) {
+  }
 }
 
 class OrderDetailPage<OrderBloc> extends BaseOrderDetailPage {
