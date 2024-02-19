@@ -257,7 +257,7 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
       // fetch locations for branches
       if (hasBranches) {
-        formData.locations = await locationApi.fetchLocationsForSelect();
+        formData.locations = await locationApi.fetchLocationsForSelect(branch: formData.branch);
         if (formData.locations!.isNotEmpty) {
           formData.orderlineFormData!.equipmentLocation = formData.locations![0].id;
         }
