@@ -26,7 +26,7 @@ class PastListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidg
 
   @override
   String getEmptyMessage() {
-    return i18nIn.$trans('notice_no_order');
+    return i18nIn.$trans('past.notice_no_order');
   }
 
   @override

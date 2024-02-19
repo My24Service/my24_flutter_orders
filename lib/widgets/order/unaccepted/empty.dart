@@ -26,7 +26,7 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
 
   @override
   String getEmptyMessage() {
-    return i18nIn.$trans('notice_no_order');
+    return i18nIn.$trans('unaccepted.notice_no_order');
   }
 
   @override
