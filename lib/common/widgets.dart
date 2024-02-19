@@ -221,48 +221,18 @@ class PastOrdersAppBarFactory extends BaseOrdersAppBarFactory {
   }
 }
 
-class SalesListOrdersAppBarFactory extends BaseOrdersAppBarFactory {
-  SalesListOrdersAppBarFactory({
-    required super.orderPageMetaData,
-    required super.context,
-    required super.orders,
-    required super.count,
-    super.onStretch
-  });
-
-  @override
-  String getBaseTranslateStringForUser() {
-    return 'orders.sales_list.app_bar_title';
-  }
-}
-
 class UnacceptedOrdersAppBarFactory extends BaseOrdersAppBarFactory {
   UnacceptedOrdersAppBarFactory({
     required super.orderPageMetaData,
     required super.context,
-    required super.orders,
-    required super.count,
+    super.orders,
+    super.count,
     super.onStretch
   });
 
   @override
   String getBaseTranslateStringForUser() {
     return 'orders.unaccepted.app_bar_title';
-  }
-}
-
-class UnassignedOrdersAppBarFactory extends BaseOrdersAppBarFactory {
-  UnassignedOrdersAppBarFactory({
-    required super.orderPageMetaData,
-    required super.context,
-    required super.orders,
-    required super.count,
-    super.onStretch
-  });
-
-  @override
-  String getBaseTranslateStringForUser() {
-    return 'orders.unassigned.app_bar_title';
   }
 }
 

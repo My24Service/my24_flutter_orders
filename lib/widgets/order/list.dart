@@ -5,7 +5,6 @@ import 'package:my24_flutter_core/models/models.dart';
 import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
-import 'package:my24_flutter_orders/widgets/order/shared.dart';
 
 import '../../common/widgets.dart';
 import '../../models/order/models.dart';
@@ -39,26 +38,69 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
 
   @override
   Widget getBottomSection(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
     return widgets.showPaginationSearchNewSection(
       context,
       paginationInfo,
       searchController,
-      () { nextPage(bloc, fetchEvent, paginationInfo!, searchController.text); },
-      () { previousPage(bloc, fetchEvent, paginationInfo!, searchController.text); },
-      () { doSearch(bloc, fetchEvent, searchController.text); },
-      () { handleNew(bloc); },
+      nextPage,
+      previousPage,
+      doSearch,
+      handleNew
     );
   }
 
   @override
   void doRefresh(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    doRefreshCommon(bloc, fetchEvent);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
+    bloc.add(OrderEvent(status: fetchEvent));
   }
 
   bool isPlanning() {
     return orderPageMetaData.submodel == 'planning_user';
+  }
+
+  nextPage(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(
+      status: fetchEvent,
+      page: paginationInfo!.currentPage! + 1,
+      query: searchController.text,
+    ));
+  }
+
+  previousPage(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(
+      status: fetchEvent,
+      page: paginationInfo!.currentPage! - 1,
+      query: searchController.text,
+    ));
+  }
+
+  doSearch(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
+    bloc.add(OrderEvent(
+        status: fetchEvent,
+        query: searchController.text,
+        page: 1
+    ));
+  }
+
+  handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(
+        status: OrderEventStatus.newOrder
+    ));
   }
 
   @override

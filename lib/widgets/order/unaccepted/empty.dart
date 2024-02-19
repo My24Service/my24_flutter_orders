@@ -6,7 +6,6 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
 import '../../../blocs/order_bloc.dart';
-import '../shared.dart';
 
 class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
   final OrderEventStatus fetchEvent;
@@ -33,20 +32,41 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
   @override
   void doRefresh(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    doRefreshCommon(bloc, fetchEvent);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
+    bloc.add(OrderEvent(status: fetchEvent));
   }
 
   @override
   Widget getBottomSection(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
     return widgets.showPaginationSearchNewSection(
       context,
       null,
       searchController,
       () {  },
       () {  },
-      () { doSearch(bloc, fetchEvent, searchController.text); },
-      () { handleNew(bloc); },
+      doSearch,
+      handleNew
     );
+  }
+
+  doSearch(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
+    bloc.add(OrderEvent(
+        status: fetchEvent,
+        query: searchController.text,
+        page: 1
+    ));
+  }
+
+  handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(
+        status: OrderEventStatus.newOrder
+    ));
   }
 }

@@ -327,6 +327,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
   }
 
   Widget _createOrderForm(BuildContext context) {
+    print("HAS BRANCHES? ${!orderPageMetaData.hasBranches!}");
     return Form(key: _formKeys[0], child: Table(
         children: [
           getFirstElement(context),
@@ -358,7 +359,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                     Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
-                          i18nIn.$trans('info_customer', pathOverride: 'generic'),
+                          My24i18n.tr('generic.info_name'),
                           style: const TextStyle(fontWeight: FontWeight.bold)
                         )
                     )

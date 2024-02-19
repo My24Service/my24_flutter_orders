@@ -6,7 +6,6 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
 import '../../../blocs/order_bloc.dart';
-import '../shared.dart';
 
 class PastListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
   final OrderEventStatus fetchEvent;
@@ -33,7 +32,9 @@ class PastListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidg
   @override
   void doRefresh(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    doRefreshCommon(bloc, fetchEvent);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
+    bloc.add(OrderEvent(status: fetchEvent));
   }
 
   @override
@@ -45,8 +46,28 @@ class PastListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidg
       searchController,
       () {  },
       () {  },
-      () { doSearch(bloc, fetchEvent, searchController.text); },
-      () { handleNew(bloc); },
+      doSearch,
+      handleNew
     );
+  }
+
+  doSearch(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
+    bloc.add(OrderEvent(
+        status: fetchEvent,
+        query: searchController.text,
+        page: 1
+    ));
+  }
+
+  handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(
+        status: OrderEventStatus.newOrder
+    ));
   }
 }

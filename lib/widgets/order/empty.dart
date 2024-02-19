@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
-import 'package:my24_flutter_orders/widgets/order/shared.dart';
 
 import '../../blocs/order_bloc.dart';
 
@@ -27,26 +26,48 @@ class OrderListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWid
 
   @override
   String getEmptyMessage() {
-    return i18nIn.$trans('notice_no_order');
+    return i18nIn.$trans('list.notice_no_order');
   }
 
   @override
   void doRefresh(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    doRefreshCommon(bloc, fetchEvent);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
+    bloc.add(OrderEvent(status: fetchEvent));
   }
 
   @override
   Widget getBottomSection(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
     return widgets.showPaginationSearchNewSection(
       context,
       null,
       searchController,
       () {  },
       () {  },
-      () { doSearch(bloc, fetchEvent, searchController.text); },
-      () { handleNew(bloc); },
+      doSearch,
+      handleNew
     );
   }
+
+  doSearch(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
+    bloc.add(OrderEvent(
+        status: fetchEvent,
+        query: searchController.text,
+        page: 1
+    ));
+  }
+
+  handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<BlocClass>(context);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(const OrderEvent(
+        status: OrderEventStatus.newOrder
+    ));
+  }
+
 }
