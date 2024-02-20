@@ -80,17 +80,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-        onPopInvoked: (boolIn) {
-          if (customerOrderAccepted) {
-            navOrders(context, OrderEventStatus.fetchAll);
-          } else {
-            navOrders(context, OrderEventStatus.fetchUnaccepted);
-          }
-
-          return;
-        },
-        child: FutureBuilder<OrderDocumentPageData>(
+    return FutureBuilder<OrderDocumentPageData>(
           future: getPageData(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
@@ -129,7 +119,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
               );
             }
           }
-      )
+
     );
   }
 
