@@ -69,7 +69,9 @@ Widget createOrderHistoryListHeader(String date) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       getOrderHeaderKeyWidget(
-          My24i18n.tr('orders.info_order_date'), fontsizeKey),
+          My24i18n.tr('orders.info_order_date'),
+          fontsizeKey
+      ),
       getOrderHeaderValueWidget(date, fontsizeValue),
     ],
   );

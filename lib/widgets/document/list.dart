@@ -86,14 +86,14 @@ abstract class BaseOrderDocumentListWidget<BlocClass extends OrderBlocBase> exte
                           }
                         }
                     ),
-                    const SizedBox(width: 10),
-                    widgetsIn.createDeleteButton(
-                        () { _showDeleteDialog(context, document); }
-                    ),
                     const SizedBox(width: 8),
                     widgetsIn.createEditButton(
                         () => { _doEdit(context, document) }
-                    )
+                    ),
+                    const SizedBox(width: 10),
+                    widgetsIn.createDeleteButton(
+                            () { _showDeleteDialog(context, document); }
+                    ),
                   ],
                 ),
                 if (index < orderDocuments!.results!.length-1)
