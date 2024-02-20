@@ -48,7 +48,8 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
             // createHeader(i18nIn.$trans('info_order')),
             widgetsIn.buildOrderInfoCard(context, order!),
             widgetsIn.getMy24Divider(context),
-            _createAssignedInfoSection(context),
+            if (!orderPageMetaData.hasBranches!)
+              _createAssignedInfoSection(context),
             _createOrderlinesSection(context),
             if (!_isCustomerOrBranch())
               _createInfolinesSection(context),

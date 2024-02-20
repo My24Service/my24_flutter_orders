@@ -170,10 +170,14 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
         i18n.$trans('button_documents'), () => navDocuments(context, orderPk));
   }
 
+  bool isBranchEmployee() {
+    return orderPageMetaData.submodel == 'employee_user' && orderPageMetaData.hasBranches!;
+  }
+
   Row getButtonRow(BuildContext context, Order order) {
     Row row;
 
-    if (!orderPageMetaData.hasBranches! && isPlanning()) {
+    if (isPlanning() || isBranchEmployee()) {
       row = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

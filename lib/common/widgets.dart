@@ -50,7 +50,7 @@ Widget createOrderListHeader(Order order, String date) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       getOrderHeaderKeyWidget(
-          My24i18n.tr('orders.info_customer'), fontsizeKey),
+          My24i18n.tr('generic.info_name'), fontsizeKey),
       getOrderHeaderValueWidget(
           '${order.orderName}, ${order.orderCity}', fontsizeValue),
       const SizedBox(height: 2),
