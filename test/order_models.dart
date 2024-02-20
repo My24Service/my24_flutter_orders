@@ -2,6 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my24_flutter_core/i18n.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
@@ -299,7 +300,8 @@ class OrderListPage<OrderBloc> extends BaseOrderListPage {
   }
 
   @override
-  void handleCreateDocumentsCancel(BuildContext context, OrderPageMetaData? orderPageMetaData) {
+  Widget getAfterCreateButtonsWidget({String? memberPicture, required CoreWidgets widgetsIn, required My24i18n i18nIn}) {
+    return const SizedBox(height: 1);
   }
 }
 

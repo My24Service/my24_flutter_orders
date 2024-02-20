@@ -55,6 +55,14 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         required CoreWidgets widgets
   });
 
+  void navDocuments(BuildContext context, int orderPk);
+  void navDetail(BuildContext context, int orderPk, BlocClass bloc);
+  Widget getAfterCreateButtonsWidget({
+    String? memberPicture,
+    required CoreWidgets widgetsIn,
+    required My24i18n i18nIn,
+  });
+
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
     bool? hasBranches = await utils.getHasBranches();
@@ -129,42 +137,11 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
     return orderListData.submodel == 'planning_user';
   }
 
-  void navDocuments(BuildContext context, int orderPk);
-  void navDetail(BuildContext context, int orderPk, BlocClass bloc);
-  void handleCreateDocumentsCancel(BuildContext context, OrderPageMetaData? orderPageMetaData);
-
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
     if (state is OrderInsertedState) {
       widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
-
-      // ask if we want to add documents after insert
-      await showDialog<void>(
-          context: context,
-          barrierDismissible: false, // user must tap button!
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(i18n.$trans('list.dialog_add_documents_title')),
-              content: Text(i18n.$trans('list.dialog_add_documents_content')),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(i18n.$trans('list.dialog_add_documents_button_yes')),
-                  onPressed: () {
-                    navDocuments(context, state.order!.id!);
-                  },
-                ),
-                TextButton(
-                  child: Text(i18n.$trans('list.dialog_add_documents_button_no')),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    handleCreateDocumentsCancel(context, orderPageMetaData);
-                  },
-                ),
-              ],
-            );
-          }
-      );
     }
 
     if (state is OrderNavDocumentsState) {
@@ -231,16 +208,17 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
     }
-
-    // if (state is AssignedMeState) {
-    //   createSnackBar(context, i18n.$trans('snackbar_assigned'));
-    //
-    //   bloc.add(OrderEvent(status: OrderEventStatus.DO_ASYNC));
-    //   bloc.add(OrderEvent(status: OrderEventStatus.FETCH_ALL));
-    // }
   }
 
   Widget getBody(context, state, OrderPageMetaData orderPageMetaData) {
+    if (state is OrderInsertedState) {
+      return getAfterCreateButtonsWidget(
+        widgetsIn: widgets,
+        i18nIn: i18n,
+        memberPicture: orderPageMetaData.memberPicture
+      );
+    }
+
     if (state is OrderErrorState) {
       switch (fetchMode) {
         case OrderEventStatus.fetchAll: {
