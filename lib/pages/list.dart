@@ -61,6 +61,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
     String? memberPicture,
     required CoreWidgets widgetsIn,
     required My24i18n i18nIn,
+    required int orderPk
   });
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
@@ -215,7 +216,8 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       return getAfterCreateButtonsWidget(
         widgetsIn: widgets,
         i18nIn: i18n,
-        memberPicture: orderPageMetaData.memberPicture
+        memberPicture: orderPageMetaData.memberPicture,
+        orderPk: state.order!.id!
       );
     }
 

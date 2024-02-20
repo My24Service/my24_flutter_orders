@@ -300,7 +300,7 @@ class OrderListPage<OrderBloc> extends BaseOrderListPage {
   }
 
   @override
-  Widget getAfterCreateButtonsWidget({String? memberPicture, required CoreWidgets widgetsIn, required My24i18n i18nIn}) {
+  Widget getAfterCreateButtonsWidget({String? memberPicture, required CoreWidgets widgetsIn, required My24i18n i18nIn, required int orderPk}) {
     return const SizedBox(height: 1);
   }
 }
