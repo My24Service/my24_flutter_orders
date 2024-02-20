@@ -6,8 +6,8 @@ import 'package:my24_flutter_core/i18n.dart';
 
 import '../../blocs/order_bloc.dart';
 
-abstract class AfterCreateButtonsWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
-  const AfterCreateButtonsWidget({
+abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
+  const BaseAfterCreateButtonsWidget({
     Key? key,
     String? memberPicture,
     required CoreWidgets widgetsIn,
