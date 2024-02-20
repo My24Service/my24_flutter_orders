@@ -23,7 +23,7 @@ abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> ext
   );
 
   void navOrders(BuildContext context);
-  void navDocuments(BuildContext context, int orderPk);
+  void navDocuments(BuildContext context);
 
   @override
   String getAppBarTitle(BuildContext context) {
@@ -43,7 +43,7 @@ abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> ext
         widgets.createDefaultElevatedButton(
             context,
             i18n.$trans('after_create.add_document'),
-            () { navDocuments(context, orderPk); }
+            () { navDocuments(context); }
         )
       ],
     );
