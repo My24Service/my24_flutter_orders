@@ -7,11 +7,14 @@ import 'package:my24_flutter_core/i18n.dart';
 import '../../blocs/order_bloc.dart';
 
 abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
+  final int orderPk;
+
   const BaseAfterCreateButtonsWidget({
     Key? key,
     String? memberPicture,
     required CoreWidgets widgetsIn,
     required My24i18n i18nIn,
+    required this.orderPk
   }) : super(
       key: key,
       memberPicture: memberPicture,
@@ -20,7 +23,7 @@ abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> ext
   );
 
   void navOrders(BuildContext context);
-  void navDocuments(BuildContext context);
+  void navDocuments(BuildContext context, int orderPk);
 
   @override
   String getAppBarTitle(BuildContext context) {
@@ -40,7 +43,7 @@ abstract class BaseAfterCreateButtonsWidget<BlocClass extends OrderBlocBase> ext
         widgets.createDefaultElevatedButton(
             context,
             i18n.$trans('after_create.add_document'),
-            () { navDocuments(context); }
+            () { navDocuments(context, orderPk); }
         )
       ],
     );
