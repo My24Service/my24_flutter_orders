@@ -11,7 +11,6 @@ import '../blocs/document_states.dart';
 import '../blocs/order_bloc.dart';
 import '../widgets/document/error.dart';
 import '../widgets/document/form.dart';
-import '../widgets/document/list.dart';
 import '../models/document/models.dart';
 import '../models/order/api.dart';
 import '../models/order/models.dart';
@@ -41,13 +40,30 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
     }
   }
 
-  Future<OrderDocumentPageData> getPageData() async {
+  Future<Widget?> getDrawerForUserWithSubmodel(
+      BuildContext context, String? submodel);
+
+  Widget getOrderDocumentListWidget({
+    OrderDocuments? orderDocuments,
+    required int orderId,
+    required PaginationInfo paginationInfo,
+    String? memberPicture,
+    String? searchQuery,
+    required CoreWidgets widgets,
+    required My24i18n i18n,
+  });
+
+  Future<OrderDocumentPageData> getPageData(BuildContext context) async {
+    String? submodel = await utils.getUserSubmodel();
     Order order = await api.detail(orderId!);
     String? memberPicture = await utils.getMemberPicture();
+    Widget? drawer = context.mounted ?
+    await getDrawerForUserWithSubmodel(context, submodel) : null;
 
     OrderDocumentPageData result = OrderDocumentPageData(
       memberPicture: memberPicture,
-      order: order
+      order: order,
+      drawer: drawer
     );
 
     return result;
@@ -81,7 +97,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<OrderDocumentPageData>(
-          future: getPageData(),
+          future: getPageData(context),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
               OrderDocumentPageData pageData = snapshot.data!;
@@ -95,6 +111,7 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return Scaffold(
+                            drawer: pageData.drawer,
                             body: GestureDetector(
                               onTap: () {
                                 FocusScope.of(context).requestFocus(FocusNode());
@@ -189,13 +206,13 @@ abstract class BaseOrderDocumentsPage extends StatelessWidget {
           pageSize: 20
       );
 
-      return OrderDocumentListWidget(
+      return getOrderDocumentListWidget(
         orderDocuments: state.documents,
-        orderId: orderId,
+        orderId: orderId!,
         paginationInfo: paginationInfo,
         memberPicture: pageData.memberPicture,
         searchQuery: state.query,
-        widgetsIn: widgets,
+        widgets: widgets,
         i18n: i18n,
       );
     }

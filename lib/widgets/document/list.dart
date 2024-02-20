@@ -6,17 +6,18 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
 
 import '../../blocs/document_bloc.dart';
+import '../../blocs/order_bloc.dart';
 import '../../models/document/models.dart';
 
-class OrderDocumentListWidget extends BaseSliverListStatelessWidget {
+abstract class BaseOrderDocumentListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListStatelessWidget {
   final TextEditingController searchController = TextEditingController();
   final OrderDocuments? orderDocuments;
-  final int? orderId;
+  final int orderId;
   final String? searchQuery;
   final CoreWidgets widgetsIn;
   final CoreUtils utils = CoreUtils();
 
-  OrderDocumentListWidget({
+  BaseOrderDocumentListWidget({
     Key? key,
     required this.orderDocuments,
     required this.orderId,
@@ -36,6 +37,24 @@ class OrderDocumentListWidget extends BaseSliverListStatelessWidget {
   String getAppBarSubtitle(BuildContext context) {
     return i18n.$trans('app_bar_subtitle',
         namedArgs: {'count': "${orderDocuments!.count}"}
+    );
+  }
+
+  void navDetail(BuildContext context);
+
+  @override
+  SliverList getPreSliverListContent(BuildContext context) {
+    return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            return widgetsIn.createDefaultElevatedButton(
+                context,
+                i18n.$trans('nav_order'),
+                () { navDetail(context); }
+            );
+          },
+          childCount: 1,
+        )
     );
   }
 

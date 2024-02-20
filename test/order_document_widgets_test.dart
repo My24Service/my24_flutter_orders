@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
+import 'package:my24_flutter_core/i18n.dart';
+import 'package:my24_flutter_core/models/models.dart';
+import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
+import 'package:my24_flutter_orders/models/document/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
@@ -25,6 +29,15 @@ Widget createWidget({Widget? child}) {
   );
 }
 
+class OrderDocumentListWidget extends BaseOrderDocumentListWidget {
+  OrderDocumentListWidget({super.key, required super.orderDocuments, required super.orderId, required super.paginationInfo, required super.memberPicture, required super.searchQuery, required super.widgetsIn, required super.i18n});
+
+  @override
+  void navDetail(BuildContext context) {
+  }
+
+}
+
 class OrderDocumentsPage extends BaseOrderDocumentsPage {
   OrderDocumentsPage({
     super.key,
@@ -37,6 +50,16 @@ class OrderDocumentsPage extends BaseOrderDocumentsPage {
   @override
   void navOrders(BuildContext context, OrderEventStatus fetchMode) {
     // TODO: implement navOrders
+  }
+
+  @override
+  Future<Widget?> getDrawerForUserWithSubmodel(BuildContext context, String? submodel) async {
+    return const SizedBox(height: 1);
+  }
+
+  @override
+  Widget getOrderDocumentListWidget({OrderDocuments? orderDocuments, required int orderId, required PaginationInfo paginationInfo, String? memberPicture, String? searchQuery, required CoreWidgets widgets, required My24i18n i18n}) {
+    return OrderDocumentListWidget(orderDocuments: orderDocuments, orderId: orderId, paginationInfo: paginationInfo, memberPicture: memberPicture, searchQuery: searchQuery, widgetsIn: widgets, i18n: i18n);
   }
 }
 
