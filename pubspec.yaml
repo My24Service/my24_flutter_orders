@@ -16,6 +16,7 @@ dependencies:
   file_picker: '>=5.2.10'
   flutter_typeahead: ^4.0.0
   easy_localization: ^3.0.1
+  cached_network_image: ^3.2.1
   logging: ^1.2.0
   my24_flutter_core:
     #    path: ../my24_flutter_core

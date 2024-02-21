@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -17,6 +18,7 @@ import '../../blocs/order_bloc.dart';
 import '../../models/order/models.dart';
 import '../../models/infoline/models.dart';
 import '../../models/orderline/models.dart';
+import 'form_document.dart';
 
 abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends BaseSliverPlainStatelessWidget{
   final CoreWidgets widgetsIn;
@@ -27,7 +29,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
   final List<GlobalKey<FormState>> _formKeys = [
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
-    GlobalKey<FormState>()
+    GlobalKey<FormState>(),
   ];
 
   final EquipmentApi equipmentApi = EquipmentApi();
@@ -87,6 +89,12 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                       _buildInfolineSection(context),
                     if (!orderPageMetaData.hasBranches! && isPlanning())
                       const Divider(),
+                    const Divider(),
+                    Documents(
+                        formData: formData!,
+                        widgets: widgetsIn,
+                        orderId: formData!.id,
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -121,12 +129,12 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                   widgetsIn.createDefaultElevatedButton(
                       context,
                       i18nIn.$trans('form.button_accept'),
-                          () => _doAccept(context)
+                      () => _doAccept(context)
                   ),
                   const SizedBox(width: 10),
                   widgetsIn.createElevatedButtonColored(
                       i18nIn.$trans('form.button_reject'),
-                          () => _doReject(context),
+                      () => _doReject(context),
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.red
                   )
@@ -1270,8 +1278,10 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           order: updatedOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,
+          documents: formData!.documents,
           deletedOrderLines: formData!.deletedOrderLines!,
           deletedInfoLines: formData!.deletedInfoLines!,
+          deletedDocuments: formData!.deletedDocuments!
         ));
       } else {
         if (!orderPageMetaData.hasBranches! && orderPageMetaData.submodel == 'planning_user') {
@@ -1284,6 +1294,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           order: newOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,
+          documents: formData!.documents,
         ));
       }
     }

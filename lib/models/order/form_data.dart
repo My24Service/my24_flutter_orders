@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_equipment/models/location/models.dart';
+import 'package:my24_flutter_orders/models/document/models.dart';
 
 import '../infoline/form_data.dart';
 import '../infoline/models.dart';
@@ -37,9 +38,11 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
 
   List<Orderline>? orderLines = [];
   List<Infoline>? infoLines = [];
+  List<OrderDocument>? documents = [];
 
   List<Orderline>? deletedOrderLines = [];
   List<Infoline>? deletedInfoLines = [];
+  List<OrderDocument>? deletedDocuments = [];
 
   DateTime? startDate = DateTime.now();
   DateTime? startTime; // = DateTime.now();
@@ -107,45 +110,49 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
   }
 
   BaseOrderFormData({
-      this.id,
-      this.typeAheadControllerCustomer,
-      this.typeAheadControllerBranch,
-      this.customerPk,
-      this.customerId,
-      this.branch,
-      this.orderlineFormData,
-      this.infolineFormData,
-      this.orderCustomerIdController,
-      this.orderNameController,
-      this.orderAddressController,
-      this.orderPostalController,
-      this.orderCityController,
-      this.orderContactController,
-      this.orderReferenceController,
-      this.customerRemarksController,
-      this.orderEmailController,
-      this.orderMobileController,
-      this.orderTelController,
+    this.id,
+    this.typeAheadControllerCustomer,
+    this.typeAheadControllerBranch,
+    this.customerPk,
+    this.customerId,
+    this.branch,
 
-      this.orderLines,
-      this.deletedOrderLines,
-      this.infoLines,
-      this.deletedInfoLines,
+    this.orderCustomerIdController,
+    this.orderNameController,
+    this.orderAddressController,
+    this.orderPostalController,
+    this.orderCityController,
+    this.orderContactController,
+    this.orderReferenceController,
+    this.customerRemarksController,
+    this.orderEmailController,
+    this.orderMobileController,
+    this.orderTelController,
 
-      this.startDate,
-      this.startTime,
-      this.endDate,
-      this.endTime,
-      this.changedEndDate,
-      this.orderTypes,
-      this.orderType,
-      this.orderCountryCode,
-      this.customerOrderAccepted,
-      this.locations,
-      this.error,
-      this.isCreatingEquipment,
-      this.isCreatingLocation,
-      this.quickCreateSettings,
-      this.customerBranchId
+    this.orderlineFormData,
+    this.infolineFormData,
+
+    this.orderLines,
+    this.deletedOrderLines,
+    this.infoLines,
+    this.deletedInfoLines,
+    this.documents,
+    this.deletedDocuments,
+
+    this.startDate,
+    this.startTime,
+    this.endDate,
+    this.endTime,
+    this.changedEndDate,
+    this.orderTypes,
+    this.orderType,
+    this.orderCountryCode,
+    this.customerOrderAccepted,
+    this.locations,
+    this.error,
+    this.isCreatingEquipment,
+    this.isCreatingLocation,
+    this.quickCreateSettings,
+    this.customerBranchId
   });
 }

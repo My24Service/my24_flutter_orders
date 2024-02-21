@@ -18,7 +18,7 @@ class OrderDocumentPageData {
 
 class OrderDocument extends BaseModel {
   final int? id;
-  final int? orderId;
+  int? orderId;
   final String? name;
   final String? description;
   final String? file;

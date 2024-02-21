@@ -55,14 +55,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         required CoreWidgets widgets
   });
 
-  void navDocuments(BuildContext context, int orderPk);
   void navDetail(BuildContext context, int orderPk, BlocClass bloc);
-  Widget getAfterCreateButtonsWidget({
-    String? memberPicture,
-    required CoreWidgets widgetsIn,
-    required My24i18n i18nIn,
-    required int orderPk
-  });
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
@@ -143,11 +136,15 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrderInsertedState) {
       widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
-    }
 
-    if (state is OrderNavDocumentsState) {
-      if (context.mounted) {
-        navDocuments(context, state.orderPk);
+      if (isPlanning(orderPageMetaData!)) {
+        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+        bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
+      } else {
+        if (context.mounted) {
+          bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+          bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
+        }
       }
     }
 
@@ -167,7 +164,6 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
       } else {
         if (context.mounted) {
-          final BlocClass bloc = BlocProvider.of<BlocClass>(context);
           bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
           bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
         }
@@ -212,15 +208,6 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
   }
 
   Widget getBody(context, state, OrderPageMetaData orderPageMetaData) {
-    if (state is OrderInsertedState) {
-      return getAfterCreateButtonsWidget(
-        widgetsIn: widgets,
-        i18nIn: i18n,
-        memberPicture: orderPageMetaData.memberPicture,
-        orderPk: state.order!.id!
-      );
-    }
-
     if (state is OrderErrorState) {
       switch (fetchMode) {
         case OrderEventStatus.fetchAll: {

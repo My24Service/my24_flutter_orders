@@ -140,13 +140,6 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
     );
   }
 
-  navDocuments(BuildContext context, int orderPk) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.navDocuments, pk: orderPk));
-  }
-
   showDeleteDialog(BuildContext context, int orderPk) {
     widgets.showDeleteDialogWrapper(
         i18n.$trans('list.delete_dialog_title'),
@@ -165,11 +158,6 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
     );
   }
 
-  Widget getDocumentsButton(BuildContext context, int orderPk) {
-    return widgets.createElevatedButtonColored(
-        i18n.$trans('button_documents'), () => navDocuments(context, orderPk));
-  }
-
   bool isBranchEmployee() {
     return orderPageMetaData.submodel == 'employee_user' && orderPageMetaData.hasBranches!;
   }
@@ -182,8 +170,6 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           getEditButton(context, order.id!),
-          const SizedBox(width: 10),
-          getDocumentsButton(context, order.id!),
           const SizedBox(width: 10),
           getDeleteButton(context, order.id!)
         ],

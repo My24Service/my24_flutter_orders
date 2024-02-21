@@ -2,12 +2,10 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my24_flutter_core/i18n.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
-import 'package:my24_flutter_orders/blocs/document_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
 import 'package:my24_flutter_orders/models/infoline/form_data.dart';
@@ -17,8 +15,6 @@ import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/pages/detail.dart';
 import 'package:my24_flutter_orders/pages/list.dart';
 import 'package:my24_flutter_orders/widgets/order/form.dart';
-
-import 'order_document_widgets_test.dart';
 
 class OrderBloc extends OrderBlocBase {
   OrderBloc() : super(OrderInitialState()) {
@@ -94,6 +90,8 @@ class OrderFormData extends BaseOrderFormData {
     super.deletedOrderLines,
     super.infoLines,
     super.deletedInfoLines,
+    super.documents,
+    super.deletedDocuments,
 
     super.startDate,
     super.startTime,
@@ -121,7 +119,8 @@ class OrderFormData extends BaseOrderFormData {
       startDate: DateTime.now(),
       endDate: DateTime.now(),
       orderlineFormData: orderlineFormData,
-      infolineFormData: infolineFormData
+      infolineFormData: infolineFormData,
+      documents: []
     );
   }
 
@@ -210,8 +209,10 @@ class OrderFormData extends BaseOrderFormData {
 
       orderLines: order.orderLines,
       infoLines: order.infoLines,
+      documents: order.documents,
       deletedOrderLines: [],
       deletedInfoLines: [],
+      deletedDocuments: [],
 
       locations: [],
       isCreatingEquipment: false,
@@ -257,19 +258,6 @@ class OrderListPage<OrderBloc> extends BaseOrderListPage {
   }
 
   @override
-  void navDocuments(BuildContext context, int orderPk) {
-    Navigator.of(context).pop();
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(
-            builder: (context) => OrderDocumentsPage(
-              orderId: orderPk,
-              bloc: OrderDocumentBloc(),
-            )
-        )
-    );
-  }
-
-  @override
   void navDetail(BuildContext context, int orderPk, dynamic bloc) {
     Navigator.of(context).pop();
     Navigator.pushReplacement(context,
@@ -299,10 +287,6 @@ class OrderListPage<OrderBloc> extends BaseOrderListPage {
     );
   }
 
-  @override
-  Widget getAfterCreateButtonsWidget({String? memberPicture, required CoreWidgets widgetsIn, required My24i18n i18nIn, required int orderPk}) {
-    return const SizedBox(height: 1);
-  }
 }
 
 class OrderDetailPage<OrderBloc> extends BaseOrderDetailPage {

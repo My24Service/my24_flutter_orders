@@ -49,8 +49,6 @@ class UnacceptedListWidget extends OrderListWidget {
       children: [
         getEditButton(context, order.id!),
         const SizedBox(width: 10),
-        getDocumentsButton(context, order.id!),
-        const SizedBox(width: 10),
         getDeleteButton(context, order.id!),
       ],
     );

@@ -7,6 +7,8 @@ import 'package:my24_flutter_equipment/models/equipment/models.dart';
 import 'package:my24_flutter_member_models/private/api.dart';
 import 'package:my24_flutter_equipment/models/location/models.dart';
 
+import '../models/document/api.dart';
+import '../models/document/models.dart';
 import '../models/order/api.dart';
 import '../blocs/order_states.dart';
 import '../models/order/models.dart';
@@ -47,10 +49,15 @@ class OrderEvent {
   final String? query;
   final Order? order;
   final dynamic formData;
+
   final List<Orderline>? orderLines;
-  final List<Infoline>? infoLines;
   final List<Orderline>? deletedOrderLines;
+
+  final List<Infoline>? infoLines;
   final List<Infoline>? deletedInfoLines;
+
+  final List<OrderDocument>? documents;
+  final List<OrderDocument>? deletedDocuments;
 
   const OrderEvent({
     this.pk,
@@ -62,7 +69,9 @@ class OrderEvent {
     this.orderLines,
     this.infoLines,
     this.deletedOrderLines,
-    this.deletedInfoLines
+    this.deletedInfoLines,
+    this.documents,
+    this.deletedDocuments
   });
 }
 
@@ -73,6 +82,7 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
   PrivateMemberApi privateMemberApi = PrivateMemberApi();
   OrderlineApi orderlineApi = OrderlineApi();
   InfolineApi infolineApi = InfolineApi();
+  OrderDocumentApi orderDocumentApi = OrderDocumentApi();
 
   OrderBlocBase(OrderState initialState) : super(initialState);
 
@@ -335,6 +345,13 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
         order.infoLines!.add(infoline);
       }
 
+      // add documents
+      for (int i=0; i<event.documents!.length; i++) {
+        event.documents![i].orderId = order.id;
+        OrderDocument document = await orderDocumentApi.insert(event.documents![i]);
+        order.documents!.add(document);
+      }
+
       emit(OrderInsertedState(order: order));
     } catch(e) {
       emit(OrderErrorState(message: e.toString()));
@@ -386,6 +403,27 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
             event.infoLines![i].order = event.pk;
           }
           await infolineApi.update(event.infoLines![i].id!, event.infoLines![i]);
+        }
+      }
+
+      // handle documents
+      for (int i=0; i<event.deletedDocuments!.length; i++) {
+        if (event.deletedDocuments![i].id != null) {
+          orderDocumentApi.delete(event.deletedDocuments![i].id!);
+        }
+      }
+
+      for (int i=0; i<event.documents!.length; i++) {
+        if (event.documents![i].id == null) {
+          if (event.documents![i].orderId == null) {
+            event.documents![i].orderId = event.pk;
+          }
+          await orderDocumentApi.insert(event.documents![i]);
+        } else {
+          if (event.documents![i].orderId == null) {
+            event.documents![i].orderId = event.pk;
+          }
+          await orderDocumentApi.update(event.documents![i].id!, event.documents![i]);
         }
       }
 
