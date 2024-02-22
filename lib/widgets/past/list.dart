@@ -4,13 +4,13 @@ import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/models/models.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import '../../../common/widgets.dart';
-import '../../../models/order/models.dart';
-import '../../../blocs/order_bloc.dart';
-import '../list.dart';
+import 'package:my24_flutter_orders/common/widgets.dart';
+import 'package:my24_flutter_orders/models/order/models.dart';
+import 'package:my24_flutter_orders/widgets/list.dart';
+import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 
-class UnacceptedListWidget extends OrderListWidget {
-  UnacceptedListWidget({
+class PastListWidget extends OrderListWidget {
+  PastListWidget({
     Key? key,
     required List<Order>? orderList,
     required OrderPageMetaData orderPageMetaData,
@@ -20,7 +20,7 @@ class UnacceptedListWidget extends OrderListWidget {
     required My24i18n i18nIn,
     required PaginationInfo paginationInfo,
   }): super(
-      key: key,
+    key: key,
       orderList: orderList,
       orderPageMetaData: orderPageMetaData,
       fetchEvent: fetchEvent,
@@ -32,7 +32,7 @@ class UnacceptedListWidget extends OrderListWidget {
 
   @override
   SliverAppBar getAppBar(BuildContext context) {
-    UnacceptedOrdersAppBarFactory factory = UnacceptedOrdersAppBarFactory(
+    PastOrdersAppBarFactory factory = PastOrdersAppBarFactory(
         context: context,
         orderPageMetaData: orderPageMetaData,
         orders: orderList,
@@ -40,17 +40,5 @@ class UnacceptedListWidget extends OrderListWidget {
         onStretch: doRefresh
     );
     return factory.createAppBar();
-  }
-
-  @override
-  Row getButtonRow(BuildContext context, Order order) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        getEditButton(context, order.id!),
-        const SizedBox(width: 10),
-        getDeleteButton(context, order.id!),
-      ],
-    );
   }
 }

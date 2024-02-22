@@ -1,35 +1,43 @@
-import 'package:flutter/cupertino.dart';
-
 import 'package:my24_flutter_core/models/base_models.dart';
+
 import 'models.dart';
 
 class OrderlineFormData extends BaseFormData<Orderline> {
   int? id;
+  int? order;
   int? equipment;
   int? equipmentLocation;
 
-  TextEditingController? locationController = TextEditingController();
-  TextEditingController? productController = TextEditingController();
-  TextEditingController? remarksController = TextEditingController();
-
-  TextEditingController? typeAheadControllerEquipment = TextEditingController();
-  TextEditingController? typeAheadControllerEquipmentLocation = TextEditingController();
+  String? location;
+  String? product;
+  String? remarks;
 
   bool isValid() {
-    if (productController!.text == "") {
+    if (product == "") {
       return false;
     }
 
     return true;
   }
 
+  void reset(int? order) {
+    id = null;
+    order = order;
+    equipment = null;
+    equipmentLocation = null;
+    location = null;
+    product = null;
+    remarks = null;
+  }
+
   @override
   Orderline toModel() {
     Orderline orderline = Orderline(
         id: id,
-        product: productController!.text,
-        location: locationController!.text,
-        remarks: remarksController!.text,
+        order: order,
+        product: product,
+        location: location,
+        remarks: remarks,
         equipment: equipment,
         equipmentLocation: equipmentLocation,
     );
@@ -37,59 +45,37 @@ class OrderlineFormData extends BaseFormData<Orderline> {
     return orderline;
   }
 
-  factory OrderlineFormData.createEmpty() {
-    TextEditingController? locationController = TextEditingController();
-    TextEditingController? productController = TextEditingController();
-    TextEditingController? remarksController = TextEditingController();
-
-    TextEditingController? typeAheadControllerEquipment = TextEditingController();
-    TextEditingController? typeAheadControllerEquipmentLocation = TextEditingController();
-
+  factory OrderlineFormData.createEmpty(int? order) {
     return OrderlineFormData(
       id: null,
+      order: order,
       equipment: null,
       equipmentLocation: null,
-      locationController: locationController,
-      productController: productController,
-      remarksController: remarksController,
-      typeAheadControllerEquipment: typeAheadControllerEquipment,
-      typeAheadControllerEquipmentLocation: typeAheadControllerEquipmentLocation,
+      location: null,
+      product: null,
+      remarks: null,
     );
   }
 
   factory OrderlineFormData.createFromModel(Orderline orderline) {
-    TextEditingController? locationController = TextEditingController();
-    locationController.text = orderline.location != null ? orderline.location! : "";
-
-    TextEditingController? productController = TextEditingController();
-    productController.text = orderline.product != null ? orderline.product! : "";
-
-    TextEditingController? remarksController = TextEditingController();
-    remarksController.text = orderline.remarks != null ? orderline.remarks! : "";
-
-    TextEditingController? typeAheadControllerEquipment = TextEditingController();
-    TextEditingController? typeAheadControllerEquipmentLocation = TextEditingController();
-
     return OrderlineFormData(
       id: orderline.id,
+      order: orderline.order,
       equipment: orderline.equipment,
       equipmentLocation: orderline.equipmentLocation,
-      locationController: locationController,
-      productController: productController,
-      remarksController: remarksController,
-      typeAheadControllerEquipment: typeAheadControllerEquipment,
-      typeAheadControllerEquipmentLocation: typeAheadControllerEquipmentLocation,
+      location: orderline.location,
+      product: orderline.product,
+      remarks: orderline.remarks,
     );
   }
 
   OrderlineFormData({
-      this.id,
-      this.equipment,
-      this.equipmentLocation,
-      this.locationController,
-      this.productController,
-      this.remarksController,
-      this.typeAheadControllerEquipment,
-      this.typeAheadControllerEquipmentLocation,
+    this.id,
+    this.order,
+    this.equipment,
+    this.equipmentLocation,
+    this.location,
+    this.product,
+    this.remarks,
   });
 }

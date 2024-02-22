@@ -7,18 +7,18 @@ import 'package:my24_flutter_core/models/models.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import '../blocs/order_bloc.dart';
-import '../blocs/order_states.dart';
-import '../widgets/order/list.dart';
-import '../widgets/order/error.dart';
-import '../widgets/order/empty.dart';
-import '../models/order/models.dart';
-import '../widgets/order/past/empty.dart';
-import '../widgets/order/past/error.dart';
-import '../widgets/order/past/list.dart';
-import '../widgets/order/unaccepted/empty.dart';
-import '../widgets/order/unaccepted/error.dart';
-import '../widgets/order/unaccepted/list.dart';
+import 'package:my24_flutter_orders/blocs/order_bloc.dart';
+import 'package:my24_flutter_orders/blocs/order_states.dart';
+import 'package:my24_flutter_orders/widgets/list.dart';
+import 'package:my24_flutter_orders/widgets/error.dart';
+import 'package:my24_flutter_orders/widgets/empty.dart';
+import 'package:my24_flutter_orders/models/order/models.dart';
+import 'package:my24_flutter_orders/widgets/past/empty.dart';
+import 'package:my24_flutter_orders/widgets/past/error.dart';
+import 'package:my24_flutter_orders/widgets/past/list.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/empty.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/error.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/list.dart';
 
 final log = Logger('orders.list');
 

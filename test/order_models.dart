@@ -4,17 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
-import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
-import 'package:my24_flutter_orders/models/infoline/form_data.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
-import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/pages/detail.dart';
 import 'package:my24_flutter_orders/pages/list.dart';
-import 'package:my24_flutter_orders/widgets/order/form.dart';
+import 'package:my24_flutter_orders/widgets/form/order.dart';
 
 class OrderBloc extends OrderBlocBase {
   OrderBloc() : super(OrderInitialState()) {
@@ -32,25 +29,6 @@ class OrderBloc extends OrderBlocBase {
     final OrderTypes orderTypes = await api.fetchOrderTypes();
     OrderFormData orderFormData = OrderFormData.newFromOrderTypes(orderTypes);
     orderFormData = await addQuickCreateSettings(orderFormData) as OrderFormData;
-
-    final String? submodel = await coreUtils.getUserSubmodel();
-
-    // only fetch locations for select when we're not allowed to create them
-    if (submodel == 'planning_user' &&
-        !orderFormData.quickCreateSettings!.equipmentLocationPlanningQuickCreate) {
-      orderFormData.locations = await locationApi.fetchLocationsForSelect();
-      if (orderFormData.locations!.isNotEmpty) {
-        orderFormData.orderlineFormData!.equipmentLocation = orderFormData.locations![0].id;
-      }
-    }
-
-    else if (submodel == 'branch_employee_user' &&
-        !orderFormData.quickCreateSettings!.equipmentLocationQuickCreate) {
-      orderFormData.locations = await locationApi.fetchLocationsForSelect();
-      if (orderFormData.locations!.isNotEmpty) {
-        orderFormData.orderlineFormData!.equipmentLocation = orderFormData.locations![0].id;
-      }
-    }
 
     emit(OrderNewState(
         formData: orderFormData
@@ -72,8 +50,7 @@ class OrderFormData extends BaseOrderFormData {
     super.customerPk,
     super.customerId,
     super.branch,
-    super.orderlineFormData,
-    super.infolineFormData,
+
     super.orderCustomerIdController,
     super.orderNameController,
     super.orderAddressController,
@@ -102,7 +79,6 @@ class OrderFormData extends BaseOrderFormData {
     super.orderType,
     super.orderCountryCode,
     super.customerOrderAccepted,
-    super.locations,
     super.error,
     super.isCreatingEquipment,
     super.isCreatingLocation,
@@ -111,16 +87,13 @@ class OrderFormData extends BaseOrderFormData {
   });
 
   factory OrderFormData.newFromOrderTypes(OrderTypes orderTypes) {
-    final OrderlineFormData orderlineFormData = OrderlineFormData.createEmpty();
-    final InfolineFormData infolineFormData = InfolineFormData.createEmpty();
-
     return OrderFormData(
       orderTypes: orderTypes,
       startDate: DateTime.now(),
       endDate: DateTime.now(),
-      orderlineFormData: orderlineFormData,
-      infolineFormData: infolineFormData,
-      documents: []
+      documents: [],
+      orderLines: [],
+      infoLines: []
     );
   }
 
@@ -160,9 +133,6 @@ class OrderFormData extends BaseOrderFormData {
 
     final TextEditingController customerRemarksController = TextEditingController();
     customerRemarksController.text = checkNull(order.customerRemarks);
-
-    final OrderlineFormData orderlineFormData = OrderlineFormData.createEmpty();
-    final InfolineFormData infolineFormData = InfolineFormData.createEmpty();
 
     DateTime? startTime;
     if (order.startTime != null) {
@@ -204,9 +174,6 @@ class OrderFormData extends BaseOrderFormData {
       endTime: endTime,
       customerOrderAccepted: order.customerOrderAccepted,
 
-      orderlineFormData: orderlineFormData,
-      infolineFormData: infolineFormData,
-
       orderLines: order.orderLines,
       infoLines: order.infoLines,
       documents: order.documents,
@@ -214,7 +181,6 @@ class OrderFormData extends BaseOrderFormData {
       deletedInfoLines: [],
       deletedDocuments: [],
 
-      locations: [],
       isCreatingEquipment: false,
       isCreatingLocation: false,
       quickCreateSettings: null,

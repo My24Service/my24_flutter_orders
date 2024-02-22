@@ -5,11 +5,11 @@ import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
-import '../blocs/order_bloc.dart';
-import '../blocs/order_states.dart';
-import '../widgets/order/detail.dart';
-import '../widgets/order/error.dart';
-import '../models/order/models.dart';
+import 'package:my24_flutter_orders/blocs/order_bloc.dart';
+import 'package:my24_flutter_orders/blocs/order_states.dart';
+import 'package:my24_flutter_orders/widgets/detail.dart';
+import 'package:my24_flutter_orders/widgets/error.dart';
+import 'package:my24_flutter_orders/models/order/models.dart';
 
 abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
   final int? orderId;

@@ -259,19 +259,16 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
   Future<void> _handleFetchState(OrderEvent event, Emitter<OrderState> emit) async {
     try {
       final OrderTypes orderTypes = await api.fetchOrderTypes();
-      final bool hasBranches = (await coreUtils.getHasBranches())!;
       final Order order = await api.detail(event.pk!);
+
+      // when an order type gets deleted, this will cause an error in the from
+      // that the value doesn't exist
+      if (!orderTypes.orderTypes!.contains(order.orderType)) {
+        order.orderType = null;
+      }
 
       FormData formData = createFromModel(order, orderTypes);
       formData = await addQuickCreateSettings(formData);
-
-      // fetch locations for branches
-      if (hasBranches) {
-        formData.locations = await locationApi.fetchLocationsForSelect(branch: formData.branch);
-        if (formData.locations!.isNotEmpty) {
-          formData.orderlineFormData!.equipmentLocation = formData.locations![0].id;
-        }
-      }
 
       emit(OrderLoadedState(formData: formData));
     } catch (e) {

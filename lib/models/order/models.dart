@@ -123,7 +123,7 @@ class Order extends BaseModel {
   final String? orderId;
   final String? serviceNumber;
   final String? orderReference;
-  final String? orderType;
+  String? orderType;
   final String? customerRemarks;
   final String? description;
   final String? startDate;

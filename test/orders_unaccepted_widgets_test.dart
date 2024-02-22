@@ -8,9 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my24_flutter_core/tests/http_client.mocks.dart';
 
-import 'package:my24_flutter_orders/widgets/order/unaccepted/empty.dart';
-import 'package:my24_flutter_orders/widgets/order/unaccepted/error.dart';
-import 'package:my24_flutter_orders/widgets/order/unaccepted/list.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/empty.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/error.dart';
+import 'package:my24_flutter_orders/widgets/unaccepted/list.dart';
 import 'order_models.dart';
 import 'fixtures.dart';
 

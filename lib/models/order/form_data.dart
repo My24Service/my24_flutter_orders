@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
-import 'package:my24_flutter_equipment/models/location/models.dart';
-import 'package:my24_flutter_orders/models/document/models.dart';
 
-import '../infoline/form_data.dart';
+import 'package:my24_flutter_orders/models/document/models.dart';
 import '../infoline/models.dart';
-import '../orderline/form_data.dart';
 import '../orderline/models.dart';
 import 'models.dart';
 
@@ -33,9 +30,6 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
   TextEditingController? orderMobileController = TextEditingController();
   TextEditingController? orderTelController = TextEditingController();
 
-  OrderlineFormData? orderlineFormData = OrderlineFormData();
-  InfolineFormData? infolineFormData = InfolineFormData();
-
   List<Orderline>? orderLines = [];
   List<Infoline>? infoLines = [];
   List<OrderDocument>? documents = [];
@@ -54,8 +48,6 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
   String? orderType;
   String? orderCountryCode = 'NL';
   bool? customerOrderAccepted = false;
-
-  List<EquipmentLocation>? locations = [];
 
   String? error;
   bool? isCreatingEquipment = false;
@@ -129,9 +121,6 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
     this.orderMobileController,
     this.orderTelController,
 
-    this.orderlineFormData,
-    this.infolineFormData,
-
     this.orderLines,
     this.deletedOrderLines,
     this.infoLines,
@@ -148,7 +137,6 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
     this.orderType,
     this.orderCountryCode,
     this.customerOrderAccepted,
-    this.locations,
     this.error,
     this.isCreatingEquipment,
     this.isCreatingLocation,

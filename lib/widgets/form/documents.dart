@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,12 +7,12 @@ import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import '../../blocs/order_bloc.dart';
-import '../../models/document/form_data.dart';
-import '../../models/document/models.dart';
-import '../../models/order/form_data.dart';
+import '../../../blocs/order_bloc.dart';
+import '../../../models/document/form_data.dart';
+import '../../../models/document/models.dart';
+import '../../../models/order/form_data.dart';
 
-class Documents<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatelessWidget {
+class Documents<FormDataClass extends BaseOrderFormData> extends StatelessWidget {
   final My24i18n i18n = My24i18n(basePath: "orders.form.documents");
   final FormDataClass formData;
   final CoreWidgets widgets;
@@ -124,34 +124,34 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
     );
   }
 
-  Widget _getDocumentPreview(OrderDocument document) {
-    if (document.file!.endsWith(".jpg")) {
-      return CachedNetworkImage(
-        placeholder: (context, url) => const CircularProgressIndicator(),
-        imageUrl: document.url!,
-        fit: BoxFit.cover,
-      );
-    }
-
-    return const Text("view");
-  }
-
-  Widget _createViewDocument(BuildContext context, OrderDocument document) {
-    return widgets.createViewButton(
-        () async {
-          String url = await utils.getUrl(document.url);
-          url = url.replaceAll('/api', '');
-
-          Map<String, dynamic> openResult = await coreUtils.openDocument(url);
-          if (!openResult['result'] && context.mounted) {
-            widgets.createSnackBar(
-                context,
-                i18n.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic')
-            );
-          }
-        }
-    );
-  }
+  // Widget _getDocumentPreview(OrderDocument document) {
+  //   if (document.file!.endsWith(".jpg")) {
+  //     return CachedNetworkImage(
+  //       placeholder: (context, url) => const CircularProgressIndicator(),
+  //       imageUrl: document.url!,
+  //       fit: BoxFit.cover,
+  //     );
+  //   }
+  //
+  //   return const Text("view");
+  // }
+  //
+  // Widget _createViewDocument(BuildContext context, OrderDocument document) {
+  //   return widgets.createViewButton(
+  //       () async {
+  //         String url = await utils.getUrl(document.url);
+  //         url = url.replaceAll('/api', '');
+  //
+  //         Map<String, dynamic> openResult = await coreUtils.openDocument(url);
+  //         if (!openResult['result'] && context.mounted) {
+  //           widgets.createSnackBar(
+  //               context,
+  //               i18n.$trans('error_arg', namedArgs: {'error': openResult['message']}, pathOverride: 'generic')
+  //           );
+  //         }
+  //       }
+  //   );
+  // }
 }
 
 class DocumentForm<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
