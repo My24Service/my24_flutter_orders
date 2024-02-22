@@ -137,14 +137,12 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
     if (state is OrderInsertedState) {
       widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
 
-      if (isPlanning(orderPageMetaData!)) {
+      if (!orderPageMetaData!.hasBranches!) {
         bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
         bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
       } else {
-        if (context.mounted) {
-          bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-          bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
-        }
+        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+        bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
       }
     }
 
@@ -159,15 +157,8 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_updated'));
       }
 
-      if (isPlanning(orderPageMetaData!)) {
-        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-        bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
-      } else {
-        if (context.mounted) {
-          bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-          bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
-        }
-      }
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(OrderEvent(status: fetchMode));
     }
 
     if (state is OrderErrorSnackbarState) {
@@ -185,7 +176,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
+      bloc.add(OrderEvent(status: fetchMode));
     }
 
     if (state is OrderAcceptedState) {
@@ -194,7 +185,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
+      bloc.add(OrderEvent(status: fetchMode));
     }
 
     if (state is OrderRejectedState) {
@@ -203,7 +194,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       }
 
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
+      bloc.add(OrderEvent(status: fetchMode));
     }
   }
 

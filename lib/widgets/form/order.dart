@@ -61,20 +61,20 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                   children: [
                     widgetsIn.createHeader(i18nIn.$trans('header_order_details')),
                     _createOrderForm(context),
-                    const Divider(),
+                    const SizedBox(height: 20),
                     OrderlinesWidget(
                       formData: formData!,
                       widgets: widgets,
                       isPlanning: isPlanning(),
                       hasBranches: orderPageMetaData.hasBranches!,
                     ),
-                    const Divider(),
+                    const SizedBox(height: 20),
                     if (!orderPageMetaData.hasBranches! && isPlanning())
                       InfolinesWidget(
                         formData: formData!,
                         widgets: widgets,
                       ),
-                    const Divider(),
+                    const SizedBox(height: 20),
                     Documents(
                         formData: formData!,
                         widgets: widgetsIn,

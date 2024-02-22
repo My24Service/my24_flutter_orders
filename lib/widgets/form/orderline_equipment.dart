@@ -187,7 +187,9 @@ class _OrderlineFormEquipmentState<
                   locationController.text = suggestion.location!.name!;
                   widget.orderlineFormData.location = suggestion.location!.name!;
                 }
-                updateFormData(context);
+                setState(() {
+
+                });
               },
               validator: (value) {
                 return null;
@@ -213,10 +215,10 @@ class _OrderlineFormEquipmentState<
                 visible: !widget.formData.isCreatingEquipment!,
                 child:
                 SizedBox(
-                    width: 400,
+                    width: 420,
                     child: Row(
                       children: [
-                        SizedBox(width: 290,
+                        SizedBox(width: 260,
                             child: TextFormField(
                                 controller: productController,
                                 keyboardType: TextInputType.text,
@@ -321,6 +323,7 @@ class _OrderlineFormEquipmentState<
       typeAheadControllerEquipmentLocation.text = '';
 
       updateFormData(context);
+      widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));
     } else {
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
@@ -398,69 +401,78 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
 
   @override
   Widget build(BuildContext context) {
+    if (widget.orderlineFormData.location != null) {
+      locationController.text = widget.orderlineFormData.location!;
+    }
+
     if (_canCreateLocation()) {
       return Column(
         children: [
-          TypeAheadFormField<EquipmentLocationTypeAheadModel>(
-            minCharsForSuggestions: 2,
-            textFieldConfiguration: TextFieldConfiguration(
-                controller: typeAheadControllerEquipmentLocation,
-                decoration: InputDecoration(
-                    labelText:
-                    widget.i18n.$trans('typeahead_label_search_location')
-                )
-            ),
-            suggestionsCallback: (String pattern) async {
-              return await equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
-            },
-            itemBuilder: (context, suggestion) {
-              String text = suggestion.identifier != null && suggestion.identifier != '' ?
-              '${suggestion.name} (${suggestion.identifier})' :
-              '${suggestion.name}';
-              return ListTile(
-                title: Text(text),
-              );
-            },
-            noItemsFoundBuilder: (context) {
-              return Expanded(
-                  child: Column(
-                      children: [
-                        Text(widget.i18n.$trans('location_not_found'),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: Colors.grey
-                            )
-                        ),
-                        TextButton(
-                          child: Text(
-                              widget.i18n.$trans('create_new_location'),
+          Visibility(
+            visible: widget.orderlineFormData.equipmentLocation == null,
+            child: TypeAheadFormField<EquipmentLocationTypeAheadModel>(
+              minCharsForSuggestions: 2,
+              textFieldConfiguration: TextFieldConfiguration(
+                  controller: typeAheadControllerEquipmentLocation,
+                  decoration: InputDecoration(
+                      labelText:
+                      widget.i18n.$trans('typeahead_label_search_location')
+                  )
+              ),
+              suggestionsCallback: (String pattern) async {
+                return await equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
+              },
+              itemBuilder: (context, suggestion) {
+                String text = suggestion.identifier != null && suggestion.identifier != '' ?
+                '${suggestion.name} (${suggestion.identifier})' :
+                '${suggestion.name}';
+                return ListTile(
+                  title: Text(text),
+                );
+              },
+              noItemsFoundBuilder: (context) {
+                return Expanded(
+                    child: Column(
+                        children: [
+                          Text(widget.i18n.$trans('location_not_found'),
                               style: const TextStyle(
-                                fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: Colors.grey
                               )
                           ),
-                          onPressed: () {
-                            // create new location
-                            FocusScope.of(context).requestFocus(equipmentLocationCreateFocusNode);
-                            _createSelectEquipmentLocation(context);
-                          },
-                        )
-                      ]
-                  )
-              );
-            },
-            transitionBuilder: (context, suggestionsBox, controller) {
-              return suggestionsBox;
-            },
-            onSuggestionSelected: (EquipmentLocationTypeAheadModel suggestion) {
-              widget.orderlineFormData.equipmentLocation = suggestion.id;
-              widget.orderlineFormData.location = suggestion.name!;
-              locationController.text = suggestion.name!;
-              // updateFormData(context);
-            },
-            validator: (value) {
-              return null;
-            },
+                          TextButton(
+                            child: Text(
+                                widget.i18n.$trans('create_new_location'),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                )
+                            ),
+                            onPressed: () {
+                              // create new location
+                              FocusScope.of(context).requestFocus(equipmentLocationCreateFocusNode);
+                              _createSelectEquipmentLocation(context);
+                            },
+                          )
+                        ]
+                    )
+                );
+              },
+              transitionBuilder: (context, suggestionsBox, controller) {
+                return suggestionsBox;
+              },
+              onSuggestionSelected: (EquipmentLocationTypeAheadModel suggestion) {
+                widget.orderlineFormData.equipmentLocation = suggestion.id;
+                widget.orderlineFormData.location = suggestion.name!;
+                locationController.text = suggestion.name!;
+                setState(() {
+
+                });
+              },
+              validator: (value) {
+                return null;
+              },
+            )
           ),
           widget.widgets.wrapGestureDetector(context, const SizedBox(
             height: 10.0,
@@ -484,7 +496,7 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                   width: 400,
                   child: Row(
                     children: [
-                      SizedBox(width: 290,
+                      SizedBox(width: 260,
                           child: TextFormField(
                               controller: locationController,
                               keyboardType: TextInputType.text,
@@ -529,7 +541,9 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                   (location) => location.id == widget.orderlineFormData.equipmentLocation);
           locationController.text = location.name!;
           widget.orderlineFormData.location  = location.name!;
-          // updateFormData(context);
+          setState(() {
+
+          });
         }
     );
   }

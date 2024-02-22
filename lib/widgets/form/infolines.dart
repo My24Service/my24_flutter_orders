@@ -239,6 +239,7 @@ class _InfolineFormState<
       widget.infolineFormData.reset(widget.formData.id);
 
       updateFormData(context);
+      widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));
     } else {
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
