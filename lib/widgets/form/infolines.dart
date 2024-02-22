@@ -77,7 +77,7 @@ class InfolineList<
     if (formData.infoLines!.isEmpty) {
       return Column(
         children: [
-          Text(i18n.$trans("no_infolines"))
+          Text(i18n.$trans("no_items"))
         ],
       );
     }

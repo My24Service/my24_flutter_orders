@@ -85,7 +85,7 @@ class OrderlineList<
     if (formData.orderLines!.isEmpty) {
       return Column(
         children: [
-          Text(i18n.$trans("no_orderlines"))
+          Text(i18n.$trans("no_items"))
         ],
       );
     }
@@ -95,11 +95,11 @@ class OrderlineList<
         "",
         formData.orderLines,
         (item) {
-          String equipmentLocationTitle = "${i18n.$trans('info_equipment', pathOverride: 'generic')} / ${i18n.$trans('info_location', pathOverride: 'generic')}";
+          String equipmentLocationTitle = "${My24i18n.tr('generic.info_equipment')} / ${My24i18n.tr('generic.info_location')}";
           String equipmentLocationValue = "${item.product} / ${item.location}";
           return <Widget>[
             ...widgets.buildItemListKeyValueList(equipmentLocationTitle, equipmentLocationValue),
-            ...widgets.buildItemListKeyValueList(i18n.$trans('info_remarks', pathOverride: 'generic'), item.remarks)
+            ...widgets.buildItemListKeyValueList(My24i18n.tr('generic.info_remarks'), item.remarks)
           ];
         },
         (Orderline item) {
@@ -136,8 +136,8 @@ class OrderlineList<
 
   _showDeleteDialog(BuildContext context, Orderline orderLine) {
     widgets.showDeleteDialogWrapper(
-        i18n.$trans('form.delete_dialog_title_orderline'),
-        i18n.$trans('form.delete_dialog_content_orderline'),
+        i18n.$trans('delete_dialog_title'),
+        i18n.$trans('delete_dialog_content'),
         () => _delete(context, orderLine),
         context
     );

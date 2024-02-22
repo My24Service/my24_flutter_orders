@@ -41,9 +41,17 @@ class Documents<FormDataClass extends BaseOrderFormData> extends StatelessWidget
       child: Column(
         children: [
           widgets.createHeader(i18n.$trans('header')),
-          DocumentList(widgets: widgets, formData: formData),
+          DocumentList(
+            widgets: widgets,
+            formData: formData,
+            i18n: i18n,
+          ),
           widgets.createHeader(i18n.$trans('header_new')),
-          DocumentForm(formData: formData, widgets: widgets),
+          DocumentForm(
+            formData: formData,
+            widgets: widgets,
+            i18n: i18n,
+          ),
         ],
       ),
     );
@@ -54,12 +62,13 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
   final CoreWidgets widgets;
   final FormDataClass formData;
   final CoreUtils utils = CoreUtils();
-  final My24i18n i18n = My24i18n(basePath: "orders.form.documents");
+  final My24i18n i18n;
 
   DocumentList({
     super.key,
     required this.widgets,
-    required this.formData
+    required this.formData,
+    required this.i18n
   });
 
   @override
@@ -67,7 +76,7 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
     if (formData.documents!.isEmpty) {
       return Column(
         children: [
-          Text(i18n.$trans("no_documents"))
+          Text(i18n.$trans("no_items"))
         ],
       );
     }
@@ -78,7 +87,7 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
         formData.documents,
         (item) {
           return widgets.buildItemListKeyValueList(
-              i18n.$trans('name'),
+              i18n.$trans('info_name'),
               item.name
           );
         },
@@ -157,11 +166,13 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
 class DocumentForm<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
   final FormDataClass formData;
   final CoreWidgets widgets;
+  final My24i18n i18n;
 
   const DocumentForm({
     super.key,
     required this.formData,
     required this.widgets,
+    required this.i18n
   });
 
   @override
@@ -173,7 +184,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController documentController = TextEditingController();
   final picker = ImagePicker();
-  final My24i18n i18n = My24i18n(basePath: "orders.form.documents");
   OrderDocumentFormData orderDocumentFormData = OrderDocumentFormData.createEmpty(null);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -230,7 +240,7 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(i18n.$trans('name')),
+            Text(widget.i18n.$trans('info_name')),
             TextFormField(
                 controller: nameController,
                 validator: (value) {
@@ -253,7 +263,7 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
             const SizedBox(
               height: 10.0,
             ),
-            Text(i18n.$trans('info_document')),
+            Text(widget.i18n.$trans('info_document')),
             TextFormField(
                 readOnly: true,
                 controller: documentController,
@@ -285,7 +295,7 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
             ),
             widget.widgets.createDefaultElevatedButton(
               context,
-              i18n.$trans('button_add'),
+              widget.i18n.$trans('button_add'),
               () { _addDocument(context); }
             )
           ],
@@ -387,7 +397,7 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
     } else {
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
-          i18n.$trans('error_adding_document')
+          widget.i18n.$trans('error_adding')
       );
     }
   }
