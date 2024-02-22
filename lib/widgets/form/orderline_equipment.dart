@@ -49,6 +49,7 @@ class _OrderlineFormEquipmentState<
   final EquipmentApi equipmentApi = EquipmentApi();
   final FocusNode equipmentCreateFocusNode = FocusNode();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool mustResetLocation = false;
 
   _addListeners() {
     locationController.addListener(_locationListen);
@@ -259,6 +260,7 @@ class _OrderlineFormEquipmentState<
               isPlanning: widget.isPlanning,
               orderlineFormData: widget.orderlineFormData,
               i18n: widget.i18n,
+              mustReset: mustResetLocation,
             ),
 
             widget.widgets.wrapGestureDetector(
@@ -324,6 +326,9 @@ class _OrderlineFormEquipmentState<
 
       updateFormData(context);
       widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));
+      setState(() {
+        mustResetLocation = true;
+      });
     } else {
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
@@ -339,6 +344,7 @@ class LocationsPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseO
   final bool isPlanning;
   final OrderlineFormData orderlineFormData;
   final My24i18n i18n;
+  final bool mustReset;
 
   const LocationsPart({
     super.key,
@@ -346,7 +352,8 @@ class LocationsPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseO
     required this.widgets,
     required this.isPlanning,
     required this.orderlineFormData,
-    required this.i18n
+    required this.i18n,
+    required this.mustReset
   });
 
   @override
@@ -401,10 +408,14 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
 
   @override
   Widget build(BuildContext context) {
-    if (widget.orderlineFormData.location != null) {
-      locationController.text = widget.orderlineFormData.location!;
+    if (widget.mustReset) {
+      locationController.text = "";
+      typeAheadControllerEquipmentLocation.text = "";
+    } else {
+      if (widget.orderlineFormData.location != null) {
+        locationController.text = widget.orderlineFormData.location!;
+      }
     }
-
     if (_canCreateLocation()) {
       return Column(
         children: [

@@ -25,7 +25,7 @@ class OrderlineFormData extends BaseFormData<Orderline> {
     order = order;
     equipment = null;
     equipmentLocation = null;
-    location = null;
+    location = "";
     product = null;
     remarks = null;
   }
