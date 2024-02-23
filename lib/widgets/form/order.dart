@@ -75,7 +75,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
                         widgets: widgets,
                       ),
                     const SizedBox(height: 20),
-                    Documents(
+                    DocumentsWidget(
                         formData: formData!,
                         widgets: widgetsIn,
                         orderId: formData!.id,

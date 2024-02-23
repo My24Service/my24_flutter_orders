@@ -12,13 +12,13 @@ import '../../../models/document/form_data.dart';
 import '../../../models/document/models.dart';
 import '../../../models/order/form_data.dart';
 
-class Documents<FormDataClass extends BaseOrderFormData> extends StatelessWidget {
+class DocumentsWidget<FormDataClass extends BaseOrderFormData> extends StatelessWidget {
   final My24i18n i18n = My24i18n(basePath: "orders.form.documents");
   final FormDataClass formData;
   final CoreWidgets widgets;
   final int? orderId;
 
-  Documents({
+  DocumentsWidget({
     super.key,
     required this.formData,
     required this.widgets,
