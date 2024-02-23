@@ -55,6 +55,7 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
 
   EquipmentCreateQuickResponse? equipmentCreateQuickResponse;
   EquipmentLocationCreateQuickResponse? equipmentLocationCreateQuickResponse;
+  List<Equipment>? equipmentLocationUpdates = [];
 
   QuickCreateSettings? quickCreateSettings;
 
@@ -144,6 +145,7 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
 
     this.equipmentCreateQuickResponse,
     this.equipmentLocationCreateQuickResponse,
+    this.equipmentLocationUpdates,
 
     this.quickCreateSettings,
     this.customerBranchId

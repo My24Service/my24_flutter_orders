@@ -60,6 +60,8 @@ class OrderEvent {
   final List<OrderDocument>? documents;
   final List<OrderDocument>? deletedDocuments;
 
+  final List<Equipment>? equipmentLocationUpdates;
+
   const OrderEvent({
     this.pk,
     this.status,
@@ -73,7 +75,8 @@ class OrderEvent {
     this.deletedOrderLines,
     this.deletedInfoLines,
     this.documents,
-    this.deletedDocuments
+    this.deletedDocuments,
+    this.equipmentLocationUpdates
   });
 }
 
@@ -345,6 +348,14 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
         order.documents!.add(document);
       }
 
+      // handle equipment location updates
+      if (event.equipmentLocationUpdates != null) {
+        for (int i = 0; i < event.equipmentLocationUpdates!.length; i++) {
+          await equipmentApi.update(event.equipmentLocationUpdates![i].id!,
+              event.equipmentLocationUpdates![i]);
+        }
+      }
+
       emit(OrderInsertedState(order: order));
     } catch(e) {
       emit(OrderErrorState(message: e.toString()));
@@ -417,6 +428,13 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
             event.documents![i].orderId = event.pk;
           }
           await orderDocumentApi.update(event.documents![i].id!, event.documents![i]);
+        }
+      }
+
+      // handle equipment location updates
+      if (event.equipmentLocationUpdates != null) {
+        for (int i=0; i<event.equipmentLocationUpdates!.length; i++) {
+          await equipmentApi.update(event.equipmentLocationUpdates![i].id!, event.equipmentLocationUpdates![i]);
         }
       }
 

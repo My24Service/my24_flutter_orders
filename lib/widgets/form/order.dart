@@ -700,7 +700,8 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           documents: formData!.documents,
           deletedOrderLines: formData!.deletedOrderLines!,
           deletedInfoLines: formData!.deletedInfoLines!,
-          deletedDocuments: formData!.deletedDocuments!
+          deletedDocuments: formData!.deletedDocuments!,
+          equipmentLocationUpdates: formData!.equipmentLocationUpdates
         ));
       } else {
         if (!orderPageMetaData.hasBranches! && orderPageMetaData.submodel == 'planning_user') {
@@ -714,6 +715,7 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,
           documents: formData!.documents,
+          equipmentLocationUpdates: formData!.equipmentLocationUpdates
         ));
       }
     }

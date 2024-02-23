@@ -44,6 +44,8 @@ class _OrderlineFormEquipmentState<
 > extends State<OrderlineFormEquipment> {
   final TextEditingController remarksController = TextEditingController();
   bool mustReset = false;
+  bool equipmentHasLocation = false;
+  bool setLocationToEquipment = false;
 
   @override
   void dispose() {
@@ -125,6 +127,27 @@ class _OrderlineFormEquipmentState<
           const SizedBox(
             height: 10.0,
           ),
+          Visibility(
+            visible: !equipmentHasLocation && widget.orderlineFormData.equipment != null && widget.orderlineFormData.equipmentLocation != null,
+            child: CheckboxListTile(
+                title: widget.widgets.wrapGestureDetector(
+                    context,
+                    Text(widget.i18n.$trans('info_save_location_to_equipment'))
+                ),
+                value: setLocationToEquipment,
+                onChanged: (newValue) {
+                  setState(() {
+                    setLocationToEquipment = newValue!;
+                  });
+
+                }
+            )
+          ),
+          if (!equipmentHasLocation)
+            const SizedBox(
+            height: 10.0,
+          ),
+
           widget.widgets.createElevatedButtonColored(
               widget.i18n.$trans('button_add'),
               () { _addOrderLine(context); }
@@ -160,8 +183,11 @@ class _OrderlineFormEquipmentState<
 
       // fill location if this is set and known
       if (equipment.location != null) {
+        equipmentHasLocation = true;
         widget.orderlineFormData.equipmentLocation = equipment.location!.id;
         widget.orderlineFormData.location = equipment.location!.name!;
+      } else {
+        equipmentHasLocation = false;
       }
     });
   }
@@ -186,6 +212,16 @@ class _OrderlineFormEquipmentState<
       widget.formData.orderLines!.add(orderline);
       widget.orderlineFormData.reset(widget.formData.id);
       remarksController.text = "";
+
+      // check if we need to update equipment
+      if (setLocationToEquipment) {
+        final Equipment updateEquipment = Equipment(
+          id: orderline.equipment!,
+          name: orderline.product!,
+          location: orderline.equipmentLocation!
+        );
+        widget.formData.equipmentLocationUpdates!.add(updateEquipment);
+      }
 
       final bloc = BlocProvider.of<BlocClass>(context);
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));

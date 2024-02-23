@@ -81,7 +81,8 @@ class OrderFormData extends BaseOrderFormData {
     super.customerOrderAccepted,
     super.error,
     super.quickCreateSettings,
-    super.customerBranchId
+    super.customerBranchId,
+    super.equipmentLocationUpdates
   });
 
   factory OrderFormData.newFromOrderTypes(OrderTypes orderTypes) {
@@ -91,7 +92,8 @@ class OrderFormData extends BaseOrderFormData {
       endDate: DateTime.now(),
       documents: [],
       orderLines: [],
-      infoLines: []
+      infoLines: [],
+      equipmentLocationUpdates: []
     );
   }
 
@@ -180,6 +182,7 @@ class OrderFormData extends BaseOrderFormData {
       deletedDocuments: [],
 
       quickCreateSettings: null,
+      equipmentLocationUpdates: []
     );
   }
 
