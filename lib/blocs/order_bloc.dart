@@ -49,6 +49,7 @@ class OrderEvent {
   final String? query;
   final Order? order;
   final dynamic formData;
+  final String? name;
 
   final List<Orderline>? orderLines;
   final List<Orderline>? deletedOrderLines;
@@ -66,6 +67,7 @@ class OrderEvent {
     this.query,
     this.order,
     this.formData,
+    this.name,
     this.orderLines,
     this.infoLines,
     this.deletedOrderLines,
@@ -149,32 +151,30 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   Future<void> _handleCreateSelectEquipment(OrderEvent event, Emitter<OrderState> emit) async {
     final bool hasBranches = (await coreUtils.getHasBranches())!;
-    final String? submodel = await coreUtils.getUserSubmodel();
+    EquipmentCreateQuickResponse response;
 
     try {
       if (hasBranches) {
         final EquipmentCreateQuickBranch equipment = EquipmentCreateQuickBranch(
-          name: event.formData!.orderlineFormData!.typeAheadControllerEquipment!.text.trim(),
-          branch: submodel == 'planning_user' ? event.formData!.branch : 0,
+          name: event.name!,
+          branch: event.formData!.branch,
         );
 
-        final EquipmentCreateQuickResponse response = await equipmentApi.createQuickBranch(equipment);
-        event.formData!.orderlineFormData!.equipment = response.id;
-        event.formData!.orderlineFormData!.productController!.text = response.name!;
-
+        response = await equipmentApi.createQuickBranch(equipment);
+        event.formData!.equipmentCreateQuickResponse = response;
       } else {
         final EquipmentCreateQuickCustomer equipment = EquipmentCreateQuickCustomer(
-          name: event.formData!.orderlineFormData!.typeAheadControllerEquipment!.text.trim(),
-          customer: submodel == 'planning_user' ? event.formData!.customerPk : 0,
+          name: event.name!,
+          customer: event.formData!.customerPk,
         );
 
-        final EquipmentCreateQuickResponse response = await equipmentApi.createQuickCustomer(equipment);
-        event.formData!.orderlineFormData!.equipment = response.id;
-        event.formData!.orderlineFormData!.productController!.text = response.name!;
+        response = await equipmentApi.createQuickCustomer(equipment);
+        event.formData!.equipmentCreateQuickResponse = response;
       }
 
-      event.formData!.isCreatingEquipment = false;
-      emit(OrderNewEquipmentCreatedState(formData: event.formData));
+      emit(OrderNewEquipmentCreatedState(
+        formData: event.formData,
+      ));
     } catch(e) {
       event.formData!.error = e.toString();
       emit(OrderErrorSnackbarState(message: e.toString()));
@@ -185,31 +185,27 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   Future<void> _handleCreateSelectEquipmentLocation(OrderEvent event, Emitter<OrderState> emit) async {
     final bool hasBranches = (await coreUtils.getHasBranches())!;
-    final String? submodel = await coreUtils.getUserSubmodel();
+    EquipmentLocationCreateQuickResponse response;
 
     try {
       if (hasBranches) {
         final EquipmentLocationCreateQuickBranch location = EquipmentLocationCreateQuickBranch(
-          name: event.formData!.orderlineFormData!.typeAheadControllerEquipmentLocation!.text.trim(),
-          branch: submodel == 'planning_user' ? event.formData!.branch : 0,
+          name: event.name!,
+          branch: event.formData!.branch,
         );
 
-        final EquipmentLocationCreateQuickResponse response = await locationApi.createQuickBranch(location);
-        event.formData!.orderlineFormData!.equipmentLocation = response.id;
-        event.formData!.orderlineFormData!.locationController!.text = response.name!;
-
+        response = await locationApi.createQuickBranch(location);
+        event.formData!.equipmentLocationCreateQuickResponse = response;
       } else {
         final EquipmentLocationCreateQuickCustomer location = EquipmentLocationCreateQuickCustomer(
-          name: event.formData!.orderlineFormData!.typeAheadControllerEquipmentLocation!.text.trim(),
-          customer: submodel == 'planning_user' ? event.formData!.customerPk : 0,
+          name: event.name!,
+          customer: event.formData!.customerPk,
         );
 
-        final EquipmentLocationCreateQuickResponse response = await locationApi.createQuickCustomer(location);
-        event.formData!.orderlineFormData!.equipmentLocation = response.id;
-        event.formData!.orderlineFormData!.locationController!.text = response.name!;
+        response = await locationApi.createQuickCustomer(location);
+        event.formData!.equipmentLocationCreateQuickResponse = response;
       }
 
-      event.formData!.isCreatingLocation = false;
       emit(OrderNewLocationCreatedState(formData: event.formData));
     } catch(e) {
       event.formData!.error = e.toString();

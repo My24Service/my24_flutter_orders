@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
+import 'package:my24_flutter_equipment/models/equipment/models.dart';
+import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import 'package:my24_flutter_orders/models/document/models.dart';
 import '../infoline/models.dart';
@@ -50,8 +52,9 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
   bool? customerOrderAccepted = false;
 
   String? error;
-  bool? isCreatingEquipment = false;
-  bool? isCreatingLocation = false;
+
+  EquipmentCreateQuickResponse? equipmentCreateQuickResponse;
+  EquipmentLocationCreateQuickResponse? equipmentLocationCreateQuickResponse;
 
   QuickCreateSettings? quickCreateSettings;
 
@@ -138,8 +141,10 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
     this.orderCountryCode,
     this.customerOrderAccepted,
     this.error,
-    this.isCreatingEquipment,
-    this.isCreatingLocation,
+
+    this.equipmentCreateQuickResponse,
+    this.equipmentLocationCreateQuickResponse,
+
     this.quickCreateSettings,
     this.customerBranchId
   });
