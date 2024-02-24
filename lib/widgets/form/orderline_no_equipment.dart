@@ -6,7 +6,6 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
-import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
 class OrderlineFormNoEquipment<
@@ -16,7 +15,6 @@ class OrderlineFormNoEquipment<
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
-  final OrderlineFormData orderlineFormData;
   final My24i18n i18n;
 
   const OrderlineFormNoEquipment({
@@ -24,7 +22,6 @@ class OrderlineFormNoEquipment<
     required this.formData,
     required this.widgets,
     required this.isPlanning,
-    required this.orderlineFormData,
     required this.i18n,
   });
 
@@ -49,25 +46,25 @@ class _OrderlineFormNoEquipmentState<
 
   void _locationListen() {
     if (locationController.text.isEmpty) {
-      widget.orderlineFormData.location = "";
+      widget.formData.orderlineFormData!.location = "";
     } else {
-      widget.orderlineFormData.location = locationController.text;
+      widget.formData.orderlineFormData!.location = locationController.text;
     }
   }
 
   void _productListen() {
     if (productController.text.isEmpty) {
-      widget.orderlineFormData.product = "";
+      widget.formData.orderlineFormData!.product = "";
     } else {
-      widget.orderlineFormData.product = productController.text;
+      widget.formData.orderlineFormData!.product = productController.text;
     }
   }
 
   void _remarksListen() {
     if (remarksController.text.isEmpty) {
-      widget.orderlineFormData.remarks = "";
+      widget.formData.orderlineFormData!.remarks = "";
     } else {
-      widget.orderlineFormData.remarks = remarksController.text;
+      widget.formData.orderlineFormData!.remarks = remarksController.text;
     }
   }
 
@@ -154,14 +151,14 @@ class _OrderlineFormNoEquipmentState<
     if (this.formKey.currentState!.validate()) {
       this.formKey.currentState!.save();
 
-      Orderline orderline = widget.orderlineFormData.toModel();
+      Orderline orderline = widget.formData.orderlineFormData!.toModel();
 
       widget.formData.orderLines!.add(orderline);
 
       remarksController.text = '';
       locationController.text = '';
       productController.text = '';
-      widget.orderlineFormData.reset(widget.formData.id);
+      widget.formData.orderlineFormData!.reset(widget.formData.id);
 
       updateFormData(context);
     } else {

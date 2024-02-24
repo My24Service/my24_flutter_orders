@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/utils.dart';
@@ -8,9 +9,10 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/widgets/form/orderline_no_equipment.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
-import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 import 'orderline_equipment.dart';
+
+final log = Logger('orders.form.orderlines');
 
 class OrderlinesWidget<
   FormDataClass extends BaseOrderFormData
@@ -151,11 +153,10 @@ class OrderlineForm<
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
-  final OrderlineFormData orderlineFormData = OrderlineFormData.createEmpty(null);
   final bool hasBranches;
   final My24i18n i18n;
 
-  OrderlineForm({
+  const OrderlineForm({
     super.key,
     required this.formData,
     required this.widgets,
@@ -174,7 +175,7 @@ class _OrderlineFormState<
 > extends State<OrderlineForm> {
   @override
   void initState() {
-    widget.orderlineFormData.order = widget.formData.id;
+    widget.formData.orderlineFormData!.order = widget.formData.id;
     super.initState();
   }
 
@@ -185,12 +186,13 @@ class _OrderlineFormState<
 
   @override
   Widget build(BuildContext context) {
+    log.info("BUILD ORDERLINE; equipment: ${widget.formData.orderlineFormData!.equipment}, equipment location: ${widget.formData.orderlineFormData!.equipmentLocation}");
+
     if (widget.hasBranches || widget.formData.customerBranchId != null) {
       return OrderlineFormEquipment(
         formData: widget.formData,
         widgets: widget.widgets,
         isPlanning: widget.isPlanning,
-        orderlineFormData: widget.orderlineFormData,
         i18n: widget.i18n,
       );
     }
@@ -199,7 +201,6 @@ class _OrderlineFormState<
       formData: widget.formData,
       widgets: widget.widgets,
       isPlanning: widget.isPlanning,
-      orderlineFormData: widget.orderlineFormData,
       i18n: widget.i18n,
     );
   }

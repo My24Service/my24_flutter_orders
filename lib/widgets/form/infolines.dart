@@ -7,7 +7,6 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
-import 'package:my24_flutter_orders/models/infoline/form_data.dart';
 import 'package:my24_flutter_orders/models/infoline/models.dart';
 
 class InfolinesWidget<
@@ -140,10 +139,9 @@ class InfolineForm<
 > extends StatefulWidget {
   final FormDataClass formData;
   final CoreWidgets widgets;
-  final InfolineFormData infolineFormData = InfolineFormData.createEmpty(null);
   final My24i18n i18n;
 
-  InfolineForm({
+  const InfolineForm({
     super.key,
     required this.formData,
     required this.widgets,
@@ -163,9 +161,9 @@ class _InfolineFormState<
 
   void _infoListen() {
     if (infoController.text.isEmpty) {
-      widget.infolineFormData.info = "";
+      widget.formData.infolineFormData!.info = "";
     } else {
-      widget.infolineFormData.info = infoController.text;
+      widget.formData.infolineFormData!.info = infoController.text;
     }
   }
 
@@ -181,7 +179,7 @@ class _InfolineFormState<
   @override
   void initState() {
     _infoListen();
-    widget.infolineFormData.order = widget.formData.id;
+    widget.formData.infolineFormData!.order = widget.formData.id;
     super.initState();
   }
 
@@ -230,13 +228,13 @@ class _InfolineFormState<
     if (this.formKey.currentState!.validate()) {
       this.formKey.currentState!.save();
 
-      Infoline infoline = widget.infolineFormData.toModel();
+      Infoline infoline = widget.formData.infolineFormData!.toModel();
 
       widget.formData.infoLines!.add(infoline);
 
       // reset fields
       infoController.text = '';
-      widget.infolineFormData.reset(widget.formData.id);
+      widget.formData.infolineFormData!.reset(widget.formData.id);
 
       updateFormData(context);
       widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));

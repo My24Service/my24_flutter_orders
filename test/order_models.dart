@@ -7,8 +7,10 @@ import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
+import 'package:my24_flutter_orders/models/infoline/form_data.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
+import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 import 'package:my24_flutter_orders/pages/detail.dart';
 import 'package:my24_flutter_orders/pages/list.dart';
 import 'package:my24_flutter_orders/widgets/form/order.dart';
@@ -70,6 +72,9 @@ class OrderFormData extends BaseOrderFormData {
     super.documents,
     super.deletedDocuments,
 
+    super.orderlineFormData,
+    super.infolineFormData,
+
     super.startDate,
     super.startTime,
     super.endDate,
@@ -93,7 +98,9 @@ class OrderFormData extends BaseOrderFormData {
       documents: [],
       orderLines: [],
       infoLines: [],
-      equipmentLocationUpdates: []
+      equipmentLocationUpdates: [],
+      orderlineFormData: OrderlineFormData.createEmpty(null),
+      infolineFormData: InfolineFormData.createEmpty(null)
     );
   }
 
@@ -182,10 +189,12 @@ class OrderFormData extends BaseOrderFormData {
       deletedDocuments: [],
 
       quickCreateSettings: null,
-      equipmentLocationUpdates: []
+      equipmentLocationUpdates: [],
+
+      orderlineFormData: OrderlineFormData.createEmpty(null),
+      infolineFormData: InfolineFormData.createEmpty(null)
     );
   }
-
 }
 
 class OrderFormWidget<OrderBloc, OrderFormData> extends BaseOrderFormWidget {

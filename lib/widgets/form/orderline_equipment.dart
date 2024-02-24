@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
@@ -11,8 +12,9 @@ import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
-import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
+
+final log = Logger('orders.form.orderlines.equipment');
 
 class OrderlineFormEquipment<
   BlocClass extends OrderBlocBase,
@@ -21,7 +23,6 @@ class OrderlineFormEquipment<
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
-  final OrderlineFormData orderlineFormData;
   final My24i18n i18n;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -30,7 +31,6 @@ class OrderlineFormEquipment<
     required this.formData,
     required this.widgets,
     required this.isPlanning,
-    required this.orderlineFormData,
     required this.i18n
   });
 
@@ -64,13 +64,13 @@ class _OrderlineFormEquipmentState<
     final bloc = BlocProvider.of<BlocClass>(context);
 
     if (widget.formData.equipmentCreateQuickResponse != null) {
-      widget.orderlineFormData.equipment = widget.formData.equipmentCreateQuickResponse!.id!;
-      widget.orderlineFormData.product = widget.formData.equipmentCreateQuickResponse!.name!;
+      widget.formData.orderlineFormData!.equipment = widget.formData.equipmentCreateQuickResponse!.id!;
+      widget.formData.orderlineFormData!.product = widget.formData.equipmentCreateQuickResponse!.name!;
     }
 
     if (widget.formData.equipmentLocationCreateQuickResponse != null) {
-      widget.orderlineFormData.equipmentLocation = widget.formData.equipmentLocationCreateQuickResponse!.id!;
-      widget.orderlineFormData.location = widget.formData.equipmentLocationCreateQuickResponse!.name!;
+      widget.formData.orderlineFormData!.equipmentLocation = widget.formData.equipmentLocationCreateQuickResponse!.id!;
+      widget.formData.orderlineFormData!.location = widget.formData.equipmentLocationCreateQuickResponse!.name!;
     }
 
     return Form(
@@ -80,7 +80,6 @@ class _OrderlineFormEquipmentState<
           EquipmentPart(
             formData: widget.formData,
             widgets: widget.widgets,
-            orderlineFormData: widget.orderlineFormData,
             i18n: widget.i18n,
             mustReset: mustReset,
             onEquipmentSelect: _onEquipmentSelect,
@@ -98,7 +97,6 @@ class _OrderlineFormEquipmentState<
           LocationsPart(
             formData: widget.formData,
             widgets: widget.widgets,
-            orderlineFormData: widget.orderlineFormData,
             i18n: widget.i18n,
             mustReset: mustReset,
             onLocationSelect: _onLocationSelect,
@@ -128,7 +126,7 @@ class _OrderlineFormEquipmentState<
             height: 10.0,
           ),
           Visibility(
-            visible: !equipmentHasLocation && widget.orderlineFormData.equipment != null && widget.orderlineFormData.equipmentLocation != null,
+            visible: !equipmentHasLocation && widget.formData.orderlineFormData!.equipment != null && widget.formData.orderlineFormData!.equipmentLocation != null,
             child: CheckboxListTile(
                 title: widget.widgets.wrapGestureDetector(
                     context,
@@ -163,32 +161,33 @@ class _OrderlineFormEquipmentState<
 
   void _remarksListen() {
     if (remarksController.text.isEmpty) {
-      widget.orderlineFormData.remarks = "";
+      widget.formData.orderlineFormData!.remarks = "";
     } else {
-      widget.orderlineFormData.remarks = remarksController.text;
+      widget.formData.orderlineFormData!.remarks = remarksController.text;
     }
   }
 
   void _onLocationSelect(int id, String name) {
     setState(() {
-      widget.orderlineFormData.equipmentLocation = id;
-      widget.orderlineFormData.location = name;
+      widget.formData.orderlineFormData!.equipmentLocation = id;
+      widget.formData.orderlineFormData!.location = name;
     });
   }
 
   void _onEquipmentSelect(EquipmentTypeAheadModel equipment) {
     setState(() {
-      widget.orderlineFormData.equipment = equipment.id!;
-      widget.orderlineFormData.product = equipment.name!;
+      widget.formData.orderlineFormData!.equipment = equipment.id!;
+      widget.formData.orderlineFormData!.product = equipment.name!;
 
       // fill location if this is set and known
       if (equipment.location != null) {
         equipmentHasLocation = true;
-        widget.orderlineFormData.equipmentLocation = equipment.location!.id;
-        widget.orderlineFormData.location = equipment.location!.name!;
+        widget.formData.orderlineFormData!.equipmentLocation = equipment.location!.id;
+        widget.formData.orderlineFormData!.location = equipment.location!.name!;
       } else {
         equipmentHasLocation = false;
       }
+      // _updateFormData();
     });
   }
 
@@ -202,15 +201,24 @@ class _OrderlineFormEquipmentState<
         (!widget.isPlanning && widget.formData.quickCreateSettings!.equipmentLocationQuickCreate);
   }
 
+  void _updateFormData() {
+    final bloc = BlocProvider.of<BlocClass>(context);
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(
+        status: OrderEventStatus.updateFormData,
+        formData: widget.formData
+    ));
+  }
+
   _addOrderLine(BuildContext context) {
-    if (widget.formKey.currentState!.validate() && widget.orderlineFormData.equipment != null &&
-        widget.orderlineFormData.equipmentLocation != null) {
+    if (widget.formKey.currentState!.validate() && widget.formData.orderlineFormData!.equipment != null &&
+        widget.formData.orderlineFormData!.equipmentLocation != null) {
       widget.formKey.currentState!.save();
 
-      Orderline orderline = widget.orderlineFormData.toModel();
+      Orderline orderline = widget.formData.orderlineFormData!.toModel();
 
       widget.formData.orderLines!.add(orderline);
-      widget.orderlineFormData.reset(widget.formData.id);
+      widget.formData.orderlineFormData!.reset(widget.formData.id);
       remarksController.text = "";
 
       // check if we need to update equipment
@@ -223,12 +231,7 @@ class _OrderlineFormEquipmentState<
         widget.formData.equipmentLocationUpdates!.add(updateEquipment);
       }
 
-      final bloc = BlocProvider.of<BlocClass>(context);
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(
-          status: OrderEventStatus.updateFormData,
-          formData: widget.formData
-      ));
+      _updateFormData();
 
       widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));
 
@@ -237,6 +240,7 @@ class _OrderlineFormEquipmentState<
         mustReset = true;
       });
     } else {
+      log.severe("error adding orderline; equipment: ${widget.formData.orderlineFormData!.equipment}, equipment location: ${widget.formData.orderlineFormData!.equipmentLocation}");
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
           widget.i18n.$trans('error_adding')
@@ -246,21 +250,22 @@ class _OrderlineFormEquipmentState<
 }
 
 class EquipmentPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
+  final FocusNode equipmentCreateFocusNode = FocusNode();
+  final TextEditingController typeAheadControllerEquipment = TextEditingController();
+  final TextEditingController productController = TextEditingController();
   final FormDataClass formData;
   final CoreWidgets widgets;
   final My24i18n i18n;
-  final OrderlineFormData orderlineFormData;
   final bool mustReset;
   final Function onEquipmentSelect;
   final bool canCreateEquipment;
   final BlocClass bloc;
 
-  const EquipmentPart({
+  EquipmentPart({
     super.key,
     required this.formData,
     required this.widgets,
     required this.i18n,
-    required this.orderlineFormData,
     required this.mustReset,
     required this.onEquipmentSelect,
     required this.canCreateEquipment,
@@ -273,17 +278,14 @@ class EquipmentPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseO
 
 class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends State<EquipmentPart> {
   final EquipmentApi equipmentApi = EquipmentApi();
-  final FocusNode equipmentCreateFocusNode = FocusNode();
-  final TextEditingController typeAheadControllerEquipment = TextEditingController();
-  final TextEditingController productController = TextEditingController();
   bool isCreatingEquipment = false;
 
   @override
   void dispose() {
     super.dispose();
-    typeAheadControllerEquipment.dispose();
-    productController.dispose();
-    equipmentCreateFocusNode.dispose();
+    widget.typeAheadControllerEquipment.dispose();
+    widget.productController.dispose();
+    widget.equipmentCreateFocusNode.dispose();
   }
 
   @override
@@ -300,11 +302,13 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
     }
 
     if (widget.mustReset) {
-      productController.text = "";
-      typeAheadControllerEquipment.text = "";
+      log.info("RESETTING EQUIPMENT");
+      widget.productController.text = "";
+      widget.typeAheadControllerEquipment.text = "";
     } else {
-      if (widget.orderlineFormData.product != null) {
-        productController.text = widget.orderlineFormData.product!;
+      if (widget.formData.orderlineFormData!.product != null) {
+        log.info("Setting equipment text from product");
+        widget.productController.text = widget.formData.orderlineFormData!.product!;
       }
     }
 
@@ -318,7 +322,7 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
           TypeAheadFormField<EquipmentTypeAheadModel>(
             minCharsForSuggestions: 2,
             textFieldConfiguration: TextFieldConfiguration(
-                controller: typeAheadControllerEquipment,
+                controller: widget.typeAheadControllerEquipment,
                 decoration: InputDecoration(
                     labelText:
                     widget.i18n.$trans('typeahead_label_search_equipment')
@@ -357,12 +361,12 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                       ),
                       onPressed: () {
                         // create new equipment
-                        FocusScope.of(context).requestFocus(equipmentCreateFocusNode);
+                        FocusScope.of(context).requestFocus(widget.equipmentCreateFocusNode);
                         widget.widgets.showActionDialogWrapper(
                           widget.i18n.$trans('dialog_title_create_equipment'),
-                          widget.i18n.$trans('dialog_content_create_equipment', namedArgs: {'name': typeAheadControllerEquipment.text}),
+                          widget.i18n.$trans('dialog_content_create_equipment', namedArgs: {'name': widget.typeAheadControllerEquipment.text}),
                           widget.i18n.$trans('dialog_button_create_equipment'),
-                          _createSelectEquipment(context),
+                          () { _createSelectEquipment(context); },
                           context
                         );
                       },
@@ -375,7 +379,7 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
             },
             onSuggestionSelected: (EquipmentTypeAheadModel suggestion) {
               widget.onEquipmentSelect(suggestion);
-              productController.text = suggestion.name!;
+              widget.productController.text = suggestion.name!;
             },
             validator: (value) {
               return null;
@@ -406,9 +410,9 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                     children: [
                       SizedBox(width: 260,
                           child: TextFormField(
-                              controller: productController,
+                              controller: widget.productController,
                               keyboardType: TextInputType.text,
-                              focusNode: equipmentCreateFocusNode,
+                              focusNode: widget.equipmentCreateFocusNode,
                               readOnly: true,
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -420,7 +424,7 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                       ),
                       const SizedBox(width: 10),
                       Visibility(
-                        visible: widget.orderlineFormData.equipment != null,
+                        visible: widget.formData.orderlineFormData!.equipment != null,
                         child: const Icon(
                           Icons.check,
                           color: Colors.blue,
@@ -442,26 +446,29 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
     widget.bloc.add(OrderEvent(
       status: OrderEventStatus.createSelectEquipment,
       formData: widget.formData,
-      name: typeAheadControllerEquipment.text
+      name: widget.typeAheadControllerEquipment.text
     ));
   }
 }
 
 class LocationsPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
+  final TextEditingController typeAheadControllerEquipmentLocation = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final EquipmentLocationApi equipmentLocationApi = EquipmentLocationApi();
+  final FocusNode equipmentLocationCreateFocusNode = FocusNode();
+  final EquipmentLocationApi locationApi = EquipmentLocationApi();
   final FormDataClass formData;
   final CoreWidgets widgets;
-  final OrderlineFormData orderlineFormData;
   final My24i18n i18n;
   final bool mustReset;
   final Function onLocationSelect;
   final bool canCreateLocation;
   final BlocClass bloc;
 
-  const LocationsPart({
+  LocationsPart({
     super.key,
     required this.formData,
     required this.widgets,
-    required this.orderlineFormData,
     required this.i18n,
     required this.mustReset,
     required this.onLocationSelect,
@@ -474,20 +481,15 @@ class LocationsPart<BlocClass extends OrderBlocBase, FormDataClass extends BaseO
 }
 
 class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends State<LocationsPart> {
-  final TextEditingController typeAheadControllerEquipmentLocation = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final EquipmentLocationApi equipmentLocationApi = EquipmentLocationApi();
-  final FocusNode equipmentLocationCreateFocusNode = FocusNode();
   List<EquipmentLocation> locations = [];
-  final EquipmentLocationApi locationApi = EquipmentLocationApi();
   bool isCreatingLocation = false;
 
   @override
   void dispose() {
     super.dispose();
-    typeAheadControllerEquipmentLocation.dispose();
-    locationController.dispose();
-    equipmentLocationCreateFocusNode.dispose();
+    widget.typeAheadControllerEquipmentLocation.dispose();
+    widget.locationController.dispose();
+    widget.equipmentLocationCreateFocusNode.dispose();
   }
 
   @override
@@ -501,12 +503,13 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
 
   @override
   Widget build(BuildContext context) {
+    log.info("BUILD LOCATION PART; equipment: ${widget.formData.orderlineFormData!.equipment}, equipment location: ${widget.formData.orderlineFormData!.equipmentLocation}");
     if (widget.mustReset) {
-      locationController.text = "";
-      typeAheadControllerEquipmentLocation.text = "";
+      widget.locationController.text = "";
+      widget.typeAheadControllerEquipmentLocation.text = "";
     } else {
-      if (widget.orderlineFormData.location != null) {
-        locationController.text = widget.orderlineFormData.location!;
+      if (widget.formData.orderlineFormData!.location != null) {
+        widget.locationController.text = widget.formData.orderlineFormData!.location!;
       }
     }
 
@@ -520,18 +523,18 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
       return Column(
         children: [
           Visibility(
-            visible: widget.orderlineFormData.equipmentLocation == null,
+            visible: widget.formData.orderlineFormData!.equipmentLocation == null,
             child: TypeAheadFormField<EquipmentLocationTypeAheadModel>(
               minCharsForSuggestions: 2,
               textFieldConfiguration: TextFieldConfiguration(
-                  controller: typeAheadControllerEquipmentLocation,
+                  controller: widget.typeAheadControllerEquipmentLocation,
                   decoration: InputDecoration(
                       labelText:
                       widget.i18n.$trans('typeahead_label_search_location')
                   )
               ),
               suggestionsCallback: (String pattern) async {
-                return await equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
+                return await widget.equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
               },
               itemBuilder: (context, suggestion) {
                 String text = suggestion.identifier != null && suggestion.identifier != '' ?
@@ -560,8 +563,14 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                       ),
                       onPressed: () {
                         // create new location
-                        FocusScope.of(context).requestFocus(equipmentLocationCreateFocusNode);
-                        _createSelectEquipmentLocation(context);
+                        FocusScope.of(context).requestFocus(widget.equipmentLocationCreateFocusNode);
+                        widget.widgets.showActionDialogWrapper(
+                            widget.i18n.$trans('dialog_title_create_location'),
+                            widget.i18n.$trans('dialog_content_create_location', namedArgs: {'name': widget.typeAheadControllerEquipmentLocation.text}),
+                            widget.i18n.$trans('dialog_button_create_location'),
+                            () { _createSelectEquipmentLocation(context); },
+                            context
+                        );
                       },
                     )
                   ]
@@ -572,7 +581,7 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
               },
               onSuggestionSelected: (EquipmentLocationTypeAheadModel suggestion) {
                 widget.onLocationSelect(suggestion.id, suggestion.name!);
-                locationController.text = suggestion.name!;
+                widget.locationController.text = suggestion.name!;
               },
               validator: (value) {
                 return null;
@@ -603,9 +612,9 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                     children: [
                       SizedBox(width: 260,
                           child: TextFormField(
-                              controller: locationController,
+                              controller: widget.locationController,
                               keyboardType: TextInputType.text,
-                              focusNode: equipmentLocationCreateFocusNode,
+                              focusNode: widget.equipmentLocationCreateFocusNode,
                               readOnly: true,
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -617,7 +626,7 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                       ),
                       const SizedBox(width: 10),
                       Visibility(
-                        visible: widget.orderlineFormData.equipmentLocation != null,
+                        visible: widget.formData.orderlineFormData!.equipmentLocation != null,
                         child: const Icon(
                           Icons.check,
                           color: Colors.blue,
@@ -633,7 +642,7 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
     }
 
     return DropdownButtonFormField<String>(
-        value: "${widget.orderlineFormData.equipmentLocation}",
+        value: "${widget.formData.orderlineFormData!.equipmentLocation}",
         items: locations.map((EquipmentLocation location) {
           return DropdownMenuItem<String>(
             value: "${location.id}",
@@ -641,11 +650,11 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
           );
         }).toList(),
         onChanged: (String? locationId) {
-          widget.orderlineFormData.equipmentLocation = int.parse(locationId!);
+          widget.formData.orderlineFormData!.equipmentLocation = int.parse(locationId!);
           EquipmentLocation location = locations.firstWhere(
-                  (location) => location.id == widget.orderlineFormData.equipmentLocation);
+                  (location) => location.id == widget.formData.orderlineFormData!.equipmentLocation);
           widget.onLocationSelect(location.id, location.name);
-          locationController.text = location.name!;
+          widget.locationController.text = location.name!;
         }
     );
   }
@@ -658,23 +667,23 @@ class _LocationsPartState<BlocClass extends OrderBlocBase, FormDataClass extends
     widget.bloc.add(OrderEvent(
       status: OrderEventStatus.createSelectEquipmentLocation,
       formData: widget.formData,
-      name: typeAheadControllerEquipmentLocation.text
+      name: widget.typeAheadControllerEquipmentLocation.text
     ));
   }
 
   Future<void> _fetchLocations() async {
-    locations = await locationApi.fetchLocationsForSelect(branch: widget.formData.branch);
+    locations = await widget.locationApi.fetchLocationsForSelect(branch: widget.formData.branch);
   }
 
   _addListeners() {
-    locationController.addListener(_locationListen);
+    widget.locationController.addListener(_locationListen);
   }
 
   void _locationListen() {
-    if (locationController.text.isEmpty) {
-      widget.orderlineFormData.location = "";
+    if (widget.locationController.text.isEmpty) {
+      widget.formData.orderlineFormData!.location = "";
     } else {
-      widget.orderlineFormData.location = locationController.text;
+      widget.formData.orderlineFormData!.location = widget.locationController.text;
     }
   }
 }
