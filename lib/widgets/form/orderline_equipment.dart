@@ -358,7 +358,13 @@ class _EquipmentPartState<BlocClass extends OrderBlocBase, FormDataClass extends
                       onPressed: () {
                         // create new equipment
                         FocusScope.of(context).requestFocus(equipmentCreateFocusNode);
-                        _createSelectEquipment(context);
+                        widget.widgets.showActionDialogWrapper(
+                          widget.i18n.$trans('dialog_title_create_equipment'),
+                          widget.i18n.$trans('dialog_content_create_equipment', namedArgs: {'name': typeAheadControllerEquipment.text}),
+                          widget.i18n.$trans('dialog_button_create_equipment'),
+                          _createSelectEquipment(context),
+                          context
+                        );
                       },
                     )
                 ]
