@@ -1,6 +1,6 @@
 name: my24_flutter_orders
 description: "My24Service shared orders package"
-version: 0.0.1
+version: 0.1.0
 homepage: https://www.my24service.com
 publish_to: none
 
@@ -23,7 +23,7 @@ dependencies:
     git:
       url: https://github.com/My24Service/my24_flutter_core.git
   my24_flutter_equipment:
-    #    path: ../my24_flutter_core
+#        path: ../my24_flutter_equipment
     git:
       url: https://github.com/My24Service/my24_flutter_equipment.git
   my24_flutter_member_models:
