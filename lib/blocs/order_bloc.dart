@@ -31,12 +31,18 @@ enum OrderEventStatus {
   update,
   insert,
   updateFormData,
-  createSelectEquipment,
-  createSelectEquipmentLocation,
   accept,
   reject,
 
-  navDocuments,
+  addOrderLine,
+  removeOrderline,
+
+  addInfoLine,
+  removeInfoline,
+
+  addDocument,
+  removeDocument,
+
   navDetail
 }
 
@@ -59,6 +65,10 @@ class OrderEvent {
 
   final List<Equipment>? equipmentLocationUpdates;
 
+  final Orderline? orderline;
+  final OrderDocument? document;
+  final Infoline? infoline;
+
   const OrderEvent({
     this.pk,
     this.status,
@@ -72,7 +82,10 @@ class OrderEvent {
     this.deletedInfoLines,
     this.documents,
     this.deletedDocuments,
-    this.equipmentLocationUpdates
+    this.equipmentLocationUpdates,
+    this.orderline,
+    this.infoline,
+    this.document,
   });
 }
 
@@ -93,9 +106,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     }
     else if (event.status == OrderEventStatus.doSearch) {
       _handleDoSearchState(event, emit);
-    }
-    else if (event.status == OrderEventStatus.navDocuments) {
-      _handleNavDocumentsState(event, emit);
     }
     else if (event.status == OrderEventStatus.navDetail) {
       _handleNavDetailState(event, emit);
@@ -136,6 +146,70 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     else if (event.status == OrderEventStatus.reject) {
       _handleRejectState(event, emit);
     }
+    else if (event.status == OrderEventStatus.addOrderLine) {
+      _handleAddOrderLineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeOrderline) {
+      _handleRemoveOrderlineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.addInfoLine) {
+      _handleAddInfoLineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeInfoline) {
+      _handleRemoveInfolineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.addDocument) {
+      _handleAddDocumentState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeDocument) {
+      _handleRemoveDocumentState(event, emit);
+    }
+  }
+
+  void _handleAddOrderLineState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.orderlines!.add(event.orderline);
+
+    emit(OrderLineAddedState(formData: event.formData));
+  }
+
+  void _handleRemoveOrderlineState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.orderline!.id != null && !event.formData.deletedOrderLines!.contains(event.orderline!)) {
+      event.formData.deletedOrderLines!.add(event.orderline!);
+    }
+    event.formData.orderLines!.removeAt(event.formData.orderLines!.indexOf(event.orderline!));
+
+    emit(OrderLineRemovedState(formData: event.formData));
+  }
+
+  void _handleAddInfoLineState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.infolines!.add(event.infoline);
+
+    emit(InfoLineAddedState(formData: event.formData));
+  }
+
+  void _handleRemoveInfolineState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.infoline!.id != null && !event.formData.deletedInfolines!.contains(event.infoline!)) {
+      event.formData.deletedInfolines!.add(event.infoline!);
+    }
+    event.formData.infolines!.removeAt(event.formData.infolines!.indexOf(event.infoline!));
+
+    emit(InfoLineRemovedState(formData: event.formData));
+  }
+
+  void _handleAddDocumentState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.orderlines!.add(event.orderline);
+
+    emit(DocumentAddedState(formData: event.formData));
+  }
+
+  void _handleRemoveDocumentState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.document!.id != null && !event.formData.deletedDocuments!.contains(event.document!)) {
+      event.formData.deletedDocuments!.add(event.document!);
+    }
+
+    event.formData.documents!.removeAt(event.formData.documents!.indexOf(event.document!));
+
+    emit(DocumentRemovedState(formData: event.formData));
   }
 
   void _handleUpdateFormDataState(OrderEvent event, Emitter<OrderState> emit) {
@@ -157,10 +231,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   void _handleDoAsyncState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadingState());
-  }
-
-  void _handleNavDocumentsState(OrderEvent event, Emitter<OrderState> emit) {
-    emit(OrderNavDocumentsState(orderPk: event.pk!));
   }
 
   void _handleNavDetailState(OrderEvent event, Emitter<OrderState> emit) {

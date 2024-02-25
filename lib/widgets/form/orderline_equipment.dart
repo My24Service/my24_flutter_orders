@@ -184,10 +184,6 @@ class _OrderlineFormEquipmentState<
 
       Orderline orderline = widget.orderlineFormData.toModel();
 
-      widget.formData.orderLines!.add(orderline);
-      widget.orderlineFormData.reset(widget.formData.id);
-      remarksController.text = "";
-
       // check if we need to update equipment
       if (setLocationToEquipment) {
         final Equipment updateEquipment = Equipment(
@@ -201,19 +197,19 @@ class _OrderlineFormEquipmentState<
       final orderBloc = BlocProvider.of<BlocClass>(context);
       orderBloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       orderBloc.add(OrderEvent(
-          status: OrderEventStatus.updateFormData,
-          formData: widget.formData
+        status: OrderEventStatus.addOrderLine,
+        formData: widget.formData,
+        orderline: orderline
       ));
 
       final orderLineBloc = BlocProvider.of<OrderLineBloc>(context);
       orderLineBloc.add(OrderLineEvent(
-        status: OrderLineStatus.added,
-        formData: widget.orderlineFormData
-      ));
-      orderLineBloc.add(OrderLineEvent(
           status: OrderLineStatus.newFormData,
           order: widget.formData.id
       ));
+
+      widget.orderlineFormData.reset(widget.formData.id);
+      remarksController.text = "";
     } else {
       log.severe("error adding orderline; equipment: ${widget.orderlineFormData.equipment}, equipment location: ${widget.orderlineFormData.equipmentLocation}");
       widget.widgets.displayDialog(context,

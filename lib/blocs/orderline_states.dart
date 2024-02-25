@@ -66,8 +66,3 @@ class OrderLineLoadingState extends OrderLineBaseState {
   @override
   List<Object> get props => [];
 }
-
-class OrderLineAddedState extends OrderLineBaseState {
-  @override
-  List<Object> get props => [];
-}

@@ -17,7 +17,6 @@ enum OrderLineStatus {
   createSelectEquipment,
   createSelectEquipmentLocation,
   doAsync,
-  added
 }
 
 final log = Logger('orderline_bloc');
@@ -62,8 +61,6 @@ class OrderLineBloc extends Bloc<OrderLineEvent, OrderLineBaseState> {
       }
       else if (event.status == OrderLineStatus.createSelectEquipmentLocation) {
         await _handleCreateSelectEquipmentLocation(event, emit);
-      } else if (event.status == OrderLineStatus.added) {
-        _handleAdded(event, emit);
       }
     },
     transformer: sequential());
@@ -71,10 +68,6 @@ class OrderLineBloc extends Bloc<OrderLineEvent, OrderLineBaseState> {
 
   void _handleDoAsyncState(OrderLineEvent event, Emitter<OrderLineBaseState> emit) {
     emit(OrderLineLoadingState());
-  }
-
-  void _handleAdded(OrderLineEvent event, Emitter<OrderLineBaseState> emit) {
-    emit(OrderLineAddedState());
   }
 
   void _handleUpdateFormData(OrderLineEvent event, Emitter<OrderLineBaseState> emit) {

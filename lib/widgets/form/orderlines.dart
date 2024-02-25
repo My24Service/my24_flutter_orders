@@ -121,21 +121,14 @@ class OrderlineList<
     );
   }
 
-  updateFormData(BuildContext context) {
+  _delete(BuildContext context, Orderline orderLine) {
     final bloc = BlocProvider.of<BlocClass>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
-        formData: formData
+      status: OrderEventStatus.removeOrderline,
+      formData: formData,
+      orderline: orderLine
     ));
-  }
-
-  _delete(BuildContext context, Orderline orderLine) {
-    if (orderLine.id != null && !formData.deletedOrderLines!.contains(orderLine)) {
-      formData.deletedOrderLines!.add(orderLine);
-    }
-    formData.orderLines!.removeAt(formData.orderLines!.indexOf(orderLine));
-    updateFormData(context);
   }
 
   _showDeleteDialog(BuildContext context, Orderline orderLine) {
@@ -208,10 +201,6 @@ class OrderlineForm<
     if (state is OrderLineNewLocationCreatedState) {
       widgets.createSnackBar(context, i18n.$trans('location_created'));
     }
-
-    if (state is OrderLineAddedState) {
-      widgets.createSnackBar(context, i18n.$trans('snackbar_added'));
-    }
   }
 
   Widget _getBody(context, state) {
@@ -220,8 +209,8 @@ class OrderlineForm<
     }
 
     if (state is OrderLineNewFormDataState || state is OrderLineLoadedState ||
-        state is OrderLineNewEquipmentCreatedState || state is OrderLineNewLocationCreatedState ||
-        state is OrderLineAddedState) {
+        state is OrderLineNewEquipmentCreatedState || state is OrderLineNewLocationCreatedState
+    ) {
       if (hasBranches || formData.customerBranchId != null) {
         return OrderlineFormEquipment(
           formData: formData,

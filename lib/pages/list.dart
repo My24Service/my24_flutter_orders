@@ -196,6 +196,30 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(OrderEvent(status: fetchMode));
     }
+
+    if (state is OrderLineAddedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_orderline_added'));
+    }
+
+    if (state is OrderLineRemovedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_orderline_removed'));
+    }
+
+    if (state is InfoLineAddedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_infoline_added'));
+    }
+
+    if (state is InfoLineRemovedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_infoline_removed'));
+    }
+
+    if (state is DocumentAddedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_document_added'));
+    }
+
+    if (state is DocumentRemovedState) {
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_document_removed'));
+    }
   }
 
   Widget getBody(context, state, OrderPageMetaData orderPageMetaData) {
