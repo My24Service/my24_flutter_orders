@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_equipment/models/location/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/models.dart';
 import 'package:my24_flutter_member_models/private/api.dart';
-import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import '../models/document/api.dart';
 import '../models/document/models.dart';
@@ -49,7 +47,6 @@ class OrderEvent {
   final String? query;
   final Order? order;
   final dynamic formData;
-  final String? name;
 
   final List<Orderline>? orderLines;
   final List<Orderline>? deletedOrderLines;
@@ -69,7 +66,6 @@ class OrderEvent {
     this.query,
     this.order,
     this.formData,
-    this.name,
     this.orderLines,
     this.infoLines,
     this.deletedOrderLines,
@@ -134,12 +130,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     else if (event.status == OrderEventStatus.updateFormData) {
       _handleUpdateFormDataState(event, emit);
     }
-    else if (event.status == OrderEventStatus.createSelectEquipment) {
-      await _handleCreateSelectEquipment(event, emit);
-    }
-    else if (event.status == OrderEventStatus.createSelectEquipmentLocation) {
-      await _handleCreateSelectEquipmentLocation(event, emit);
-    }
     else if (event.status == OrderEventStatus.accept) {
       _handleAcceptState(event, emit);
     }
@@ -150,72 +140,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   void _handleUpdateFormDataState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadedState(formData: event.formData));
-  }
-
-  Future<void> _handleCreateSelectEquipment(OrderEvent event, Emitter<OrderState> emit) async {
-    final bool hasBranches = (await coreUtils.getHasBranches())!;
-    EquipmentCreateQuickResponse response;
-
-    try {
-      if (hasBranches) {
-        final EquipmentCreateQuickBranch equipment = EquipmentCreateQuickBranch(
-          name: event.name!,
-          branch: event.formData!.branch,
-        );
-
-        response = await equipmentApi.createQuickBranch(equipment);
-        event.formData!.equipmentCreateQuickResponse = response;
-      } else {
-        final EquipmentCreateQuickCustomer equipment = EquipmentCreateQuickCustomer(
-          name: event.name!,
-          customer: event.formData!.customerPk,
-        );
-
-        response = await equipmentApi.createQuickCustomer(equipment);
-        event.formData!.equipmentCreateQuickResponse = response;
-      }
-
-      emit(OrderNewEquipmentCreatedState(
-        formData: event.formData,
-      ));
-    } catch(e) {
-      event.formData!.error = e.toString();
-      emit(OrderErrorSnackbarState(message: e.toString()));
-      event.formData!.isCreatingEquipment = false;
-      emit(OrderLoadedState(formData: event.formData));
-    }
-  }
-
-  Future<void> _handleCreateSelectEquipmentLocation(OrderEvent event, Emitter<OrderState> emit) async {
-    final bool hasBranches = (await coreUtils.getHasBranches())!;
-    EquipmentLocationCreateQuickResponse response;
-
-    try {
-      if (hasBranches) {
-        final EquipmentLocationCreateQuickBranch location = EquipmentLocationCreateQuickBranch(
-          name: event.name!,
-          branch: event.formData!.branch,
-        );
-
-        response = await locationApi.createQuickBranch(location);
-        event.formData!.equipmentLocationCreateQuickResponse = response;
-      } else {
-        final EquipmentLocationCreateQuickCustomer location = EquipmentLocationCreateQuickCustomer(
-          name: event.name!,
-          customer: event.formData!.customerPk,
-        );
-
-        response = await locationApi.createQuickCustomer(location);
-        event.formData!.equipmentLocationCreateQuickResponse = response;
-      }
-
-      emit(OrderNewLocationCreatedState(formData: event.formData));
-    } catch(e) {
-      event.formData!.error = e.toString();
-      emit(OrderErrorSnackbarState(message: e.toString()));
-      event.formData!.isCreatingLocation = false;
-      emit(OrderLoadedState(formData: event.formData));
-    }
   }
 
   Future<FormData> addQuickCreateSettings(FormData data) async {

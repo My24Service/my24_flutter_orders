@@ -328,24 +328,6 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       );
     }
 
-    if (state is OrderNewEquipmentCreatedState) {
-      return getOrderFormWidget(
-        formData: state.formData,
-        orderPageMetaData: orderPageMetaData,
-        fetchEvent: fetchMode,
-        widgets: widgets,
-      );
-    }
-
-    if (state is OrderNewLocationCreatedState) {
-      return getOrderFormWidget(
-        formData: state.formData,
-        orderPageMetaData: orderPageMetaData,
-        fetchEvent: fetchMode,
-        widgets: widgets,
-      );
-    }
-
     if (state is OrderLoadedState) {
       return getOrderFormWidget(
         formData: state.formData,

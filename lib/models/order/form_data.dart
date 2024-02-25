@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_equipment/models/equipment/models.dart';
-import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import 'package:my24_flutter_orders/models/document/models.dart';
 import '../infoline/form_data.dart';
 import '../infoline/models.dart';
-import '../orderline/form_data.dart';
 import '../orderline/models.dart';
 import 'models.dart';
 
@@ -55,11 +53,8 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
 
   String? error;
 
-  EquipmentCreateQuickResponse? equipmentCreateQuickResponse;
-  EquipmentLocationCreateQuickResponse? equipmentLocationCreateQuickResponse;
   List<Equipment>? equipmentLocationUpdates = [];
 
-  OrderlineFormData? orderlineFormData;
   InfolineFormData? infolineFormData;
 
   QuickCreateSettings? quickCreateSettings;
@@ -148,14 +143,11 @@ abstract class BaseOrderFormData extends BaseFormData<Order> {
     this.customerOrderAccepted,
     this.error,
 
-    this.equipmentCreateQuickResponse,
-    this.equipmentLocationCreateQuickResponse,
     this.equipmentLocationUpdates,
 
     this.quickCreateSettings,
     this.customerBranchId,
 
-    this.orderlineFormData,
     this.infolineFormData
   });
 }

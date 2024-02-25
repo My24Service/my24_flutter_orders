@@ -1,4 +1,6 @@
 import 'package:my24_flutter_core/models/base_models.dart';
+import 'package:my24_flutter_equipment/models/equipment/models.dart';
+import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import 'models.dart';
 
@@ -11,6 +13,11 @@ class OrderlineFormData extends BaseFormData<Orderline> {
   String? location;
   String? product;
   String? remarks;
+
+  EquipmentCreateQuickResponse? equipmentCreateQuickResponse;
+  EquipmentLocationCreateQuickResponse? equipmentLocationCreateQuickResponse;
+
+  bool? equipmentHasLocation;
 
   bool isValid() {
     if (product == "") {
@@ -54,6 +61,7 @@ class OrderlineFormData extends BaseFormData<Orderline> {
       location: null,
       product: null,
       remarks: null,
+      equipmentHasLocation: false
     );
   }
 
@@ -66,6 +74,7 @@ class OrderlineFormData extends BaseFormData<Orderline> {
       location: orderline.location,
       product: orderline.product,
       remarks: orderline.remarks,
+      equipmentHasLocation: false
     );
   }
 
@@ -77,5 +86,8 @@ class OrderlineFormData extends BaseFormData<Orderline> {
     this.location,
     this.product,
     this.remarks,
+    this.equipmentCreateQuickResponse,
+    this.equipmentLocationCreateQuickResponse,
+    this.equipmentHasLocation
   });
 }

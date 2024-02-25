@@ -10,6 +10,8 @@ import 'package:my24_flutter_orders/widgets/form/orderline_no_equipment.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
+import '../../blocs/orderline_bloc.dart';
+import '../../blocs/orderline_states.dart';
 import 'orderline_equipment.dart';
 
 final log = Logger('orders.form.orderlines');
@@ -34,35 +36,35 @@ class OrderlinesWidget<
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          border: Border.all(
+        decoration: BoxDecoration(
             color: Colors.grey.shade300,
-          ),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(5),
-          )
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        children: [
-          widgets.createHeader(i18n.$trans('header')),
-          OrderlineList(
+            border: Border.all(
+              color: Colors.grey.shade300,
+            ),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(5),
+            )
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          children: [
+            widgets.createHeader(i18n.$trans('header')),
+            OrderlineList(
             widgets: widgets,
             formData: formData,
             i18n: i18n,
-          ),
-          widgets.createHeader(i18n.$trans('header_new')),
-          OrderlineForm(
-            formData: formData,
-            widgets: widgets,
-            isPlanning: isPlanning,
-            hasBranches: hasBranches,
-            i18n: i18n,
-          ),
-        ],
-      ),
-    );
+            ),
+            widgets.createHeader(i18n.$trans('header_new')),
+            OrderlineForm(
+              formData: formData,
+              widgets: widgets,
+              isPlanning: isPlanning,
+              hasBranches: hasBranches,
+              i18n: i18n,
+            ),
+          ],
+        ),
+      );
   }
 }
 
@@ -147,9 +149,8 @@ class OrderlineList<
 }
 
 class OrderlineForm<
-  BlocClass extends OrderBlocBase,
   FormDataClass extends BaseOrderFormData
-> extends StatefulWidget {
+> extends StatelessWidget {
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
@@ -166,43 +167,81 @@ class OrderlineForm<
   });
 
   @override
-  State<StatefulWidget> createState() => _OrderlineFormState();
-}
-
-class _OrderlineFormState<
-  BlocClass extends OrderBlocBase,
-  FormDataClass extends BaseOrderFormData
-> extends State<OrderlineForm> {
-  @override
-  void initState() {
-    widget.formData.orderlineFormData!.order = widget.formData.id;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    log.info("BUILD ORDERLINE; equipment: ${widget.formData.orderlineFormData!.equipment}, equipment location: ${widget.formData.orderlineFormData!.equipmentLocation}");
+    return BlocProvider(
+        create: (context) =>  _initialCall(context), // OrderLineBloc(),
+        child: BlocConsumer<OrderLineBloc, OrderLineBaseState>(
+          listener: (context, state) {
+            _handleListeners(context, state);
+          },
+          builder: (context, state) {
+            return _getBody(context, state);
+          }
+        )
+    );
+  }
 
-    if (widget.hasBranches || widget.formData.customerBranchId != null) {
-      return OrderlineFormEquipment(
-        formData: widget.formData,
-        widgets: widget.widgets,
-        isPlanning: widget.isPlanning,
-        i18n: widget.i18n,
+  OrderLineBloc _initialCall(BuildContext context) {
+    final bloc = OrderLineBloc();
+    bloc.add(OrderLineEvent(
+      status: OrderLineStatus.newFormData,
+      order: formData.id
+    ));
+
+    return bloc;
+  }
+
+  _handleListeners(context, state) {
+    if (state is OrderLineErrorSnackbarState) {
+      if (context.mounted) {
+        widgets.createSnackBar(context, i18n.$trans(
+            'error_arg', pathOverride: 'generic',
+            namedArgs: {'error': "${state.message}"}
+        ));
+      }
+    }
+
+    if (state is OrderLineNewEquipmentCreatedState) {
+      widgets.createSnackBar(context, i18n.$trans('equipment_created'));
+    }
+
+    if (state is OrderLineNewLocationCreatedState) {
+      widgets.createSnackBar(context, i18n.$trans('location_created'));
+    }
+
+    if (state is OrderLineAddedState) {
+      widgets.createSnackBar(context, i18n.$trans('snackbar_added'));
+    }
+  }
+
+  Widget _getBody(context, state) {
+    if (state is OrderLineLoadingState) {
+      return widgets.loadingNotice();
+    }
+
+    if (state is OrderLineNewFormDataState || state is OrderLineLoadedState ||
+        state is OrderLineNewEquipmentCreatedState || state is OrderLineNewLocationCreatedState ||
+        state is OrderLineAddedState) {
+      if (hasBranches || formData.customerBranchId != null) {
+        return OrderlineFormEquipment(
+          formData: formData,
+          widgets: widgets,
+          isPlanning: isPlanning,
+          i18n: i18n,
+          orderlineFormData: state.formData,
+        );
+      }
+
+      return OrderlineFormNoEquipment(
+        formData: formData,
+        widgets: widgets,
+        isPlanning: isPlanning,
+        i18n: i18n,
+        orderlineFormData: state.formData,
       );
     }
 
-    return OrderlineFormNoEquipment(
-      formData: widget.formData,
-      widgets: widget.widgets,
-      isPlanning: widget.isPlanning,
-      i18n: widget.i18n,
-    );
+    return widgets.loadingNotice();
   }
 }
 

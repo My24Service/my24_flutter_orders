@@ -87,24 +87,6 @@ class OrderNewState extends OrderState {
   List<Object?> get props => [formData];
 }
 
-class OrderNewEquipmentCreatedState extends OrderState {
-  final dynamic formData;
-
-  OrderNewEquipmentCreatedState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
-}
-
-class OrderNewLocationCreatedState extends OrderState {
-  final dynamic formData;
-
-  OrderNewLocationCreatedState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
-}
-
 class OrdersLoadedState extends OrderState {
   final Orders? orders;
   final String? query;
