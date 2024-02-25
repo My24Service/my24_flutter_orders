@@ -167,9 +167,10 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
   }
 
   void _handleAddOrderLineState(OrderEvent event, Emitter<OrderState> emit) {
-    event.formData.orderlines!.add(event.orderline);
+    event.formData.orderLines!.add(event.orderline);
 
-    emit(OrderLineAddedState(formData: event.formData));
+    emit(OrderLineAddedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleRemoveOrderlineState(OrderEvent event, Emitter<OrderState> emit) {
@@ -178,28 +179,32 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     }
     event.formData.orderLines!.removeAt(event.formData.orderLines!.indexOf(event.orderline!));
 
-    emit(OrderLineRemovedState(formData: event.formData));
+    emit(OrderLineRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleAddInfoLineState(OrderEvent event, Emitter<OrderState> emit) {
-    event.formData.infolines!.add(event.infoline);
+    event.formData.infoLines!.add(event.infoline);
 
-    emit(InfoLineAddedState(formData: event.formData));
+    emit(InfoLineAddedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleRemoveInfolineState(OrderEvent event, Emitter<OrderState> emit) {
     if (event.infoline!.id != null && !event.formData.deletedInfolines!.contains(event.infoline!)) {
       event.formData.deletedInfolines!.add(event.infoline!);
     }
-    event.formData.infolines!.removeAt(event.formData.infolines!.indexOf(event.infoline!));
+    event.formData.infoLines!.removeAt(event.formData.infoLines!.indexOf(event.infoline!));
 
-    emit(InfoLineRemovedState(formData: event.formData));
+    emit(InfoLineRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleAddDocumentState(OrderEvent event, Emitter<OrderState> emit) {
-    event.formData.orderlines!.add(event.orderline);
+    event.formData.documents!.add(event.document);
 
-    emit(DocumentAddedState(formData: event.formData));
+    emit(DocumentAddedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleRemoveDocumentState(OrderEvent event, Emitter<OrderState> emit) {
@@ -209,7 +214,8 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
     event.formData.documents!.removeAt(event.formData.documents!.indexOf(event.document!));
 
-    emit(DocumentRemovedState(formData: event.formData));
+    emit(DocumentRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleUpdateFormDataState(OrderEvent event, Emitter<OrderState> emit) {
