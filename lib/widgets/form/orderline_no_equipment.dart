@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
@@ -8,7 +9,10 @@ import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
+import '../../blocs/orderline_bloc.dart';
 import '../../models/orderline/form_data.dart';
+
+final log = Logger('orders.form.orderlines.no_equipment');
 
 class OrderlineFormNoEquipment<
   BlocClass extends OrderBlocBase,
@@ -142,15 +146,6 @@ class _OrderlineFormNoEquipmentState<
     }
   }
 
-  updateFormData(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
-        formData: widget.formData
-    ));
-  }
-
   void _addOrderLine(BuildContext context) {
     if (this.formKey.currentState!.validate()) {
       this.formKey.currentState!.save();
@@ -162,10 +157,22 @@ class _OrderlineFormNoEquipmentState<
       remarksController.text = '';
       locationController.text = '';
       productController.text = '';
-      widget.orderlineFormData.reset(widget.formData.id);
 
-      updateFormData(context);
+      final bloc = BlocProvider.of<BlocClass>(context);
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(OrderEvent(
+        status: OrderEventStatus.addOrderLine,
+        formData: widget.formData,
+        orderline: orderline
+      ));
+
+      final orderLineBloc = BlocProvider.of<OrderLineBloc>(context);
+      orderLineBloc.add(OrderLineEvent(
+          status: OrderLineStatus.newFormData,
+          order: widget.formData.id
+      ));
     } else {
+      log.severe("error adding orderline");
       widget.widgets.displayDialog(
           context,
           My24i18n.tr('generic.error_dialog_title'),

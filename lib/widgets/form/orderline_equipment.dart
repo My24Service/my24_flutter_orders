@@ -73,6 +73,8 @@ class _OrderlineFormEquipmentState<
       widget.orderlineFormData.location = widget.orderlineFormData.equipmentLocationCreateQuickResponse!.name!;
     }
 
+    remarksController.text = widget.orderlineFormData.remarks!;
+
     return Form(
         key: widget.formKey,
         child: Column(
@@ -207,9 +209,6 @@ class _OrderlineFormEquipmentState<
           status: OrderLineStatus.newFormData,
           order: widget.formData.id
       ));
-
-      widget.orderlineFormData.reset(widget.formData.id);
-      remarksController.text = "";
     } else {
       log.severe("error adding orderline; equipment: ${widget.orderlineFormData.equipment}, equipment location: ${widget.orderlineFormData.equipmentLocation}");
       widget.widgets.displayDialog(context,
@@ -268,10 +267,7 @@ class _EquipmentPartState extends State<EquipmentPart> {
       });
     }
 
-    if (widget.orderlineFormData.product != null) {
-      log.info("Setting equipment text from product");
-      widget.productController.text = widget.orderlineFormData.product!;
-    }
+    widget.productController.text = widget.orderlineFormData.product!;
 
     // we need the top level context is the dialog call
     BuildContext mainContext = context;
@@ -489,16 +485,13 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
 
   @override
   Widget build(BuildContext context) {
-    log.info("BUILD LOCATION PART; equipment: ${widget.orderlineFormData.equipment}, equipment location: ${widget.orderlineFormData.equipmentLocation}");
-    if (widget.orderlineFormData.location != null) {
-      widget.locationController.text = widget.orderlineFormData.location!;
-    }
-
     if (widget.orderlineFormData.equipmentLocationCreateQuickResponse != null) {
       setState(() {
         isCreatingLocation = false;
       });
     }
+
+    widget.locationController.text = widget.orderlineFormData.location!;
 
     // we need the top level context is the dialog call
     BuildContext mainContext = context;

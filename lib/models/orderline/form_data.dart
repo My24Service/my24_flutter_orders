@@ -27,16 +27,6 @@ class OrderlineFormData extends BaseFormData<Orderline> {
     return true;
   }
 
-  void reset(int? order) {
-    id = null;
-    order = order;
-    equipment = null;
-    equipmentLocation = null;
-    location = "";
-    product = null;
-    remarks = null;
-  }
-
   @override
   Orderline toModel() {
     Orderline orderline = Orderline(
@@ -58,9 +48,9 @@ class OrderlineFormData extends BaseFormData<Orderline> {
       order: order,
       equipment: null,
       equipmentLocation: null,
-      location: null,
-      product: null,
-      remarks: null,
+      location: "",
+      product: "",
+      remarks: "",
       equipmentHasLocation: false
     );
   }
