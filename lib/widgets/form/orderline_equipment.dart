@@ -562,7 +562,7 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                 widget.orderlineFormData.equipmentLocation = suggestion.id!;
                 widget.orderlineFormData.location = suggestion.name!;
 
-                _updateFormData();
+                // _updateFormData();
               },
               validator: (value) {
                 return null;
@@ -636,19 +636,8 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
           widget.locationController.text = location.name!;
 
           widget.orderlineFormData.equipmentLocation = location.id!;
-
-          _updateFormData();
         }
     );
-  }
-
-  void _updateFormData() {
-    final bloc = BlocProvider.of<OrderLineBloc>(context);
-    bloc.add(OrderLineEvent(status: OrderLineStatus.doAsync));
-    bloc.add(OrderLineEvent(
-        status: OrderLineStatus.updateFormData,
-        formData: widget.orderlineFormData
-    ));
   }
 
   _createSelectEquipmentLocation(BuildContext context) {

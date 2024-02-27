@@ -19,7 +19,7 @@ dependencies:
   cached_network_image: ^3.2.1
   logging: ^1.2.0
   my24_flutter_core:
-    #    path: ../my24_flutter_core
+#        path: ../my24_flutter_core
     git:
       url: https://github.com/My24Service/my24_flutter_core.git
   my24_flutter_equipment:
@@ -27,7 +27,7 @@ dependencies:
     git:
       url: https://github.com/My24Service/my24_flutter_equipment.git
   my24_flutter_member_models:
-    #    path: ../my24_flutter_core
+    #    path: ../my24_flutter_member_models
     git:
       url: https://github.com/My24Service/my24_flutter_member_models.git
   flutter:
