@@ -16,10 +16,6 @@ enum OrderEventStatus {
   fetchPast,
 
   delete,
-
-  navDetail,
-  navFormNew,
-  navFormEdit
 }
 
 class OrderEvent {
@@ -49,15 +45,6 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
       else if (event.status == OrderEventStatus.doSearch) {
         _handleDoSearchState(event, emit);
       }
-      else if (event.status == OrderEventStatus.navDetail) {
-        _handleNavDetailState(event, emit);
-      }
-      else if (event.status == OrderEventStatus.navFormNew) {
-        _handleNavFormNewState(event, emit);
-      }
-      else if (event.status == OrderEventStatus.navFormEdit) {
-        _handleNavFormEditState(event, emit);
-      }
       else if (event.status == OrderEventStatus.doRefresh) {
         _handleDoRefreshState(event, emit);
       }
@@ -82,18 +69,6 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
 
   void _handleDoAsyncState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadingState());
-  }
-
-  void _handleNavDetailState(OrderEvent event, Emitter<OrderState> emit) {
-    emit(OrderNavDetailState(orderPk: event.pk!));
-  }
-
-  void _handleNavFormNewState(OrderEvent event, Emitter<OrderState> emit) {
-    emit(OrderNavFormNewState());
-  }
-
-  void _handleNavFormEditState(OrderEvent event, Emitter<OrderState> emit) {
-    emit(OrderNavFormEditState(orderPk: event.pk!));
   }
 
   void _handleDoSearchState(OrderEvent event, Emitter<OrderState> emit) {

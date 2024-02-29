@@ -9,7 +9,7 @@ import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/widgets/list.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 
-class PastListWidget extends OrderListWidget {
+class PastListWidget extends BaseOrderListWidget {
   PastListWidget({
     Key? key,
     required List<Order>? orderList,
@@ -40,5 +40,15 @@ class PastListWidget extends OrderListWidget {
         onStretch: doRefresh
     );
     return factory.createAppBar();
+  }
+
+  @override
+  void navDetail(BuildContext context, int orderPk) {
+    super.navOrderDetail(context, orderPk);
+  }
+
+  @override
+  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
+    super.navOrderForm(context, orderPk);
   }
 }

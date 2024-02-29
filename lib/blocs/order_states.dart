@@ -9,40 +9,6 @@ class OrderInitialState extends OrderState {
   List<Object> get props => [];
 }
 
-class OrderNavDocumentsState extends OrderState {
-  final int orderPk;
-
-  OrderNavDocumentsState({ required this.orderPk });
-
-  @override
-  List<Object> get props => [];
-}
-
-class OrderNavDetailState extends OrderState {
-  final int orderPk;
-
-  OrderNavDetailState({ required this.orderPk });
-
-  @override
-  List<Object> get props => [];
-}
-
-class OrderNavFormNewState extends OrderState {
-  OrderNavFormNewState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class OrderNavFormEditState extends OrderState {
-  final int orderPk;
-
-  OrderNavFormEditState({ required this.orderPk });
-
-  @override
-  List<Object> get props => [];
-}
-
 class OrderLoadingState extends OrderState {
   @override
   List<Object> get props => [];

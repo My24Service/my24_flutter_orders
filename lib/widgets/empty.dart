@@ -7,11 +7,11 @@ import 'package:my24_flutter_core/i18n.dart';
 
 import '../../blocs/order_bloc.dart';
 
-class OrderListEmptyWidget extends BaseEmptyWidget {
+abstract class BaseOrderListEmptyWidget extends BaseEmptyWidget {
   final OrderEventStatus fetchEvent;
   final TextEditingController searchController = TextEditingController();
 
-  OrderListEmptyWidget({
+  BaseOrderListEmptyWidget({
     Key? key,
     String? memberPicture,
     required CoreWidgets widgetsIn,
@@ -23,6 +23,8 @@ class OrderListEmptyWidget extends BaseEmptyWidget {
     widgetsIn: widgetsIn,
     i18nIn: i18nIn
   );
+
+  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode);
 
   @override
   String getEmptyMessage() {
@@ -62,10 +64,11 @@ class OrderListEmptyWidget extends BaseEmptyWidget {
     ));
   }
 
-  handleNew(BuildContext context) {
-    final bloc = BlocProvider.of<OrderBloc>(context);
-    bloc.add(const OrderEvent(
-        status: OrderEventStatus.navFormNew
-    ));
+  navOrderForm(BuildContext context, int? orderPk, {OrderEventStatus? fetchMode}) {
+    navForm(context, orderPk, fetchMode ?? fetchEvent);
+  }
+
+  handleNew(BuildContext context, {OrderEventStatus? fetchMode}) {
+    navForm(context, null, fetchMode ?? fetchEvent);
   }
 }

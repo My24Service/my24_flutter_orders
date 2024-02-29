@@ -10,14 +10,14 @@ import '../../common/widgets.dart';
 import '../../models/order/models.dart';
 import '../../blocs/order_bloc.dart';
 
-class OrderListWidget extends BaseSliverListStatelessWidget {
+abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
   final OrderPageMetaData orderPageMetaData;
   final List<Order>? orderList;
   final OrderEventStatus fetchEvent;
   final String? searchQuery;
   final TextEditingController searchController = TextEditingController();
 
-  OrderListWidget({
+  BaseOrderListWidget({
     Key? key,
     required this.orderList,
     required this.orderPageMetaData,
@@ -25,7 +25,7 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
     required this.searchQuery,
     required PaginationInfo paginationInfo,
     required CoreWidgets widgetsIn,
-    required My24i18n i18nIn
+    required My24i18n i18nIn,
   }) : super(
     key: key,
     paginationInfo: paginationInfo,
@@ -35,6 +35,9 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
   ) {
     searchController.text = searchQuery ?? '';
   }
+
+  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode);
+  void navDetail(BuildContext context, int orderPk);
 
   @override
   Widget getBottomSection(BuildContext context) {
@@ -176,18 +179,11 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
   }
 
   handleNew(BuildContext context) {
-    final bloc = BlocProvider.of<OrderBloc>(context);
-    bloc.add(const OrderEvent(
-        status: OrderEventStatus.navFormNew
-    ));
+    navForm(context, null, fetchEvent);
   }
 
   doEdit(BuildContext context, int orderPk) {
-    final bloc = BlocProvider.of<OrderBloc>(context);
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.navFormEdit,
-        pk: orderPk
-    ));
+    navForm(context, orderPk, fetchEvent);
   }
 
   doDelete(BuildContext context, int orderPk) async {
@@ -200,10 +196,10 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
   }
 
   navOrderDetail(BuildContext context, int orderPk) {
-    final bloc = BlocProvider.of<OrderBloc>(context);
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.navDetail,
-        pk: orderPk
-    ));
+    navDetail(context, orderPk);
+  }
+
+  navOrderForm(BuildContext context, int? orderPk) {
+    navForm(context, orderPk, fetchEvent);
   }
 }

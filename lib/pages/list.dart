@@ -9,9 +9,7 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
-import 'package:my24_flutter_orders/widgets/list.dart';
 import 'package:my24_flutter_orders/widgets/error.dart';
-import 'package:my24_flutter_orders/widgets/empty.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/widgets/past/empty.dart';
 import 'package:my24_flutter_orders/widgets/past/error.dart';
@@ -38,9 +36,6 @@ abstract class BaseOrderListPage extends StatelessWidget {
   Future<Widget?> getDrawerForUserWithSubmodel(
       BuildContext context, String? submodel);
 
-  void navDetail(BuildContext context, int orderPk);
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode);
-
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
     bool? hasBranches = await utils.getHasBranches();
@@ -64,6 +59,22 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
     return bloc;
   }
+
+  Widget getOrderListWidget({
+    List<Order>? orderList,
+    required OrderPageMetaData orderPageMetaData,
+    required OrderEventStatus fetchEvent,
+    String? searchQuery,
+    required PaginationInfo paginationInfo,
+    required CoreWidgets widgetsIn,
+    required My24i18n i18nIn,
+  });
+
+  Widget getOrderListEmptyWidget({
+    required widgetsIn,
+    required i18nIn,
+    required fetchEvent
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,24 +120,6 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
     final OrderBloc bloc = BlocProvider.of<OrderBloc>(context);
 
-    if (state is OrderNavDetailState) {
-      if (context.mounted) {
-        navDetail(context, state.orderPk);
-      }
-    }
-
-    if (state is OrderNavFormNewState) {
-      if (context.mounted) {
-        navForm(context, null, fetchMode);
-      }
-    }
-
-    if (state is OrderNavFormEditState) {
-      if (context.mounted) {
-        navForm(context, state.orderPk, fetchMode);
-      }
-    }
-
     if (state is OrderErrorSnackbarState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans(
@@ -146,7 +139,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
     }
   }
 
-  Widget _getBody(context, state, OrderPageMetaData orderPageMetaData) {
+  Widget? _getBody(context, state, OrderPageMetaData orderPageMetaData) {
     log.info("_getBody state: $state");
 
     if (state is OrderErrorState) {
@@ -187,7 +180,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
     if (state is OrdersLoadedState) {
       if (state.orders!.results!.isEmpty) {
-        return OrderListEmptyWidget(
+        return getOrderListEmptyWidget(
           fetchEvent: fetchMode,
           widgetsIn: widgets,
           i18nIn: i18n,
@@ -202,7 +195,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
           pageSize: orderPageMetaData.pageSize
       );
 
-      return OrderListWidget(
+      return getOrderListWidget(
         orderList: state.orders!.results,
         orderPageMetaData: orderPageMetaData,
         fetchEvent: fetchMode,
@@ -269,6 +262,9 @@ abstract class BaseOrderListPage extends StatelessWidget {
       );
     }
 
-    return widgets.loadingNotice();
+    if (state is OrderLoadingState) {
+      return widgets.loadingNotice();
+    }
+    return null;
   }
 }

@@ -116,6 +116,7 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
         navList(context, fetchMode);
+        return;
       }
     }
 
@@ -123,6 +124,7 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_updated'));
         navList(context, fetchMode);
+        return;
       }
     }
 
@@ -139,6 +141,7 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_accepted'));
         navList(context, fetchMode);
+        return;
       }
     }
 
@@ -146,12 +149,14 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_rejected'));
         navList(context, fetchMode);
+        return;
       }
     }
 
     if (state is OrderFormNavListState) {
       if (context.mounted) {
         navList(context, fetchMode);
+        return;
       }
     }
 
@@ -180,7 +185,7 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
     }
   }
 
-  Widget _getBody(context, state, OrderPageMetaData orderPageMetaData) {
+  Widget? _getBody(context, state, OrderPageMetaData orderPageMetaData) {
     log.info("_getBody state: $state");
 
     if (state is OrderNewState) {
@@ -201,6 +206,9 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       );
     }
 
-    return widgets.loadingNotice();
+    if (state is OrderLoadingState) {
+      return widgets.loadingNotice();
+    }
+    return null;
   }
 }
