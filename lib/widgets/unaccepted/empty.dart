@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
-import 'package:my24_flutter_core/widgets/widgets.dart';
-import 'package:my24_flutter_core/i18n.dart';
-
 import '../../../blocs/order_bloc.dart';
+import '../empty.dart';
 
-class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
-  final OrderEventStatus fetchEvent;
-  final TextEditingController searchController = TextEditingController();
-
+class UnacceptedListEmptyWidget extends BaseOrderListEmptyWidget {
   UnacceptedListEmptyWidget({
-    Key? key,
-    String? memberPicture,
-    required CoreWidgets widgetsIn,
-    required My24i18n i18nIn,
-    required this.fetchEvent,
-  }) : super(
-    key: key,
-    memberPicture: memberPicture,
-    widgetsIn: widgetsIn,
-    i18nIn: i18nIn
-  );
+    super.key,
+    super.memberPicture,
+    required super.widgetsIn,
+    required super.i18nIn,
+    required super.fetchEvent,
+  });
 
   @override
   String getEmptyMessage() {
@@ -31,7 +20,7 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
 
   @override
   void doRefresh(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
     bloc.add(OrderEvent(status: fetchEvent));
@@ -50,8 +39,9 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
     );
   }
 
+  @override
   doSearch(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
 
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
@@ -62,11 +52,9 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
     ));
   }
 
-  handleNew(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(const OrderEvent(
-        status: OrderEventStatus.newOrder
-    ));
+  @override
+  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
+    super.navOrderForm(context, orderPk, fetchMode: fetchEvent);
   }
+
 }

@@ -7,9 +7,9 @@ import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/widgets/form/orderline_no_equipment.dart';
-import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
+import '../../blocs/order_form_bloc.dart';
 import '../../blocs/orderline_bloc.dart';
 import '../../blocs/orderline_states.dart';
 import 'orderline_equipment.dart';
@@ -69,7 +69,7 @@ class OrderlinesWidget<
 }
 
 class OrderlineList<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends StatelessWidget {
   final CoreWidgets widgets;
@@ -123,9 +123,9 @@ class OrderlineList<
 
   _delete(BuildContext context, Orderline orderLine) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-      status: OrderEventStatus.removeOrderline,
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(
+      status: OrderFormEventStatus.removeOrderline,
       formData: formData,
       orderline: orderLine
     ));
@@ -161,8 +161,10 @@ class OrderlineForm<
 
   @override
   Widget build(BuildContext context) {
+    log.info("build form");
+
     return BlocProvider(
-        create: (context) =>  _initialCall(context), // OrderLineBloc(),
+        create: (context) =>  _initialCall(context),
         child: BlocConsumer<OrderLineBloc, OrderLineBaseState>(
           listener: (context, state) {
             _handleListeners(context, state);
@@ -185,6 +187,8 @@ class OrderlineForm<
   }
 
   _handleListeners(context, state) {
+    log.info("form _handleListeners state: $state");
+
     if (state is OrderLineErrorSnackbarState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans(
@@ -204,6 +208,8 @@ class OrderlineForm<
   }
 
   Widget _getBody(context, state) {
+    log.info("form _getBody state: $state");
+
     if (state is OrderLineLoadingState) {
       return widgets.loadingNotice();
     }

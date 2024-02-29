@@ -9,7 +9,7 @@ import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import '../list.dart';
 
-class UnacceptedListWidget extends OrderListWidget {
+class UnacceptedListWidget extends BaseOrderListWidget {
   UnacceptedListWidget({
     Key? key,
     required List<Order>? orderList,
@@ -52,5 +52,15 @@ class UnacceptedListWidget extends OrderListWidget {
         getDeleteButton(context, order.id!),
       ],
     );
+  }
+
+  @override
+  void navDetail(BuildContext context, int orderPk) {
+    super.navOrderDetail(context, orderPk);
+  }
+
+  @override
+  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
+    super.navOrderForm(context, orderPk);
   }
 }

@@ -5,17 +5,17 @@ import 'package:logging/logging.dart';
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
+import '../../blocs/order_form_bloc.dart';
 import '../../blocs/orderline_bloc.dart';
 import '../../models/orderline/form_data.dart';
 
 final log = Logger('orders.form.orderlines.no_equipment');
 
 class OrderlineFormNoEquipment<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends StatefulWidget {
   final FormDataClass formData;
@@ -38,7 +38,7 @@ class OrderlineFormNoEquipment<
 }
 
 class _OrderlineFormNoEquipmentState<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends State<OrderlineFormNoEquipment> {
   final TextEditingController locationController = TextEditingController();
@@ -159,9 +159,9 @@ class _OrderlineFormNoEquipmentState<
       productController.text = '';
 
       final bloc = BlocProvider.of<BlocClass>(context);
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(
-        status: OrderEventStatus.addOrderLine,
+      bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+      bloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.addOrderLine,
         formData: widget.formData,
         orderline: orderline
       ));

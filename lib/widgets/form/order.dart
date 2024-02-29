@@ -11,11 +11,15 @@ import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
+import '../../blocs/order_form_bloc.dart';
 import 'documents.dart';
 import 'infolines.dart';
 import 'orderlines.dart';
 
-abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends BaseSliverPlainStatelessWidget{
+abstract class BaseOrderFormWidget<
+  BlocClass extends OrderFormBlocBase,
+  FormDataClass extends BaseOrderFormData
+> extends BaseSliverPlainStatelessWidget{
   final CoreWidgets widgetsIn;
   final My24i18n i18nIn = My24i18n(basePath: "orders");
   final FormDataClass? formData;
@@ -152,30 +156,28 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
 
   _fetchOrders(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: fetchEvent));
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.navList));
   }
 
   void _doAccept(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.accept, pk: formData!.id));
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(status: OrderFormEventStatus.accept, pk: formData!.id));
   }
 
   void _doReject(BuildContext context) {
     final BlocClass bloc = BlocProvider.of<BlocClass>(context);
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.reject, pk: formData!.id));
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(status: OrderFormEventStatus.reject, pk: formData!.id));
   }
 
   updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.updateFormData,
         formData: formData
     ));
   }
@@ -690,10 +692,10 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
       final bloc = BlocProvider.of<BlocClass>(context);
       if (formData!.id != null) {
         Order updatedOrder = formData!.toModel();
-        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-        bloc.add(OrderEvent(
+        bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+        bloc.add(OrderFormEvent(
           pk: updatedOrder.id,
-          status: OrderEventStatus.update,
+          status: OrderFormEventStatus.update,
           order: updatedOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,
@@ -708,9 +710,9 @@ abstract class BaseOrderFormWidget<BlocClass extends OrderBlocBase, FormDataClas
           formData!.customerOrderAccepted = true;
         }
         Order newOrder = formData!.toModel();
-        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-        bloc.add(OrderEvent(
-          status: OrderEventStatus.insert,
+        bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+        bloc.add(OrderFormEvent(
+          status: OrderFormEventStatus.insert,
           order: newOrder,
           orderLines: formData!.orderLines,
           infoLines: formData!.infoLines,

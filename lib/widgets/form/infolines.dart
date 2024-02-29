@@ -5,9 +5,9 @@ import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/infoline/models.dart';
+import '../../blocs/order_form_bloc.dart';
 
 class InfolinesWidget<
   FormDataClass extends BaseOrderFormData
@@ -56,7 +56,7 @@ class InfolinesWidget<
 }
 
 class InfolineList<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends StatelessWidget {
   final CoreWidgets widgets;
@@ -108,9 +108,9 @@ class InfolineList<
 
   updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.updateFormData,
         formData: formData
     ));
   }
@@ -134,7 +134,7 @@ class InfolineList<
 }
 
 class InfolineForm<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends StatefulWidget {
   final FormDataClass formData;
@@ -153,7 +153,7 @@ class InfolineForm<
 }
 
 class _InfolineFormState<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends State<InfolineForm> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -169,9 +169,9 @@ class _InfolineFormState<
 
   updateFormData(BuildContext context) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.updateFormData,
         formData: widget.formData
     ));
   }

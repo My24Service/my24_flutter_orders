@@ -9,9 +9,7 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
-import 'package:my24_flutter_orders/widgets/list.dart';
 import 'package:my24_flutter_orders/widgets/error.dart';
-import 'package:my24_flutter_orders/widgets/empty.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/widgets/past/empty.dart';
 import 'package:my24_flutter_orders/widgets/past/error.dart';
@@ -20,42 +18,23 @@ import 'package:my24_flutter_orders/widgets/unaccepted/empty.dart';
 import 'package:my24_flutter_orders/widgets/unaccepted/error.dart';
 import 'package:my24_flutter_orders/widgets/unaccepted/list.dart';
 
-final log = Logger('orders.list');
+final log = Logger('orders.pages.list');
 
-String? initialLoadMode;
-int? loadId;
-
-abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
+abstract class BaseOrderListPage extends StatelessWidget {
   final i18n = My24i18n(basePath: "orders");
   final OrderEventStatus fetchMode;
-  final BlocClass bloc;
+  final OrderBloc bloc;
   final CoreWidgets widgets = CoreWidgets();
   final CoreUtils utils = CoreUtils();
 
   BaseOrderListPage({
     super.key,
     required this.bloc,
-    String? initialMode,
-    int? pk,
     required this.fetchMode,
-  }) {
-    if (initialMode != null) {
-      initialLoadMode = initialMode;
-      loadId = pk;
-    }
-  }
+  });
 
   Future<Widget?> getDrawerForUserWithSubmodel(
       BuildContext context, String? submodel);
-
-  Widget getOrderFormWidget({
-        required dynamic formData,
-        required OrderPageMetaData orderPageMetaData,
-        required OrderEventStatus fetchEvent,
-        required CoreWidgets widgets
-  });
-
-  void navDetail(BuildContext context, int orderPk, BlocClass bloc);
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
@@ -74,27 +53,32 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
     );
   }
 
-  BlocClass _initialCall() {
-    if (initialLoadMode == null) {
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(status: fetchMode));
-    } else if (initialLoadMode == 'form') {
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(
-          status: OrderEventStatus.fetchDetail,
-          pk: loadId
-      ));
-    } else if (initialLoadMode == 'new') {
-      bloc.add(const OrderEvent(
-        status: OrderEventStatus.newOrder,
-      ));
-    }
+  OrderBloc _initialCall() {
+    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    bloc.add(OrderEvent(status: fetchMode));
 
     return bloc;
   }
 
+  Widget getOrderListWidget({
+    List<Order>? orderList,
+    required OrderPageMetaData orderPageMetaData,
+    required OrderEventStatus fetchEvent,
+    String? searchQuery,
+    required PaginationInfo paginationInfo,
+    required CoreWidgets widgetsIn,
+    required My24i18n i18nIn,
+  });
+
+  Widget getOrderListEmptyWidget({
+    required widgetsIn,
+    required i18nIn,
+    required fetchEvent
+  });
+
   @override
   Widget build(BuildContext context) {
+    log.info("build");
     return FutureBuilder<OrderPageMetaData?>(
         future: getOrderPageMetaData(context),
         builder: (ctx, snapshot) {
@@ -102,14 +86,14 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
             final OrderPageMetaData? orderListData = snapshot.data;
             return BlocProvider(
                 create: (context) => _initialCall(),
-                child: BlocConsumer<BlocClass, OrderState>(
+                child: BlocConsumer<OrderBloc, OrderState>(
                     listener: (context, state) {
                       _handleListener(context, state, orderListData);
                     },
                     builder: (context, state) {
                       return Scaffold(
                           drawer: orderListData!.drawer,
-                          body: getBody(context, state, orderListData)
+                          body: _getBody(context, state, orderListData)
                       );
                     }
                 )
@@ -132,34 +116,9 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
   }
 
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
-    final BlocClass bloc = BlocProvider.of<BlocClass>(context);
+    log.info("_handleListener state: $state");
 
-    if (state is OrderInsertedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
-
-      if (!orderPageMetaData!.hasBranches!) {
-        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-        bloc.add(const OrderEvent(status: OrderEventStatus.fetchAll));
-      } else {
-        bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-        bloc.add(const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
-      }
-    }
-
-    if (state is OrderNavDetailState) {
-      if (context.mounted) {
-        navDetail(context, state.orderPk, bloc);
-      }
-    }
-
-    if (state is OrderUpdatedState) {
-      if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('list.snackbar_updated'));
-      }
-
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(status: fetchMode));
-    }
+    final OrderBloc bloc = BlocProvider.of<OrderBloc>(context);
 
     if (state is OrderErrorSnackbarState) {
       if (context.mounted) {
@@ -178,51 +137,11 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(OrderEvent(status: fetchMode));
     }
-
-    if (state is OrderAcceptedState) {
-      if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('list.snackbar_accepted'));
-      }
-
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(status: fetchMode));
-    }
-
-    if (state is OrderRejectedState) {
-      if (context.mounted) {
-        widgets.createSnackBar(context, i18n.$trans('list.snackbar_rejected'));
-      }
-
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(status: fetchMode));
-    }
-
-    if (state is OrderLineAddedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_orderline_added'));
-    }
-
-    if (state is OrderLineRemovedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_orderline_removed'));
-    }
-
-    if (state is InfoLineAddedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_infoline_added'));
-    }
-
-    if (state is InfoLineRemovedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_infoline_removed'));
-    }
-
-    if (state is DocumentAddedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_document_added'));
-    }
-
-    if (state is DocumentRemovedState) {
-      widgets.createSnackBar(context, i18n.$trans('list.snackbar_document_removed'));
-    }
   }
 
-  Widget getBody(context, state, OrderPageMetaData orderPageMetaData) {
+  Widget? _getBody(context, state, OrderPageMetaData orderPageMetaData) {
+    log.info("_getBody state: $state");
+
     if (state is OrderErrorState) {
       switch (fetchMode) {
         case OrderEventStatus.fetchAll: {
@@ -261,7 +180,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
 
     if (state is OrdersLoadedState) {
       if (state.orders!.results!.isEmpty) {
-        return OrderListEmptyWidget(
+        return getOrderListEmptyWidget(
           fetchEvent: fetchMode,
           widgetsIn: widgets,
           i18nIn: i18n,
@@ -276,7 +195,7 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
           pageSize: orderPageMetaData.pageSize
       );
 
-      return OrderListWidget(
+      return getOrderListWidget(
         orderList: state.orders!.results,
         orderPageMetaData: orderPageMetaData,
         fetchEvent: fetchMode,
@@ -343,24 +262,9 @@ abstract class BaseOrderListPage<BlocClass extends OrderBlocBase> extends Statel
       );
     }
 
-    if (state is OrderNewState) {
-      return getOrderFormWidget(
-        formData: state.formData,
-        orderPageMetaData: orderPageMetaData,
-        fetchEvent: fetchMode,
-        widgets: widgets,
-      );
+    if (state is OrderLoadingState) {
+      return widgets.loadingNotice();
     }
-
-    if (state is OrderLoadedState) {
-      return getOrderFormWidget(
-        formData: state.formData,
-        orderPageMetaData: orderPageMetaData,
-        fetchEvent: fetchMode,
-        widgets: widgets,
-      );
-    }
-
-    return widgets.loadingNotice();
+    return null;
   }
 }

@@ -13,7 +13,7 @@ import 'package:my24_flutter_equipment/models/location/models.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
-import '../../blocs/order_bloc.dart';
+import '../../blocs/order_form_bloc.dart';
 import '../../blocs/orderline_bloc.dart';
 import '../../models/orderline/form_data.dart';
 
@@ -43,7 +43,7 @@ class OrderlineFormEquipment<
 }
 
 class _OrderlineFormEquipmentState<
-  BlocClass extends OrderBlocBase,
+  BlocClass extends OrderFormBlocBase,
   FormDataClass extends BaseOrderFormData
 > extends State<OrderlineFormEquipment> {
   final TextEditingController remarksController = TextEditingController();
@@ -64,11 +64,13 @@ class _OrderlineFormEquipmentState<
   @override
   Widget build(BuildContext context) {
     if (widget.orderlineFormData.equipmentCreateQuickResponse != null) {
+      log.info("build: equipment create quick response received");
       widget.orderlineFormData.equipment = widget.orderlineFormData.equipmentCreateQuickResponse!.id!;
       widget.orderlineFormData.product = widget.orderlineFormData.equipmentCreateQuickResponse!.name!;
     }
 
     if (widget.orderlineFormData.equipmentLocationCreateQuickResponse != null) {
+      log.info("build: location create quick response received");
       widget.orderlineFormData.equipmentLocation = widget.orderlineFormData.equipmentLocationCreateQuickResponse!.id!;
       widget.orderlineFormData.location = widget.orderlineFormData.equipmentLocationCreateQuickResponse!.name!;
     }
@@ -197,9 +199,9 @@ class _OrderlineFormEquipmentState<
       }
 
       final orderBloc = BlocProvider.of<BlocClass>(context);
-      orderBloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      orderBloc.add(OrderEvent(
-        status: OrderEventStatus.addOrderLine,
+      orderBloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+      orderBloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.addOrderLine,
         formData: widget.formData,
         orderline: orderline
       ));
