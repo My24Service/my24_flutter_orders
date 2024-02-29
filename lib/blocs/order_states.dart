@@ -27,6 +27,22 @@ class OrderNavDetailState extends OrderState {
   List<Object> get props => [];
 }
 
+class OrderNavFormNewState extends OrderState {
+  OrderNavFormNewState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class OrderNavFormEditState extends OrderState {
+  final int orderPk;
+
+  OrderNavFormEditState({ required this.orderPk });
+
+  @override
+  List<Object> get props => [];
+}
+
 class OrderLoadingState extends OrderState {
   @override
   List<Object> get props => [];
@@ -60,57 +76,6 @@ class OrderErrorSnackbarState extends OrderState {
   List<Object?> get props => [message];
 }
 
-class OrderLoadedState extends OrderState {
-  final dynamic formData;
-
-  OrderLoadedState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
-}
-
-class OrderLineAddedState extends OrderState {
-  OrderLineAddedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class OrderLineRemovedState extends OrderState {
-  OrderLineRemovedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class InfoLineAddedState extends OrderState {
-  InfoLineAddedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class InfoLineRemovedState extends OrderState {
-  InfoLineRemovedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class DocumentAddedState extends OrderState {
-  DocumentAddedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class DocumentRemovedState extends OrderState {
-  DocumentRemovedState();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class OrderLoadedViewState extends OrderState {
   final Order? order;
 
@@ -118,15 +83,6 @@ class OrderLoadedViewState extends OrderState {
 
   @override
   List<Object?> get props => [order];
-}
-
-class OrderNewState extends OrderState {
-  final dynamic formData;
-
-  OrderNewState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
 }
 
 class OrdersLoadedState extends OrderState {
@@ -166,42 +122,6 @@ class OrderDeletedState extends OrderState {
   final bool? result;
 
   OrderDeletedState({this.result});
-
-  @override
-  List<Object?> get props => [result];
-}
-
-class OrderUpdatedState extends OrderState {
-  final Order? order;
-
-  OrderUpdatedState({this.order});
-
-  @override
-  List<Object?> get props => [order];
-}
-
-class OrderInsertedState extends OrderState {
-  final Order? order;
-
-  OrderInsertedState({this.order});
-
-  @override
-  List<Object?> get props => [order];
-}
-
-class OrderAcceptedState extends OrderState {
-  final bool? result;
-
-  OrderAcceptedState({this.result});
-
-  @override
-  List<Object?> get props => [result];
-}
-
-class OrderRejectedState extends OrderState {
-  final bool? result;
-
-  OrderRejectedState({this.result});
 
   @override
   List<Object?> get props => [result];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
@@ -11,9 +12,11 @@ import 'package:my24_flutter_orders/widgets/detail.dart';
 import 'package:my24_flutter_orders/widgets/error.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 
-abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends StatelessWidget {
+final log = Logger('orders.pages.detail');
+
+abstract class BaseOrderDetailPage extends StatelessWidget {
   final int? orderId;
-  final BlocClass bloc;
+  final OrderBloc bloc;
   final CoreWidgets widgets = CoreWidgets();
   final My24i18n i18nIn = My24i18n(basePath: "orders");
   final CoreUtils utils = CoreUtils();
@@ -26,7 +29,7 @@ abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends Stat
 
   Future<Widget?> getDrawerForUserWithSubmodel(BuildContext context, String? submodel);
 
-  BlocClass _initialBlocCall() {
+  OrderBloc _initialBlocCall() {
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(status: OrderEventStatus.fetchDetailView, pk: orderId));
 
@@ -55,15 +58,16 @@ abstract class BaseOrderDetailPage<BlocClass extends OrderBlocBase> extends Stat
 
   @override
   Widget build(BuildContext context) {
+    log.info("build");
     return FutureBuilder<OrderPageMetaData?>(
         future: getOrderPageMetaData(context),
         builder: (ctx, snapshot) {
           if (snapshot.hasData) {
             final OrderPageMetaData? orderListData = snapshot.data;
 
-            return BlocProvider<BlocClass>(
+            return BlocProvider<OrderBloc>(
                 create: (context) => _initialBlocCall(),
-                child: BlocConsumer<BlocClass, OrderState>(
+                child: BlocConsumer<OrderBloc, OrderState>(
                     listener: (context, state) {
                     },
                     builder: (context, state) {

@@ -9,56 +9,10 @@ import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import 'fixtures.dart';
-import 'order_models.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues({});
-
-  test('Test fetch order detail', () async {
-    final client = MockClient();
-    final OrderBloc orderBloc = OrderBloc();
-    orderBloc.api.httpClient = client;
-    orderBloc.locationApi.httpClient = client;
-    orderBloc.equipmentApi.httpClient = client;
-    orderBloc.privateMemberApi.httpClient = client;
-
-    SharedPreferences.setMockInitialValues({
-      'member_has_branches': false,
-      'submodel': 'planning_user'
-    });
-
-    // return token request with a 200
-    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/jwt-token/refresh/'), headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(tokenData, 200));
-
-    // return order data with a 200
-    when(client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/1/'), headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response(order, 200));
-
-    // return order types data with a 200
-    when(client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/order_types/'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(orderTypes, 200));
-
-    // return member settings data with a 200
-    when(client.get(Uri.parse('https://demo.my24service-dev.com/api/member/member/get_my_settings/'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(memberSettings, 200));
-
-    orderBloc.stream.listen(
-      expectAsync1((event) {
-        expect(event, isA<OrderLoadedState>());
-        expect(event.props[0], isA<OrderFormData>());
-      })
-    );
-
-    expectLater(orderBloc.stream, emits(isA<OrderLoadedState>()));
-
-    orderBloc.add(
-        const OrderEvent(
-            status: OrderEventStatus.fetchDetail,
-            pk: 1
-        ));
-  });
 
   test('Test fetch all orders', () async {
     final client = MockClient();
@@ -85,60 +39,6 @@ void main() {
 
     orderBloc.add(
         const OrderEvent(status: OrderEventStatus.fetchAll));
-  });
-
-  test('Test order edit', () async {
-    final client = MockClient();
-    final orderBloc = OrderBloc();
-    orderBloc.api.httpClient = client;
-    // orderBloc.customerApi.httpClient = client;
-    // orderBloc.locationApi.httpClient = client;
-    // orderBloc.equipmentApi.httpClient = client;
-    orderBloc.privateMemberApi.httpClient = client;
-
-    Order orderModel = Order(
-      id: 1,
-      customerId: '123465',
-      orderId: '987654',
-      serviceNumber: '132789654',
-      orderLines: [],
-      infoLines: [],
-      documents: []
-    );
-
-    // return token request with a 200
-    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/jwt-token/refresh/'), headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(tokenData, 200));
-
-    // return order data with a 200
-    when(client.patch(Uri.parse('https://demo.my24service-dev.com/api/order/order/1/'), headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response(order, 200));
-
-    // return member settings data with a 200
-    when(client.get(Uri.parse('https://demo.my24service-dev.com/api/member/member/get_my_settings/'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(memberSettings, 200));
-
-    orderBloc.stream.listen(
-      expectAsync1((event) {
-        expect(event, isA<OrderUpdatedState>());
-        expect(event.props[0], isA<Order>());
-      })
-    );
-
-    expectLater(orderBloc.stream, emits(isA<OrderUpdatedState>()));
-
-    orderBloc.add(
-        OrderEvent(
-          status: OrderEventStatus.update,
-          order: orderModel,
-          pk: 1,
-          infoLines: [],
-          orderLines: [],
-          documents: [],
-          deletedInfoLines: [],
-          deletedOrderLines: [],
-          deletedDocuments: []
-        ));
   });
 
   test('Test order delete', () async {

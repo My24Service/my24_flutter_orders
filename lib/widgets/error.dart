@@ -4,10 +4,9 @@ import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
-import '../../blocs/order_bloc.dart';
 import '../../models/order/models.dart';
 
-class OrderListErrorWidget<BlocClass extends OrderBlocBase> extends BaseErrorWidget  {
+class OrderListErrorWidget extends BaseErrorWidget  {
   OrderListErrorWidget({
     Key? key,
     required String error,

@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 
-import '../../../blocs/order_bloc.dart';
 import '../../../models/document/form_data.dart';
 import '../../../models/document/models.dart';
 import '../../../models/order/form_data.dart';
+import '../../blocs/order_form_bloc.dart';
 
 class DocumentsWidget<FormDataClass extends BaseOrderFormData> extends StatelessWidget {
   final My24i18n i18n = My24i18n(basePath: "orders.form.documents");
@@ -58,7 +59,10 @@ class DocumentsWidget<FormDataClass extends BaseOrderFormData> extends Stateless
   }
 }
 
-class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatelessWidget {
+class DocumentList<
+  BlocClass extends OrderFormBlocBase,
+  FormDataClass extends BaseOrderFormData
+> extends StatelessWidget {
   final CoreWidgets widgets;
   final FormDataClass formData;
   final CoreUtils utils = CoreUtils();
@@ -108,10 +112,10 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
 
   _delete(BuildContext context, OrderDocument document) {
     final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
+    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+    bloc.add(OrderFormEvent(
       document: document,
-      status: OrderEventStatus.removeDocument,
+      status: OrderFormEventStatus.removeDocument,
       formData: formData
     ));
   }
@@ -155,7 +159,7 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
   // }
 }
 
-class DocumentForm<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
+class DocumentForm<BlocClass extends OrderFormBlocBase, FormDataClass extends BaseOrderFormData> extends StatefulWidget {
   final FormDataClass formData;
   final CoreWidgets widgets;
   final My24i18n i18n;
@@ -171,7 +175,7 @@ class DocumentForm<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
   State<StatefulWidget> createState() => _DocumentFormState();
 }
 
-class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends BaseOrderFormData> extends State<DocumentForm> {
+class _DocumentFormState<BlocClass extends OrderFormBlocBase, FormDataClass extends BaseOrderFormData> extends State<DocumentForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController documentController = TextEditingController();
@@ -356,9 +360,9 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
       OrderDocument orderDocument = orderDocumentFormData.toModel();
 
       final bloc = BlocProvider.of<BlocClass>(context);
-      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-      bloc.add(OrderEvent(
-        status: OrderEventStatus.addDocument,
+      bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+      bloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.addDocument,
         formData: widget.formData,
         document: orderDocument
       ));

@@ -7,7 +7,7 @@ import 'package:my24_flutter_core/i18n.dart';
 
 import '../../../blocs/order_bloc.dart';
 
-class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmptyWidget {
+class UnacceptedListEmptyWidget extends BaseEmptyWidget {
   final OrderEventStatus fetchEvent;
   final TextEditingController searchController = TextEditingController();
 
@@ -31,7 +31,7 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
 
   @override
   void doRefresh(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
     bloc.add(OrderEvent(status: fetchEvent));
@@ -51,7 +51,7 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
   }
 
   doSearch(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
 
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
@@ -63,10 +63,9 @@ class UnacceptedListEmptyWidget<BlocClass extends OrderBlocBase> extends BaseEmp
   }
 
   handleNew(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+    final bloc = BlocProvider.of<OrderBloc>(context);
     bloc.add(const OrderEvent(
-        status: OrderEventStatus.newOrder
+        status: OrderEventStatus.navFormNew
     ));
   }
 }

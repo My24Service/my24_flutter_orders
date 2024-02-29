@@ -10,7 +10,7 @@ import '../../common/widgets.dart';
 import '../../models/order/models.dart';
 import '../../blocs/order_bloc.dart';
 
-class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListStatelessWidget {
+class OrderListWidget extends BaseSliverListStatelessWidget {
   final OrderPageMetaData orderPageMetaData;
   final List<Order>? orderList;
   final OrderEventStatus fetchEvent;
@@ -51,7 +51,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
 
   @override
   void doRefresh(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doRefresh));
     bloc.add(OrderEvent(status: fetchEvent));
@@ -62,7 +62,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   }
 
   nextPage(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
 
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(
@@ -73,7 +73,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   }
 
   previousPage(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
 
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(
@@ -84,7 +84,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   }
 
   doSearch(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+    final bloc = BlocProvider.of<OrderBloc>(context);
 
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(const OrderEvent(status: OrderEventStatus.doSearch));
@@ -92,14 +92,6 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
         status: fetchEvent,
         query: searchController.text,
         page: 1
-    ));
-  }
-
-  handleNew(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(const OrderEvent(
-        status: OrderEventStatus.newOrder
     ));
   }
 
@@ -126,7 +118,7 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
                 title: createOrderListHeader(order, order.orderDate!),
                 subtitle: createOrderListSubtitle(order),
                 onTap: () {
-                  _navOrderDetail(context, order.id!);
+                  navOrderDetail(context, order.id!);
                 } // onTab
               ),
               const SizedBox(height: 4),
@@ -159,7 +151,9 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
   }
 
   bool isBranchEmployee() {
-    return orderPageMetaData.submodel == 'employee_user' && orderPageMetaData.hasBranches!;
+    return orderPageMetaData.submodel == 'branch_employee_user' || (
+        orderPageMetaData.submodel == 'employee_user' && orderPageMetaData.hasBranches!
+    );
   }
 
   Row getButtonRow(BuildContext context, Order order) {
@@ -181,24 +175,35 @@ class OrderListWidget<BlocClass extends OrderBlocBase> extends BaseSliverListSta
     return row;
   }
 
-  doEdit(BuildContext context, int orderPk) {
-    final bloc = BlocProvider.of<BlocClass>(context);
+  handleNew(BuildContext context) {
+    final bloc = BlocProvider.of<OrderBloc>(context);
+    bloc.add(const OrderEvent(
+        status: OrderEventStatus.navFormNew
+    ));
+  }
 
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.fetchDetail, pk: orderPk));
+  doEdit(BuildContext context, int orderPk) {
+    final bloc = BlocProvider.of<OrderBloc>(context);
+    bloc.add(OrderEvent(
+        status: OrderEventStatus.navFormEdit,
+        pk: orderPk
+    ));
   }
 
   doDelete(BuildContext context, int orderPk) async {
-    final bloc = BlocProvider.of<BlocClass>(context);
-
+    final bloc = BlocProvider.of<OrderBloc>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.delete, pk: orderPk));
+    bloc.add(OrderEvent(
+        status: OrderEventStatus.delete,
+        pk: orderPk
+    ));
   }
 
-  void _navOrderDetail(BuildContext context, int orderPk) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(status: OrderEventStatus.navDetail, pk: orderPk));
+  navOrderDetail(BuildContext context, int orderPk) {
+    final bloc = BlocProvider.of<OrderBloc>(context);
+    bloc.add(OrderEvent(
+        status: OrderEventStatus.navDetail,
+        pk: orderPk
+    ));
   }
 }

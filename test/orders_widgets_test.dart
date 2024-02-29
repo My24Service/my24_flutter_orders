@@ -147,7 +147,6 @@ void main() async {
     final client = MockClient();
     final orderBloc = OrderBloc();
     orderBloc.api.httpClient = client;
-    orderBloc.privateMemberApi.httpClient = client;
 
     SharedPreferences.setMockInitialValues({
       'member_has_branches': false,
@@ -184,9 +183,9 @@ void main() async {
 
   testWidgets('loads form edit', (tester) async {
     final client = MockClient();
-    final orderBloc = OrderBloc();
-    orderBloc.api.httpClient = client;
-    orderBloc.privateMemberApi.httpClient = client;
+    final orderFormBloc = OrderFormBloc();
+    orderFormBloc.api.httpClient = client;
+    orderFormBloc.privateMemberApi.httpClient = client;
 
     SharedPreferences.setMockInitialValues({
       'member_has_branches': false,
@@ -216,10 +215,10 @@ void main() async {
     when(client.get(Uri.parse('https://demo.my24service-dev.com/api/member/member/get_my_settings/'), headers: anyNamed('headers')))
         .thenAnswer((_) async => http.Response(memberSettings, 200));
 
-    OrderListPage widget = OrderListPage(
+    OrderFormPageClass widget = OrderFormPageClass(
       pk: 1,
-      bloc: orderBloc,
-      initialMode: 'form', fetchMode: OrderEventStatus.fetchAll
+      bloc: orderFormBloc,
+      fetchMode: OrderEventStatus.fetchAll
     );
     widget.utils.httpClient = client;
     await mockNetworkImagesFor(() async => await tester.pumpWidget(
@@ -232,9 +231,9 @@ void main() async {
 
   testWidgets('loads form new', (tester) async {
     final client = MockClient();
-    final orderBloc = OrderBloc();
-    orderBloc.api.httpClient = client;
-    orderBloc.privateMemberApi.httpClient = client;
+    final orderFormBloc = OrderFormBloc();
+    orderFormBloc.api.httpClient = client;
+    orderFormBloc.privateMemberApi.httpClient = client;
 
     SharedPreferences.setMockInitialValues({
       'member_has_branches': false,
@@ -257,9 +256,9 @@ void main() async {
     when(client.get(Uri.parse('https://demo.my24service-dev.com/api/member/member/get_my_settings/'), headers: anyNamed('headers')))
         .thenAnswer((_) async => http.Response(memberSettings, 200));
 
-    OrderListPage widget = OrderListPage(
-        bloc: orderBloc,
-        initialMode: 'new',
+    OrderFormPageClass widget = OrderFormPageClass(
+        pk: null,
+        bloc: orderFormBloc,
         fetchMode: OrderEventStatus.fetchAll
     );
     widget.utils.httpClient = client;
