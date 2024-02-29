@@ -69,6 +69,48 @@ class OrderLoadedState extends OrderState {
   List<Object?> get props => [formData];
 }
 
+class OrderLineAddedState extends OrderState {
+  OrderLineAddedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class OrderLineRemovedState extends OrderState {
+  OrderLineRemovedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class InfoLineAddedState extends OrderState {
+  InfoLineAddedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class InfoLineRemovedState extends OrderState {
+  InfoLineRemovedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class DocumentAddedState extends OrderState {
+  DocumentAddedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class DocumentRemovedState extends OrderState {
+  DocumentRemovedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class OrderLoadedViewState extends OrderState {
   final Order? order;
 
@@ -82,24 +124,6 @@ class OrderNewState extends OrderState {
   final dynamic formData;
 
   OrderNewState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
-}
-
-class OrderNewEquipmentCreatedState extends OrderState {
-  final dynamic formData;
-
-  OrderNewEquipmentCreatedState({this.formData});
-
-  @override
-  List<Object?> get props => [formData];
-}
-
-class OrderNewLocationCreatedState extends OrderState {
-  final dynamic formData;
-
-  OrderNewLocationCreatedState({this.formData});
 
   @override
   List<Object?> get props => [formData];

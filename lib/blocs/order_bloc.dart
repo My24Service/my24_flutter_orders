@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_equipment/models/location/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/models.dart';
 import 'package:my24_flutter_member_models/private/api.dart';
-import 'package:my24_flutter_equipment/models/location/models.dart';
 
 import '../models/document/api.dart';
 import '../models/document/models.dart';
@@ -33,12 +31,18 @@ enum OrderEventStatus {
   update,
   insert,
   updateFormData,
-  createSelectEquipment,
-  createSelectEquipmentLocation,
   accept,
   reject,
 
-  navDocuments,
+  addOrderLine,
+  removeOrderline,
+
+  addInfoLine,
+  removeInfoline,
+
+  addDocument,
+  removeDocument,
+
   navDetail
 }
 
@@ -49,7 +53,6 @@ class OrderEvent {
   final String? query;
   final Order? order;
   final dynamic formData;
-  final String? name;
 
   final List<Orderline>? orderLines;
   final List<Orderline>? deletedOrderLines;
@@ -62,6 +65,10 @@ class OrderEvent {
 
   final List<Equipment>? equipmentLocationUpdates;
 
+  final Orderline? orderline;
+  final OrderDocument? document;
+  final Infoline? infoline;
+
   const OrderEvent({
     this.pk,
     this.status,
@@ -69,14 +76,16 @@ class OrderEvent {
     this.query,
     this.order,
     this.formData,
-    this.name,
     this.orderLines,
     this.infoLines,
     this.deletedOrderLines,
     this.deletedInfoLines,
     this.documents,
     this.deletedDocuments,
-    this.equipmentLocationUpdates
+    this.equipmentLocationUpdates,
+    this.orderline,
+    this.infoline,
+    this.document,
   });
 }
 
@@ -97,9 +106,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     }
     else if (event.status == OrderEventStatus.doSearch) {
       _handleDoSearchState(event, emit);
-    }
-    else if (event.status == OrderEventStatus.navDocuments) {
-      _handleNavDocumentsState(event, emit);
     }
     else if (event.status == OrderEventStatus.navDetail) {
       _handleNavDetailState(event, emit);
@@ -134,88 +140,86 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
     else if (event.status == OrderEventStatus.updateFormData) {
       _handleUpdateFormDataState(event, emit);
     }
-    else if (event.status == OrderEventStatus.createSelectEquipment) {
-      await _handleCreateSelectEquipment(event, emit);
-    }
-    else if (event.status == OrderEventStatus.createSelectEquipmentLocation) {
-      await _handleCreateSelectEquipmentLocation(event, emit);
-    }
     else if (event.status == OrderEventStatus.accept) {
       _handleAcceptState(event, emit);
     }
     else if (event.status == OrderEventStatus.reject) {
       _handleRejectState(event, emit);
     }
+    else if (event.status == OrderEventStatus.addOrderLine) {
+      _handleAddOrderLineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeOrderline) {
+      _handleRemoveOrderlineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.addInfoLine) {
+      _handleAddInfoLineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeInfoline) {
+      _handleRemoveInfolineState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.addDocument) {
+      _handleAddDocumentState(event, emit);
+    }
+    else if (event.status == OrderEventStatus.removeDocument) {
+      _handleRemoveDocumentState(event, emit);
+    }
+  }
+
+  void _handleAddOrderLineState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.orderLines!.add(event.orderline);
+
+    emit(OrderLineAddedState());
+    emit(OrderLoadedState(formData: event.formData));
+  }
+
+  void _handleRemoveOrderlineState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.orderline!.id != null && !event.formData.deletedOrderLines!.contains(event.orderline!)) {
+      event.formData.deletedOrderLines!.add(event.orderline!);
+    }
+    event.formData.orderLines!.removeAt(event.formData.orderLines!.indexOf(event.orderline!));
+
+    emit(OrderLineRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
+  }
+
+  void _handleAddInfoLineState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.infoLines!.add(event.infoline);
+
+    emit(InfoLineAddedState());
+    emit(OrderLoadedState(formData: event.formData));
+  }
+
+  void _handleRemoveInfolineState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.infoline!.id != null && !event.formData.deletedInfolines!.contains(event.infoline!)) {
+      event.formData.deletedInfolines!.add(event.infoline!);
+    }
+    event.formData.infoLines!.removeAt(event.formData.infoLines!.indexOf(event.infoline!));
+
+    emit(InfoLineRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
+  }
+
+  void _handleAddDocumentState(OrderEvent event, Emitter<OrderState> emit) {
+    event.formData.documents!.add(event.document);
+
+    emit(DocumentAddedState());
+    emit(OrderLoadedState(formData: event.formData));
+  }
+
+  void _handleRemoveDocumentState(OrderEvent event, Emitter<OrderState> emit) {
+    if (event.document!.id != null && !event.formData.deletedDocuments!.contains(event.document!)) {
+      event.formData.deletedDocuments!.add(event.document!);
+    }
+
+    event.formData.documents!.removeAt(event.formData.documents!.indexOf(event.document!));
+
+    emit(DocumentRemovedState());
+    emit(OrderLoadedState(formData: event.formData));
   }
 
   void _handleUpdateFormDataState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadedState(formData: event.formData));
-  }
-
-  Future<void> _handleCreateSelectEquipment(OrderEvent event, Emitter<OrderState> emit) async {
-    final bool hasBranches = (await coreUtils.getHasBranches())!;
-    EquipmentCreateQuickResponse response;
-
-    try {
-      if (hasBranches) {
-        final EquipmentCreateQuickBranch equipment = EquipmentCreateQuickBranch(
-          name: event.name!,
-          branch: event.formData!.branch,
-        );
-
-        response = await equipmentApi.createQuickBranch(equipment);
-        event.formData!.equipmentCreateQuickResponse = response;
-      } else {
-        final EquipmentCreateQuickCustomer equipment = EquipmentCreateQuickCustomer(
-          name: event.name!,
-          customer: event.formData!.customerPk,
-        );
-
-        response = await equipmentApi.createQuickCustomer(equipment);
-        event.formData!.equipmentCreateQuickResponse = response;
-      }
-
-      emit(OrderNewEquipmentCreatedState(
-        formData: event.formData,
-      ));
-    } catch(e) {
-      event.formData!.error = e.toString();
-      emit(OrderErrorSnackbarState(message: e.toString()));
-      event.formData!.isCreatingEquipment = false;
-      emit(OrderLoadedState(formData: event.formData));
-    }
-  }
-
-  Future<void> _handleCreateSelectEquipmentLocation(OrderEvent event, Emitter<OrderState> emit) async {
-    final bool hasBranches = (await coreUtils.getHasBranches())!;
-    EquipmentLocationCreateQuickResponse response;
-
-    try {
-      if (hasBranches) {
-        final EquipmentLocationCreateQuickBranch location = EquipmentLocationCreateQuickBranch(
-          name: event.name!,
-          branch: event.formData!.branch,
-        );
-
-        response = await locationApi.createQuickBranch(location);
-        event.formData!.equipmentLocationCreateQuickResponse = response;
-      } else {
-        final EquipmentLocationCreateQuickCustomer location = EquipmentLocationCreateQuickCustomer(
-          name: event.name!,
-          customer: event.formData!.customerPk,
-        );
-
-        response = await locationApi.createQuickCustomer(location);
-        event.formData!.equipmentLocationCreateQuickResponse = response;
-      }
-
-      emit(OrderNewLocationCreatedState(formData: event.formData));
-    } catch(e) {
-      event.formData!.error = e.toString();
-      emit(OrderErrorSnackbarState(message: e.toString()));
-      event.formData!.isCreatingLocation = false;
-      emit(OrderLoadedState(formData: event.formData));
-    }
   }
 
   Future<FormData> addQuickCreateSettings(FormData data) async {
@@ -233,10 +237,6 @@ abstract class OrderBlocBase<FormData extends BaseOrderFormData> extends Bloc<Or
 
   void _handleDoAsyncState(OrderEvent event, Emitter<OrderState> emit) {
     emit(OrderLoadingState());
-  }
-
-  void _handleNavDocumentsState(OrderEvent event, Emitter<OrderState> emit) {
-    emit(OrderNavDocumentsState(orderPk: event.pk!));
   }
 
   void _handleNavDetailState(OrderEvent event, Emitter<OrderState> emit) {

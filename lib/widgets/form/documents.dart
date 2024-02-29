@@ -106,22 +106,14 @@ class DocumentList<BlocClass extends OrderBlocBase, FormDataClass extends BaseOr
     );
   }
 
-  updateFormData(BuildContext context) {
+  _delete(BuildContext context, OrderDocument document) {
     final bloc = BlocProvider.of<BlocClass>(context);
     bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
     bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
-        formData: formData
+      document: document,
+      status: OrderEventStatus.removeDocument,
+      formData: formData
     ));
-  }
-
-  _delete(BuildContext context, OrderDocument document) {
-    if (document.id != null && !formData.deletedDocuments!.contains(document)) {
-      formData.deletedDocuments!.add(document);
-    }
-
-    formData.documents!.removeAt(formData.documents!.indexOf(document));
-    updateFormData(context);
   }
 
   _showDeleteDialog(BuildContext context, OrderDocument document) {
@@ -187,36 +179,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
   OrderDocumentFormData orderDocumentFormData = OrderDocumentFormData.createEmpty(null);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  _addListeners() {
-    nameController.addListener(_nameListen);
-    descriptionController.addListener(_descriptionListen);
-  }
-
-  void _nameListen() {
-    if (nameController.text.isEmpty) {
-      orderDocumentFormData.name = "";
-    } else {
-      orderDocumentFormData.name = nameController.text;
-    }
-  }
-
-  void _descriptionListen() {
-    if (descriptionController.text.isEmpty) {
-      orderDocumentFormData.description = "";
-    } else {
-      orderDocumentFormData.description = descriptionController.text;
-    }
-  }
-
-  updateFormData(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
-    bloc.add(OrderEvent(
-        status: OrderEventStatus.updateFormData,
-        formData: widget.formData
-    ));
-  }
 
   @override
   void initState() {
@@ -303,6 +265,27 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
     );
   }
 
+  _addListeners() {
+    nameController.addListener(_nameListen);
+    descriptionController.addListener(_descriptionListen);
+  }
+
+  void _nameListen() {
+    if (nameController.text.isEmpty) {
+      orderDocumentFormData.name = "";
+    } else {
+      orderDocumentFormData.name = nameController.text;
+    }
+  }
+
+  void _descriptionListen() {
+    if (descriptionController.text.isEmpty) {
+      orderDocumentFormData.description = "";
+    } else {
+      orderDocumentFormData.description = descriptionController.text;
+    }
+  }
+
   Widget _buildOpenFileButton(BuildContext context) {
     return widget.widgets.createElevatedButtonColored(
         My24i18n.tr('generic.button_choose_file'),
@@ -335,10 +318,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
       if (nameController.text == "") {
         nameController.text = file.name;
       }
-
-      if (context.mounted) {
-        updateFormData(context);
-      }
     }
   }
 
@@ -352,10 +331,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
       documentController.text = filename;
       if (nameController.text == "") {
         nameController.text = filename;
-      }
-
-      if (context.mounted) {
-        updateFormData(context);
       }
     }
   }
@@ -371,10 +346,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
       if (nameController.text == "") {
         nameController.text = filename;
       }
-
-      if (context.mounted) {
-        updateFormData(context);
-      }
     }
   }
 
@@ -384,7 +355,13 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
 
       OrderDocument orderDocument = orderDocumentFormData.toModel();
 
-      widget.formData.documents!.add(orderDocument);
+      final bloc = BlocProvider.of<BlocClass>(context);
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(OrderEvent(
+        status: OrderEventStatus.addDocument,
+        formData: widget.formData,
+        document: orderDocument
+      ));
 
       // reset fields
       orderDocumentFormData.reset(widget.formData.id);
@@ -392,9 +369,6 @@ class _DocumentFormState<BlocClass extends OrderBlocBase, FormDataClass extends 
       documentController.text = "";
       nameController.text = "";
       descriptionController.text = "";
-
-      updateFormData(context);
-      widget.widgets.createSnackBar(context, widget.i18n.$trans('snackbar_added'));
     } else {
       widget.widgets.displayDialog(context,
           My24i18n.tr('generic.error_dialog_title'),
