@@ -120,8 +120,9 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
 
     if (state is OrderInsertedState) {
       if (context.mounted) {
+        final OrderEventStatus useFetchMode = orderPageMetaData!.hasBranches! || orderPageMetaData.submodel == 'customer_user' ? OrderEventStatus.fetchUnaccepted : fetchMode;
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
-        navListFunction(context, fetchMode);
+        navListFunction(context, useFetchMode);
       }
     }
 
