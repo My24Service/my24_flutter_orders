@@ -115,12 +115,16 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
     return orderListData.submodel == 'planning_user';
   }
 
+  bool isCustomer(OrderPageMetaData orderListData) {
+    return orderListData.submodel == 'customer_user';
+  }
+
   void _handleListener(BuildContext context, state, OrderPageMetaData? orderPageMetaData) async {
     log.info("_handleListener state: $state");
 
     if (state is OrderInsertedState) {
       if (context.mounted) {
-        final OrderEventStatus useFetchMode = orderPageMetaData!.hasBranches! || orderPageMetaData.submodel == 'customer_user' ? OrderEventStatus.fetchUnaccepted : fetchMode;
+        final OrderEventStatus useFetchMode = orderPageMetaData!.hasBranches! || isCustomer(orderPageMetaData) ? OrderEventStatus.fetchUnaccepted : fetchMode;
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
         navListFunction(context, useFetchMode);
       }

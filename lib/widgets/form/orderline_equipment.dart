@@ -291,7 +291,7 @@ class _EquipmentPartState extends State<EquipmentPart> {
                 )
             ),
             suggestionsCallback: (String pattern) async {
-              return await equipmentApi.equipmentTypeAhead(
+              return await equipmentApi.typeAhead(
                   pattern, widget.formData.branch);
             },
             itemBuilder: (context, suggestion) {
@@ -513,7 +513,7 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                   )
               ),
               suggestionsCallback: (String pattern) async {
-                return await widget.equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
+                return await widget.equipmentLocationApi.typeAhead(pattern, widget.formData.branch);
               },
               itemBuilder: (context, suggestion) {
                 String text = suggestion.identifier != null && suggestion.identifier != '' ?
