@@ -9,15 +9,18 @@ import 'package:my24_flutter_core/i18n.dart';
 import '../../common/widgets.dart';
 import '../../models/order/models.dart';
 import '../../blocs/order_bloc.dart';
+import '../pages/types.dart';
 
-abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
+class OrderListWidget extends BaseSliverListStatelessWidget {
   final OrderPageMetaData orderPageMetaData;
   final List<Order>? orderList;
   final OrderEventStatus fetchEvent;
   final String? searchQuery;
   final TextEditingController searchController = TextEditingController();
+  final NavFormFunction navFormFunction;
+  final NavDetailFunction navDetailFunction;
 
-  BaseOrderListWidget({
+  OrderListWidget({
     Key? key,
     required this.orderList,
     required this.orderPageMetaData,
@@ -26,6 +29,8 @@ abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
     required PaginationInfo paginationInfo,
     required CoreWidgets widgetsIn,
     required My24i18n i18nIn,
+    required this.navFormFunction,
+    required this.navDetailFunction
   }) : super(
     key: key,
     paginationInfo: paginationInfo,
@@ -35,9 +40,6 @@ abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
   ) {
     searchController.text = searchQuery ?? '';
   }
-
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode);
-  void navDetail(BuildContext context, int orderPk);
 
   @override
   Widget getBottomSection(BuildContext context) {
@@ -179,11 +181,11 @@ abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
   }
 
   handleNew(BuildContext context) {
-    navForm(context, null, fetchEvent);
+    navFormFunction(context, null, fetchEvent);
   }
 
   doEdit(BuildContext context, int orderPk) {
-    navForm(context, orderPk, fetchEvent);
+    navFormFunction(context, orderPk, fetchEvent);
   }
 
   doDelete(BuildContext context, int orderPk) async {
@@ -196,10 +198,10 @@ abstract class BaseOrderListWidget extends BaseSliverListStatelessWidget {
   }
 
   navOrderDetail(BuildContext context, int orderPk) {
-    navDetail(context, orderPk);
+    navDetailFunction(context, orderPk);
   }
 
   navOrderForm(BuildContext context, int? orderPk) {
-    navForm(context, orderPk, fetchEvent);
+    navFormFunction(context, orderPk, fetchEvent);
   }
 }

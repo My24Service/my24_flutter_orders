@@ -131,7 +131,7 @@ abstract class BaseOrderFormWidget<
               ),
               widgetsIn.createElevatedButtonColored(
                   i18nIn.$trans('form.button_nav_orders'),
-                      () => _fetchOrders(context)
+                  () => Navigator.pop(context)
               ),
             ],
           )
@@ -146,17 +146,12 @@ abstract class BaseOrderFormWidget<
     return Row(
         children: [
           const Spacer(),
-          widgetsIn.createCancelButton(() => _fetchOrders(context)),
+          widgetsIn.createCancelButton(() => Navigator.pop(context)),
           const SizedBox(width: 10),
           widgetsIn.createSubmitButton(context, () => _doSubmit(context)),
           const Spacer(),
         ]
     );
-  }
-
-  _fetchOrders(BuildContext context) {
-    final bloc = BlocProvider.of<BlocClass>(context);
-    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.navList));
   }
 
   void _doAccept(BuildContext context) {

@@ -94,6 +94,18 @@ class OrderApi extends BaseCrud<Order, Orders> {
     String basePathAddition = '$orderPk/create_pdf_background/';
     return await super.insertCustom(body, basePathAddition);
   }
+
+  Future<Orders> fetchAllForEquipmentOrders({required int equipmentPk, page=1}) async {
+    return super.list(
+        filters: { 'equipment': equipmentPk, 'page': page },
+        basePathAddition: 'all_for_equipment_location/');
+  }
+
+  Future<Orders> fetchAllForLocationOrders({required int locationPk, page=1}) async {
+    return super.list(
+        filters: { 'location': locationPk, 'page': page },
+        basePathAddition: 'all_for_equipment_location/');
+  }
 }
 
 class CustomerHistoryOrderApi extends BaseCrud<CustomerHistoryOrder, CustomerHistoryOrders> {
@@ -112,3 +124,4 @@ class CustomerHistoryOrderApi extends BaseCrud<CustomerHistoryOrder, CustomerHis
     return CustomerHistoryOrders.fromJson(parsedJson!);
   }
 }
+

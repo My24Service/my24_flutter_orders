@@ -25,7 +25,6 @@ enum OrderFormEventStatus {
   accept,
   reject,
   updateFormData,
-  navList,
 
   addOrderLine,
   removeOrderline,
@@ -127,13 +126,6 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
     else if (event.status == OrderFormEventStatus.reject) {
       _handleRejectState(event, emit);
     }
-    else if (event.status == OrderFormEventStatus.navList) {
-      _handleNavListState(event, emit);
-    }
-  }
-
-  void _handleNavListState(OrderFormEvent event, Emitter<OrderFormState> emit) {
-    emit(OrderFormNavListState());
   }
 
   void _handleAddOrderLineState(OrderFormEvent event, Emitter<OrderFormState> emit) {

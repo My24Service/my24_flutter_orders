@@ -2,29 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
-import 'package:my24_flutter_core/widgets/widgets.dart';
-import 'package:my24_flutter_core/i18n.dart';
 
 import '../../blocs/order_bloc.dart';
+import '../pages/types.dart';
 
-abstract class BaseOrderListEmptyWidget extends BaseEmptyWidget {
+class OrderListEmptyWidget extends BaseEmptyWidget {
   final OrderEventStatus fetchEvent;
   final TextEditingController searchController = TextEditingController();
+  final NavFormFunction navFormFunction;
 
-  BaseOrderListEmptyWidget({
-    Key? key,
-    String? memberPicture,
-    required CoreWidgets widgetsIn,
-    required My24i18n i18nIn,
+  OrderListEmptyWidget({
+    super.key,
+    super.memberPicture,
+    required super.widgetsIn,
+    required super.i18nIn,
     required this.fetchEvent,
-  }) : super(
-    key: key,
-    memberPicture: memberPicture,
-    widgetsIn: widgetsIn,
-    i18nIn: i18nIn
-  );
-
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode);
+    required this.navFormFunction
+  });
 
   @override
   String getEmptyMessage() {
@@ -64,11 +58,7 @@ abstract class BaseOrderListEmptyWidget extends BaseEmptyWidget {
     ));
   }
 
-  navOrderForm(BuildContext context, int? orderPk, {OrderEventStatus? fetchMode}) {
-    navForm(context, orderPk, fetchMode ?? fetchEvent);
-  }
-
   handleNew(BuildContext context, {OrderEventStatus? fetchMode}) {
-    navForm(context, null, fetchMode ?? fetchEvent);
+    navFormFunction(context, null, fetchMode ?? fetchEvent);
   }
 }

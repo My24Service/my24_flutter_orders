@@ -46,12 +46,25 @@ class OrderDocument extends BaseModel {
 
   @override
   String toJson() {
-    final Map body = {
+    // only add file when it's base64 encoded
+    String? useFile;
+
+    try {
+      base64Decode(file!);
+      useFile = file!;
+    } catch(e) {
+      useFile = null;
+    }
+
+    Map body = {
       'order': orderId,
       'name': name,
       'description': description,
-      'file': file,
     };
+
+    if (useFile != null) {
+      body['file'] = useFile;
+    }
 
     return json.encode(body);
   }
