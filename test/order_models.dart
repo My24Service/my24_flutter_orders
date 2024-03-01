@@ -2,10 +2,8 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my24_flutter_core/i18n.dart';
 
 import 'package:my24_flutter_core/models/base_models.dart';
-import 'package:my24_flutter_core/models/models.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_form_bloc.dart';
@@ -16,9 +14,11 @@ import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/pages/detail.dart';
 import 'package:my24_flutter_orders/pages/form.dart';
 import 'package:my24_flutter_orders/pages/list.dart';
-import 'package:my24_flutter_orders/widgets/empty.dart';
 import 'package:my24_flutter_orders/widgets/form/order.dart';
-import 'package:my24_flutter_orders/widgets/list.dart';
+
+void navFormFunction(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {}
+void navDetailFunction(BuildContext context, int? orderPk) {}
+void navListFunction(BuildContext context, OrderEventStatus fetchMode) {}
 
 class OrderFormBloc extends OrderFormBlocBase {
   OrderFormBloc() : super(OrderFormInitialState()) {
@@ -224,8 +224,10 @@ class OrderFormPageClass<OrderFormBloc> extends BaseOrderFormPage {
     super.key,
     super.bloc,
     required super.fetchMode,
-    required super.pk
-  });
+    required super.pk,
+  }) : super(
+      navListFunction: navListFunction
+  );
 
   @override
   Widget getOrderFormWidget(
@@ -243,37 +245,6 @@ class OrderFormPageClass<OrderFormBloc> extends BaseOrderFormPage {
       widgetsIn: widgets,
     );
   }
-
-  @override
-  void navList(BuildContext context, OrderEventStatus fetchMode) {
-    // TODO: implement navList
-  }
-
-}
-
-class OrderListWidget extends BaseOrderListWidget {
-  OrderListWidget({super.key, required super.orderList, required super.orderPageMetaData, required super.fetchEvent, required super.searchQuery, required super.paginationInfo, required super.widgetsIn, required super.i18nIn});
-
-  @override
-  void navDetail(BuildContext context, int orderPk) {
-    // TODO: implement navDetail
-  }
-
-  @override
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
-    // TODO: implement navForm
-  }
-
-}
-
-class OrderListEmptyWidget extends BaseOrderListEmptyWidget {
-  OrderListEmptyWidget({super.key, required super.widgetsIn, required super.i18nIn, required super.fetchEvent});
-
-  @override
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
-    // TODO: implement navForm
-  }
-
 }
 
 class OrderListPage<OrderFormBloc> extends BaseOrderListPage {
@@ -282,42 +253,15 @@ class OrderListPage<OrderFormBloc> extends BaseOrderListPage {
     required super.bloc,
     required super.fetchMode,
     String? initialMode,
-    int? pk
-  });
+    int? pk,
+  }) : super(
+      navFormFunction: navFormFunction,
+      navDetailFunction: navDetailFunction
+  );
 
   @override
   Future<Widget?> getDrawerForUserWithSubmodel(BuildContext context, String? submodel) async {
     return null;
-  }
-
-  @override
-  Widget getOrderListWidget({
-    List<Order>? orderList,
-    required OrderPageMetaData orderPageMetaData,
-    required OrderEventStatus fetchEvent,
-    String? searchQuery,
-    required PaginationInfo paginationInfo,
-    required CoreWidgets widgetsIn,
-    required My24i18n i18nIn
-  }) {
-    return OrderListWidget(
-      orderList: orderList,
-      orderPageMetaData: orderPageMetaData,
-      fetchEvent: fetchMode,
-      searchQuery: searchQuery,
-      paginationInfo: paginationInfo,
-      widgetsIn: widgets,
-      i18nIn: i18n,
-    );
-  }
-
-  @override
-  Widget getOrderListEmptyWidget({required widgetsIn, required i18nIn, required fetchEvent}) {
-    return OrderListEmptyWidget(
-      widgetsIn: widgetsIn,
-      i18nIn: i18nIn,
-      fetchEvent: fetchEvent
-    );
   }
 
 }

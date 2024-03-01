@@ -9,11 +9,17 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
+import 'package:my24_flutter_orders/pages/types.dart';
 
 import '../blocs/order_form_bloc.dart';
 import '../blocs/order_form_states.dart';
+import '../widgets/form/error.dart';
 
 final log = Logger('orders.pages.form');
+
+Future sleep1() {
+  return Future.delayed(const Duration(seconds: 1), () => "1");
+}
 
 abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extends StatelessWidget {
   final i18n = My24i18n(basePath: "orders");
@@ -22,12 +28,14 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
   final OrderFormBloc? bloc; // this bloc is here so we can use a custom bloc in tests
   final int? pk;
   final OrderEventStatus fetchMode;
+  final NavListFunction navListFunction;
 
   BaseOrderFormPage({
     super.key,
     this.pk,
     this.bloc,
     required this.fetchMode,
+    required this.navListFunction
   });
 
   Widget getOrderFormWidget({
@@ -36,8 +44,6 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
     required OrderEventStatus fetchEvent,
     required CoreWidgets widgets
   });
-
-  void navList(BuildContext context, OrderEventStatus fetchMode);
 
   Future<OrderPageMetaData?> getOrderPageMetaData(BuildContext context) async {
     String? submodel = await utils.getUserSubmodel();
@@ -115,16 +121,23 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
     if (state is OrderInsertedState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_added'));
-        navList(context, fetchMode);
-        return;
+        navListFunction(context, fetchMode);
       }
     }
 
     if (state is OrderUpdatedState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_updated'));
-        navList(context, fetchMode);
-        return;
+        navListFunction(context, fetchMode);
+      }
+    }
+
+    if (state is OrderFormErrorState) {
+      if (context.mounted) {
+        widgets.createSnackBar(context, i18n.$trans(
+            'error_arg', pathOverride: 'generic',
+            namedArgs: {'error': "${state.message}"}
+        ));
       }
     }
 
@@ -140,23 +153,14 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
     if (state is OrderAcceptedState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_accepted'));
-        navList(context, fetchMode);
-        return;
+        navListFunction(context, fetchMode);
       }
     }
 
     if (state is OrderRejectedState) {
       if (context.mounted) {
         widgets.createSnackBar(context, i18n.$trans('list.snackbar_rejected'));
-        navList(context, fetchMode);
-        return;
-      }
-    }
-
-    if (state is OrderFormNavListState) {
-      if (context.mounted) {
-        navList(context, fetchMode);
-        return;
+        navListFunction(context, fetchMode);
       }
     }
 
@@ -206,9 +210,53 @@ abstract class BaseOrderFormPage<OrderFormBloc extends OrderFormBlocBase> extend
       );
     }
 
+    if (state is OrderFormErrorState) {
+      // TODO maybe we want to display the form again but with error messages?
+      return OrderFormErrorWidget(
+        widgetsIn: widgets,
+        i18nIn: i18n,
+        error: state.message!,
+        orderPageMetaData: orderPageMetaData,
+      );
+    }
+
     if (state is OrderLoadingState) {
       return widgets.loadingNotice();
     }
+
+    if (state is OrderFormInitialState) {
+      return widgets.loadingNotice();
+    }
+
+    // navs
+    if (state is OrderInsertedState) {
+      if (context.mounted) {
+        return null;
+      }
+    }
+
+    if (state is OrderUpdatedState) {
+      if (context.mounted) {
+        return null;
+      }
+    }
+
+    if (state is OrderAcceptedState) {
+      if (context.mounted) {
+        return null;
+      }
+    }
+
+    if (state is OrderRejectedState) {
+      if (context.mounted) {
+        return null;
+      }
+    }
+
+    if (state is OrderFormLoadingState) {
+      return widgets.loadingNotice();
+    }
+
     return null;
   }
 }

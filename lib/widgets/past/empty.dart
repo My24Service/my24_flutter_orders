@@ -4,13 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/order_bloc.dart';
 import '../empty.dart';
 
-class PastListEmptyWidget extends BaseOrderListEmptyWidget {
+class PastListEmptyWidget extends OrderListEmptyWidget {
   PastListEmptyWidget({
     super.key,
     super.memberPicture,
     required super.widgetsIn,
     required super.i18nIn,
     required super.fetchEvent,
+    required super.navFormFunction,
   });
 
   @override
@@ -50,10 +51,5 @@ class PastListEmptyWidget extends BaseOrderListEmptyWidget {
         query: searchController.text,
         page: 1
     ));
-  }
-
-  @override
-  void navForm(BuildContext context, int? orderPk, OrderEventStatus fetchMode) {
-    super.navOrderForm(context, orderPk, fetchMode: fetchEvent);
   }
 }

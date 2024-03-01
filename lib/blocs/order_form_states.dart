@@ -14,11 +14,6 @@ class OrderFormLoadingState extends OrderFormState {
   List<Object> get props => [];
 }
 
-class OrderFormNavListState extends OrderFormState {
-  @override
-  List<Object> get props => [];
-}
-
 class OrderFormErrorState extends OrderFormState {
   final String? message;
 

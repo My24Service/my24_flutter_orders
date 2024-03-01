@@ -9,6 +9,7 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 
 import 'package:my24_flutter_orders/blocs/order_bloc.dart';
 import 'package:my24_flutter_orders/blocs/order_states.dart';
+import 'package:my24_flutter_orders/pages/types.dart';
 import 'package:my24_flutter_orders/widgets/error.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import 'package:my24_flutter_orders/widgets/past/empty.dart';
@@ -18,6 +19,9 @@ import 'package:my24_flutter_orders/widgets/unaccepted/empty.dart';
 import 'package:my24_flutter_orders/widgets/unaccepted/error.dart';
 import 'package:my24_flutter_orders/widgets/unaccepted/list.dart';
 
+import '../widgets/empty.dart';
+import '../widgets/list.dart';
+
 final log = Logger('orders.pages.list');
 
 abstract class BaseOrderListPage extends StatelessWidget {
@@ -26,11 +30,15 @@ abstract class BaseOrderListPage extends StatelessWidget {
   final OrderBloc bloc;
   final CoreWidgets widgets = CoreWidgets();
   final CoreUtils utils = CoreUtils();
+  final NavFormFunction navFormFunction;
+  final NavDetailFunction navDetailFunction;
 
   BaseOrderListPage({
     super.key,
     required this.bloc,
     required this.fetchMode,
+    required this.navFormFunction,
+    required this.navDetailFunction
   });
 
   Future<Widget?> getDrawerForUserWithSubmodel(
@@ -59,22 +67,6 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
     return bloc;
   }
-
-  Widget getOrderListWidget({
-    List<Order>? orderList,
-    required OrderPageMetaData orderPageMetaData,
-    required OrderEventStatus fetchEvent,
-    String? searchQuery,
-    required PaginationInfo paginationInfo,
-    required CoreWidgets widgetsIn,
-    required My24i18n i18nIn,
-  });
-
-  Widget getOrderListEmptyWidget({
-    required widgetsIn,
-    required i18nIn,
-    required fetchEvent
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,10 +172,11 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
     if (state is OrdersLoadedState) {
       if (state.orders!.results!.isEmpty) {
-        return getOrderListEmptyWidget(
+        return OrderListEmptyWidget(
           fetchEvent: fetchMode,
           widgetsIn: widgets,
           i18nIn: i18n,
+          navFormFunction: navFormFunction,
         );
       }
 
@@ -195,7 +188,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
           pageSize: orderPageMetaData.pageSize
       );
 
-      return getOrderListWidget(
+      return OrderListWidget(
         orderList: state.orders!.results,
         orderPageMetaData: orderPageMetaData,
         fetchEvent: fetchMode,
@@ -203,6 +196,8 @@ abstract class BaseOrderListPage extends StatelessWidget {
         paginationInfo: paginationInfo,
         widgetsIn: widgets,
         i18nIn: i18n,
+        navFormFunction: navFormFunction,
+        navDetailFunction: navDetailFunction,
       );
     }
 
@@ -212,6 +207,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
           fetchEvent: fetchMode,
           widgetsIn: widgets,
           i18nIn: i18n,
+          navFormFunction: navFormFunction,
         );
       }
 
@@ -231,6 +227,8 @@ abstract class BaseOrderListPage extends StatelessWidget {
         paginationInfo: paginationInfo,
         widgetsIn: widgets,
         i18nIn: i18n,
+        navFormFunction: navFormFunction,
+        navDetailFunction: navDetailFunction,
       );
     }
 
@@ -240,6 +238,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
           fetchEvent: fetchMode,
           widgetsIn: widgets,
           i18nIn: i18n,
+          navFormFunction: navFormFunction,
         );
       }
 
@@ -259,6 +258,8 @@ abstract class BaseOrderListPage extends StatelessWidget {
         paginationInfo: paginationInfo,
         widgetsIn: widgets,
         i18nIn: i18n,
+        navFormFunction: navFormFunction,
+        navDetailFunction: navDetailFunction,
       );
     }
 
