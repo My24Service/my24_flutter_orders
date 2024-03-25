@@ -20,6 +20,8 @@ enum OrderFormEventStatus {
   doAsync,
   fetchDetail,
   newOrder,
+  newOrderFromEquipmentCustomer,
+  newOrderFromEquipmentBranch,
   update,
   insert,
   accept,
@@ -39,6 +41,7 @@ enum OrderFormEventStatus {
 class OrderFormEvent {
   final OrderFormEventStatus? status;
   final int? pk;
+  final String? equipmentUuid;
   final Order? order;
   final dynamic formData;
 
@@ -59,6 +62,7 @@ class OrderFormEvent {
 
   const OrderFormEvent({
     this.pk,
+    this.equipmentUuid,
     this.status,
     this.order,
     this.formData,
