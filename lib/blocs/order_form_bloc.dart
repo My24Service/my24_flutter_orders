@@ -42,6 +42,7 @@ class OrderFormEvent {
   final OrderFormEventStatus? status;
   final int? pk;
   final String? equipmentUuid;
+  final String? equipmentOrderType;
   final Order? order;
   final dynamic formData;
 
@@ -63,6 +64,7 @@ class OrderFormEvent {
   const OrderFormEvent({
     this.pk,
     this.equipmentUuid,
+    this.equipmentOrderType,
     this.status,
     this.order,
     this.formData,
