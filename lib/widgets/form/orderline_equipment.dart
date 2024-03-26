@@ -13,9 +13,9 @@ import 'package:my24_flutter_equipment/models/location/models.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
-import '../../blocs/order_form_bloc.dart';
-import '../../blocs/orderline_bloc.dart';
-import '../../models/orderline/form_data.dart';
+import 'package:my24_flutter_orders/blocs/order_form_bloc.dart';
+import 'package:my24_flutter_orders/blocs/orderline_bloc.dart';
+import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 
 final log = Logger('orders.form.orderlines.equipment');
 

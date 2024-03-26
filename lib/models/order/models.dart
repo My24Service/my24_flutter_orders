@@ -423,13 +423,18 @@ class CustomerHistoryOrders extends BaseModelPagination {
   }
 }
 
-// TODO rename these classes
+// TODO this will become a db model on its own
 class OrderTypes {
   List<String>? orderTypes;
 
   OrderTypes({
     this.orderTypes,
   });
+
+  List<String> getForEquipmentDetail() {
+    final displayThese = ['storing', 'repair'];
+    return orderTypes!.where((element) => displayThese.contains(element.toLowerCase())).toList();
+  }
 
   factory OrderTypes.fromJson(List<dynamic> parsedJson) {
     List<String> orderTypes = List<String>.from(parsedJson);
