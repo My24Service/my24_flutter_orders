@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
+import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_equipment/models/equipment/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/models.dart';
@@ -25,7 +26,7 @@ class OrderlineFormEquipment<
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
-  final My24i18n i18n;
+  final My24i18n i18n = My24i18n(basePath: "orders.form.orderlines");
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final OrderlineFormData orderlineFormData;
 
@@ -34,7 +35,6 @@ class OrderlineFormEquipment<
     required this.formData,
     required this.widgets,
     required this.isPlanning,
-    required this.i18n,
     required this.orderlineFormData
   });
 
@@ -99,7 +99,6 @@ class _OrderlineFormEquipmentState<
           LocationsPart(
             formData: widget.formData,
             widgets: widget.widgets,
-            i18n: widget.i18n,
             canCreateLocation: _canCreateLocation(),
             orderlineFormData: widget.orderlineFormData,
           ),
@@ -447,17 +446,18 @@ class LocationsPart<FormDataClass extends BaseOrderFormData> extends StatefulWid
   final EquipmentLocationApi locationApi = EquipmentLocationApi();
   final FormDataClass formData;
   final CoreWidgets widgets;
-  final My24i18n i18n;
+  final My24i18n i18n = My24i18n(basePath: "orders.form.orderlines");
   final bool canCreateLocation;
   final OrderlineFormData orderlineFormData;
+  final Function? onLocationSelected;
 
   LocationsPart({
     super.key,
     required this.formData,
     required this.widgets,
-    required this.i18n,
     required this.canCreateLocation,
-    required this.orderlineFormData
+    required this.orderlineFormData,
+    this.onLocationSelected
   });
 
   @override
@@ -493,7 +493,7 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
       });
     }
 
-    widget.locationController.text = widget.orderlineFormData.location!;
+    widget.locationController.text = checkNull(widget.orderlineFormData.location);
 
     // we need the top level context is the dialog call
     BuildContext mainContext = context;
@@ -564,7 +564,13 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                 widget.orderlineFormData.equipmentLocation = suggestion.id!;
                 widget.orderlineFormData.location = suggestion.name!;
 
-                // _updateFormData();
+                setState(() {
+
+                });
+
+                if (widget.onLocationSelected != null) {
+                  widget.onLocationSelected!(suggestion);
+                }
               },
               validator: (value) {
                 return null;

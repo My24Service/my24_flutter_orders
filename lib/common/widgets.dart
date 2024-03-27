@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
+import 'package:my24_flutter_core/utils.dart';
 import 'package:my24_flutter_core/widgets/slivers/app_bars.dart';
 
 import '../models/order/models.dart';
@@ -246,4 +247,86 @@ class OrdersAppBarFactory extends BaseOrdersAppBarFactory {
     required super.count,
     super.onStretch
   });
+}
+
+class OrderInfoCard extends StatelessWidget {
+  final dynamic formData;
+  final CoreUtils coreUtils = CoreUtils();
+
+  OrderInfoCard({
+    super.key,
+    required this.formData
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final String nameText = formData.orderNameController!.text;
+    return SizedBox(
+        width: 300,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                    nameText,
+                    style: const TextStyle(fontWeight: FontWeight.w500)
+                ),
+                subtitle: Text(
+                    '${formData.orderAddressController!.text}\n'
+                        '${formData.orderCountryCode}-${formData.orderPostalController!.text}\n'
+                        '${formData.orderCityController!.text}'
+                ),
+                leading: Icon(
+                  Icons.home,
+                  color: Colors.blue[500],
+                ),
+              ),
+              if (formData.orderTelController!.text != '')
+                ListTile(
+                  title: Text(
+                      formData.orderTelController!.text,
+                      style: const TextStyle(fontWeight: FontWeight.w500)
+                  ),
+                  leading: Icon(
+                    Icons.contact_phone,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    coreUtils.launchURL("tel://${formData.orderTelController!.text}");
+                  },
+                ),
+              if (formData.orderMobileController!.text != '')
+                ListTile(
+                  title: Text(
+                      formData.orderMobileController!.text,
+                      style: const TextStyle(fontWeight: FontWeight.w500)
+                  ),
+                  leading: Icon(
+                    Icons.send_to_mobile,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    coreUtils.launchURL("tel://${formData.orderMobileController!.text}");
+                  },
+                ),
+              if (formData.orderEmailController!.text != '')
+                ListTile(
+                  title: Text(
+                      formData.orderEmailController!.text,
+                      style: const TextStyle(fontWeight: FontWeight.w500)
+                  ),
+                  leading: Icon(
+                    Icons.email,
+                    color: Colors.blue[500],
+                  ),
+                  onTap: () {
+                    coreUtils.launchURL("mailto://${formData.orderEmailController!.text}");
+                  },
+                ),
+            ],
+          ),
+        )
+    );
+  }
 }

@@ -14,6 +14,7 @@ import 'orderline_states.dart';
 enum OrderLineStatus {
   updateFormData,
   newFormData,
+  loadFormData,
   createSelectEquipment,
   createSelectEquipmentLocation,
   doAsync,
@@ -56,6 +57,9 @@ class OrderLineBloc extends Bloc<OrderLineEvent, OrderLineBaseState> {
       else if (event.status == OrderLineStatus.newFormData) {
         _handleNewFormData(event, emit);
       }
+      else if (event.status == OrderLineStatus.loadFormData) {
+        _handleLoadFormData(event, emit);
+      }
       else if (event.status == OrderLineStatus.createSelectEquipment) {
         await _handleCreateSelectEquipment(event, emit);
       }
@@ -76,6 +80,10 @@ class OrderLineBloc extends Bloc<OrderLineEvent, OrderLineBaseState> {
 
   void _handleNewFormData(OrderLineEvent event, Emitter<OrderLineBaseState> emit) {
     emit(OrderLineNewFormDataState(formData: OrderlineFormData.createEmpty(event.order)));
+  }
+
+  void _handleLoadFormData(OrderLineEvent event, Emitter<OrderLineBaseState> emit) {
+    emit(OrderLineNewFormDataState(formData: event.formData!));
   }
 
   Future<void> _handleCreateSelectEquipment(OrderLineEvent event, Emitter<OrderLineBaseState> emit) async {
