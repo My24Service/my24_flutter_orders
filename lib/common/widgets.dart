@@ -6,110 +6,6 @@ import 'package:my24_flutter_core/widgets/slivers/app_bars.dart';
 
 import '../models/order/models.dart';
 
-Widget getOrderHeaderKeyWidget(String text, double fontsize) {
-  return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
-      child:
-      Text(text, style: TextStyle(fontSize: fontsize, color: Colors.grey)));
-}
-
-Widget getOrderHeaderValueWidget(String text, double fontsize) {
-  return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 4, top: 2),
-      child: Text(text,
-          style: TextStyle(
-              fontSize: fontsize,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              color: Colors.black)));
-}
-
-Widget getOrderSubHeaderKeyWidget(String text, double fontsize) {
-  return Padding(
-      padding: const EdgeInsets.only(top: 1.0),
-      child: Text(text, style: TextStyle(fontSize: fontsize)));
-}
-
-Widget getOrderSubHeaderValueWidget(String text, double fontsize) {
-  return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 4, top: 2),
-      child: Text(text,
-          style: TextStyle(
-            fontSize: fontsize,
-            // fontWeight: FontWeight.bold,
-            // fontStyle: FontStyle.italic
-          )
-      )
-  );
-}
-
-Widget createOrderListHeader(Order order, String date) {
-  double fontsizeKey = 14.0;
-  double fontsizeValue = 20.0;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      getOrderHeaderKeyWidget(
-          My24i18n.tr('generic.info_name'), fontsizeKey),
-      getOrderHeaderValueWidget(
-          '${order.orderName}, ${order.orderCity}', fontsizeValue),
-      const SizedBox(height: 2),
-      getOrderHeaderKeyWidget(
-          My24i18n.tr('orders.info_order_date'), fontsizeKey),
-      getOrderHeaderValueWidget(date, fontsizeValue),
-    ],
-  );
-}
-
-Widget createOrderHistoryListHeader(String date) {
-  double fontsizeKey = 14.0;
-  double fontsizeValue = 20.0;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      getOrderHeaderKeyWidget(
-          My24i18n.tr('orders.info_order_date'),
-          fontsizeKey
-      ),
-      getOrderHeaderValueWidget(date, fontsizeValue),
-    ],
-  );
-}
-
-Widget createOrderListSubtitle(Order order) {
-  double fontsizeKey = 12.0;
-  double fontsizeValue = 16.0;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      getOrderSubHeaderKeyWidget(
-          My24i18n.tr('orders.info_order_id'), fontsizeKey),
-      getOrderSubHeaderValueWidget('${order.orderId}', fontsizeValue),
-      const SizedBox(height: 3),
-      getOrderSubHeaderKeyWidget(
-          My24i18n.tr('orders.info_address'), fontsizeKey),
-      getOrderSubHeaderValueWidget('${order.orderAddress}', fontsizeValue),
-      const SizedBox(height: 3),
-      getOrderSubHeaderKeyWidget(
-          My24i18n.tr('orders.info_postal_city'), fontsizeKey),
-      getOrderSubHeaderValueWidget(
-          '${order.orderCountryCode}-${order.orderPostal} ${order.orderCity}',
-          fontsizeValue),
-      const SizedBox(height: 3),
-      getOrderSubHeaderKeyWidget(
-          My24i18n.tr('orders.info_order_type'), fontsizeKey),
-      getOrderSubHeaderValueWidget('${order.orderType}', fontsizeValue),
-      const SizedBox(height: 3),
-      getOrderSubHeaderKeyWidget(
-          My24i18n.tr('orders.info_last_status'), fontsizeKey),
-      getOrderSubHeaderValueWidget('${order.lastStatusFull}', fontsizeValue)
-    ],
-  );
-}
-
 abstract class BaseOrdersAppBarFactory extends BaseGenericAppBarFactory {
   BuildContext context;
   List<dynamic>? orders;
@@ -330,3 +226,315 @@ class OrderInfoCard extends StatelessWidget {
     );
   }
 }
+
+class OrderHistoryListSubtitle extends StatelessWidget {
+  final double fontsizeKey = 12.0;
+  final double fontsizeValue = 16.0;
+  final Order order;
+  final Widget? workorderWidget;
+
+  const OrderHistoryListSubtitle({
+    super.key,
+    required this.order,
+    this.workorderWidget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OrderSubHeaderKeyWidget(
+          text:My24i18n.tr('orders.info_order_id'),
+          fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: "${order.orderId}",
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_type'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.orderType}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_last_status'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.lastStatusFull}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        if (workorderWidget != null)
+          workorderWidget!,
+      ],
+    );
+  }
+}
+
+class OrderSubHeaderKeyWidget extends StatelessWidget {
+  final String text;
+  final double fontsize;
+
+  const OrderSubHeaderKeyWidget({
+    super.key,
+    required this.text,
+    required this.fontsize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 1.0),
+        child: Text(text, style: TextStyle(fontSize: fontsize))
+    );
+  }
+}
+
+class OrderSubHeaderValueWidget extends StatelessWidget {
+  final String text;
+  final double fontsize;
+
+  const OrderSubHeaderValueWidget({
+    super.key,
+    required this.text,
+    required this.fontsize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(left: 8.0, bottom: 4, top: 2),
+        child: Text(text,
+            style: TextStyle(
+              fontSize: fontsize,
+              // fontWeight: FontWeight.bold,
+              // fontStyle: FontStyle.italic
+            )
+        )
+    );
+  }
+}
+
+class OrderHistoryListHeader extends StatelessWidget {
+  final double fontsizeKey = 14.0;
+  final double fontsizeValue = 20.0;
+  final String date;
+
+  const OrderHistoryListHeader({
+    super.key,
+    required this.date
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OrderHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_date'),
+            fontsize: fontsizeKey
+        ),
+        OrderHeaderValueWidget(
+            text: date,
+            fontsize: fontsizeValue
+        ),
+      ],
+    );
+  }
+}
+
+class OrderHistoryWithAcceptedListHeader extends StatelessWidget {
+  final double fontsizeKey = 14.0;
+  final double fontsizeValue = 20.0;
+  final String date;
+  final bool customerOrderAccepted;
+
+  const OrderHistoryWithAcceptedListHeader({
+    super.key,
+    required this.date,
+    required this.customerOrderAccepted
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OrderHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_date'),
+            fontsize: fontsizeKey
+        ),
+        OrderHeaderValueWidget(
+            text: date,
+            fontsize: fontsizeValue
+        ),
+        if (!customerOrderAccepted)
+          Text(
+              My24i18n.tr('orders.info_not_yet_accepted'),
+              style: TextStyle(
+                  fontSize: fontsizeValue,
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold
+              )
+          )
+      ],
+    );
+  }
+}
+
+class OrderListSubtitleWidget extends StatelessWidget {
+  final double fontsizeKey = 12.0;
+  final double fontsizeValue = 16.0;
+  final Order order;
+
+  const OrderListSubtitleWidget({
+    super.key,
+    required this.order
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_id'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.orderId}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_address'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.orderAddress}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_postal_city'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.orderCountryCode}-${order.orderPostal} ${order.orderCity}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_type'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.orderType}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 3),
+        OrderSubHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_last_status'),
+            fontsize: fontsizeKey
+        ),
+        OrderSubHeaderValueWidget(
+            text: '${order.lastStatusFull}',
+            fontsize: fontsizeValue
+        )
+      ],
+    );
+  }
+}
+
+class OrderHeaderKeyWidget extends StatelessWidget {
+  final String text;
+  final double fontsize;
+
+  const OrderHeaderKeyWidget({
+    super.key,
+    required this.text,
+    required this.fontsize
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child:
+        Text(text, style: TextStyle(fontSize: fontsize, color: Colors.grey))
+    );
+  }
+}
+
+class OrderHeaderValueWidget extends StatelessWidget {
+  final String text;
+  final double fontsize;
+
+  const OrderHeaderValueWidget({
+    super.key,
+    required this.text,
+    required this.fontsize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(left: 8.0, bottom: 4, top: 2),
+        child: Text(text,
+            style: TextStyle(
+                fontSize: fontsize,
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                color: Colors.black
+            )
+        )
+    );
+  }
+}
+
+class OrderListHeaderWidget extends StatelessWidget {
+  final double fontsizeKey = 14.0;
+  final double fontsizeValue = 20.0;
+  final Order order;
+  final String date;
+
+  const OrderListHeaderWidget({
+    super.key,
+    required this.order,
+    required this.date
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OrderHeaderKeyWidget(
+            text: My24i18n.tr('generic.info_name'),
+            fontsize: fontsizeKey
+        ),
+        OrderHeaderValueWidget(
+            text: '${order.orderName}, ${order.orderCity}',
+            fontsize: fontsizeValue
+        ),
+        const SizedBox(height: 2),
+        OrderHeaderKeyWidget(
+            text: My24i18n.tr('orders.info_order_date'),
+            fontsize: fontsizeKey
+        ),
+        OrderHeaderValueWidget(
+            text: date,
+            fontsize: fontsizeValue
+        ),
+      ],
+    );
+  }
+}
+

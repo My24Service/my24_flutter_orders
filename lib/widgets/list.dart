@@ -120,8 +120,11 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
           return Column(
             children: [
               ListTile(
-                title: createOrderListHeader(order, order.orderDate!),
-                subtitle: createOrderListSubtitle(order),
+                title: OrderListHeaderWidget(
+                    order: order,
+                    date: order.orderDate!
+                ),
+                subtitle: OrderListSubtitleWidget(order: order),
                 onTap: () {
                   navOrderDetail(context, order.id!);
                 } // onTab
