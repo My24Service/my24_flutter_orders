@@ -114,6 +114,12 @@ class OrderApi extends BaseCrud<Order, Orders> {
         filters: filters,
         basePathAddition: 'all_for_equipment_location/');
   }
+
+  Future<bool> doAssignMe(int orderPk) async {
+    final Map body = {};
+    String basePathAddition = '$orderPk/assign_me/';
+    return await super.insertCustom(body, basePathAddition);
+  }
 }
 
 class CustomerHistoryOrderApi extends BaseCrud<CustomerHistoryOrder, CustomerHistoryOrders> {

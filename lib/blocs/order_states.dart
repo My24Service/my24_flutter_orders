@@ -92,3 +92,34 @@ class OrderDeletedState extends OrderState {
   @override
   List<Object?> get props => [result];
 }
+
+class OrdersSalesLoadedState extends OrderState {
+  final Orders? orders;
+  final String? query;
+  final int? page;
+
+  OrdersSalesLoadedState({this.orders, this.query, this.page});
+
+  @override
+  List<Object?> get props => [orders, query, page];
+}
+
+class OrdersUnassignedLoadedState extends OrderState {
+  final Orders? orders;
+  final String? query;
+  final int? page;
+
+  OrdersUnassignedLoadedState({this.orders, this.query, this.page});
+
+  @override
+  List<Object?> get props => [orders, query, page];
+}
+
+class OrderAssignedMeState extends OrderState {
+  final bool? result;
+
+  OrderAssignedMeState({this.result});
+
+  @override
+  List<Object?> get props => [result];
+}

@@ -135,6 +135,36 @@ class UnacceptedOrdersAppBarFactory extends BaseOrdersAppBarFactory {
   }
 }
 
+class UnassignedOrdersAppBarFactory extends BaseOrdersAppBarFactory {
+  UnassignedOrdersAppBarFactory({
+    required super.orderPageMetaData,
+    required super.context,
+    super.orders,
+    super.count,
+    super.onStretch
+  });
+
+  @override
+  String getBaseTranslateStringForUser() {
+    return 'orders.unassigned.app_bar_title';
+  }
+}
+
+class SalesListOrdersAppBarFactory extends BaseOrdersAppBarFactory {
+  SalesListOrdersAppBarFactory({
+    required super.orderPageMetaData,
+    required super.context,
+    super.orders,
+    super.count,
+    super.onStretch
+  });
+
+  @override
+  String getBaseTranslateStringForUser() {
+    return 'orders.sales_list.app_bar_title';
+  }
+}
+
 class OrdersAppBarFactory extends BaseOrdersAppBarFactory {
   OrdersAppBarFactory({
     required super.orderPageMetaData,
