@@ -236,6 +236,10 @@ class _DocumentFormState<BlocClass extends OrderFormBlocBase, FormDataClass exte
             Text(widget.i18n.$trans('info_name')),
             TextFormField(
                 controller: nameController,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return My24i18n.tr('generic.validator_name_document');
@@ -249,6 +253,10 @@ class _DocumentFormState<BlocClass extends OrderFormBlocBase, FormDataClass exte
             TextFormField(
                 controller: descriptionController,
                 keyboardType: TextInputType.multiline,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
                 maxLines: null,
                 validator: (value) {
                   return null;
@@ -259,6 +267,10 @@ class _DocumentFormState<BlocClass extends OrderFormBlocBase, FormDataClass exte
             Text(widget.i18n.$trans('info_document')),
             TextFormField(
                 readOnly: true,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                ),
                 controller: documentController,
                 validator: (value) {
                   return null;
@@ -466,6 +478,10 @@ class _OnlyPicturesFormState<
           children: <Widget>[
             Text(widget.i18n.$trans('info_name')),
             TextFormField(
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               controller: nameController,
               validator: (value) {
                 if (value!.isEmpty) {
@@ -491,6 +507,10 @@ class _OnlyPicturesFormState<
             Text(widget.i18n.$trans('info_image')),
             TextFormField(
                 readOnly: true,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                ),
                 controller: documentController,
                 validator: (value) {
                   return null;

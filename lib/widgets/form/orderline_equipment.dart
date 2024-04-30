@@ -117,6 +117,10 @@ class _OrderlineFormEquipmentState<
           TextFormField(
               controller: remarksController,
               keyboardType: TextInputType.multiline,
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+              ),
               maxLines: null,
               validator: (value) {
                 return null;
@@ -285,6 +289,8 @@ class _EquipmentPartState extends State<EquipmentPart> {
             textFieldConfiguration: TextFieldConfiguration(
                 controller: widget.typeAheadControllerEquipment,
                 decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
                     labelText:
                     widget.i18n.$trans('typeahead_label_search_equipment')
                 )
@@ -384,6 +390,10 @@ class _EquipmentPartState extends State<EquipmentPart> {
                     children: [
                       SizedBox(width: 260,
                           child: TextFormField(
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                              ),
                               controller: widget.productController,
                               keyboardType: TextInputType.text,
                               focusNode: widget.equipmentCreateFocusNode,
@@ -509,7 +519,9 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                   controller: widget.typeAheadControllerEquipmentLocation,
                   decoration: InputDecoration(
                       labelText:
-                      widget.i18n.$trans('typeahead_label_search_location')
+                      widget.i18n.$trans('typeahead_label_search_location'),
+                    filled: true,
+                    fillColor: Colors.white,
                   )
               ),
               suggestionsCallback: (String pattern) async {
@@ -604,6 +616,10 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                               controller: widget.locationController,
                               keyboardType: TextInputType.text,
                               focusNode: widget.equipmentLocationCreateFocusNode,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                              ),
                               readOnly: true,
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -631,6 +647,10 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
     }
 
     return DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+        ),
         value: "${widget.orderlineFormData.equipmentLocation}",
         items: locations.map((EquipmentLocation location) {
           return DropdownMenuItem<String>(
