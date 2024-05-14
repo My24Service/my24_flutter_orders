@@ -15,6 +15,11 @@ class SalesListEmptyWidget extends OrderListEmptyWidget {
   });
 
   @override
+  String getAppBarTitle(BuildContext context) {
+    return i18n.$trans('sales.app_bar_title_empty');
+  }
+
+  @override
   String getEmptyMessage() {
     return i18nIn.$trans('sales.notice_no_order');
   }

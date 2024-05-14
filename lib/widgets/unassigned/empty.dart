@@ -15,6 +15,11 @@ class UnAssignedEmptyWidget extends OrderListEmptyWidget {
   });
 
   @override
+  String getAppBarTitle(BuildContext context) {
+    return i18n.$trans('unassigned.app_bar_title_empty');
+  }
+
+  @override
   String getEmptyMessage() {
     return i18nIn.$trans('unassigned.notice_no_order');
   }

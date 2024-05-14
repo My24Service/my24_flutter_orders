@@ -15,6 +15,11 @@ class PastListEmptyWidget extends OrderListEmptyWidget {
   });
 
   @override
+  String getAppBarTitle(BuildContext context) {
+    return i18n.$trans('past.app_bar_title_empty');
+  }
+
+  @override
   String getEmptyMessage() {
     return i18nIn.$trans('past.notice_no_order');
   }
