@@ -546,6 +546,7 @@ abstract class BaseOrderFormWidget<
                     )
                 ),
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   value: formData!.orderType,
                   items: formData!.orderTypes == null ? [] : formData!.orderTypes!.orderTypes!.map((String value) {
                     return DropdownMenuItem<String>(
@@ -560,7 +561,7 @@ abstract class BaseOrderFormWidget<
 
                     }
                   },
-                )
+                ),
               ]
           ),
           TableRow(

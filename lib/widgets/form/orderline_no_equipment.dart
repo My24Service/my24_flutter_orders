@@ -67,7 +67,7 @@ class _OrderlineFormNoEquipmentState<
       children: <Widget>[
         widget.widgets.wrapGestureDetector(
             context,
-            Text(widget.i18n.$trans('generic.info_equipment'))
+            Text(My24i18n.tr('generic.info_equipment'))
         ),
         TextFormField(
             decoration: const InputDecoration(
@@ -104,7 +104,7 @@ class _OrderlineFormNoEquipmentState<
         ),
         widget.widgets.wrapGestureDetector(
             context,
-            Text(widget.i18n.$trans('generic.info_remarks'))
+            Text(My24i18n.tr('generic.info_remarks'))
         ),
         TextFormField(
             decoration: const InputDecoration(
