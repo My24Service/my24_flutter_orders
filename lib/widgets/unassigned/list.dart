@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my24_flutter_orders/common/widgets.dart';
 import 'package:my24_flutter_orders/models/order/models.dart';
 import '../../blocs/order_bloc.dart';
+import '../../pages/types.dart';
 import '../list.dart';
 
 class UnAssignedListWidget extends OrderListWidget {
+  final NavAssignFunction? navAssignFunction;
+
   UnAssignedListWidget({
     super.key,
     required super.orderList,
@@ -18,6 +21,7 @@ class UnAssignedListWidget extends OrderListWidget {
     required super.paginationInfo,
     required super.navFormFunction,
     required super.navDetailFunction,
+    this.navAssignFunction
   });
 
   @override
@@ -34,20 +38,33 @@ class UnAssignedListWidget extends OrderListWidget {
 
   @override
   Row getButtonRow(BuildContext context, Order order) {
-    if (orderPageMetaData.submodel == 'planning_user') {
+    if (!orderPageMetaData.hasBranches! && orderPageMetaData.submodel == 'planning_user') {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           widgets.createDefaultElevatedButton(
-            context,
-            i18n.$trans('button_assign_engineer'),
-            () => _showDoAssignDialog(context, order.id!)
+              context,
+              i18n.$trans('button_assign'),
+              () => _navAssignOrder(context, order.id!)
           ),
         ],
       );
     }
 
-    return const Row(children: []);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        widgets.createDefaultElevatedButton(
+            context,
+            i18n.$trans('button_assign_engineer'),
+                () => _showDoAssignDialog(context, order.id!)
+        ),
+      ],
+    );
+  }
+
+  _navAssignOrder(BuildContext context, int orderPk) {
+    navAssignFunction!(context, orderPk);
   }
 
   _showDoAssignDialog(BuildContext context, int orderPk) {

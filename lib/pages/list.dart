@@ -38,13 +38,15 @@ abstract class BaseOrderListPage extends StatelessWidget {
   final CoreUtils utils = CoreUtils();
   final NavFormFunction navFormFunction;
   final NavDetailFunction navDetailFunction;
+  final NavAssignFunction? navAssignFunction;
 
   BaseOrderListPage({
     super.key,
     required this.bloc,
     required this.fetchMode,
     required this.navFormFunction,
-    required this.navDetailFunction
+    required this.navDetailFunction,
+    this.navAssignFunction,
   });
 
   Future<Widget?> getDrawerForUserWithSubmodel(

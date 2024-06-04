@@ -7,3 +7,4 @@ typedef NavFormFunction = void Function(BuildContext context, int? orderPk, Orde
 typedef NavFormFromEquipmentFunction = void Function(BuildContext context, String uuid, String orderType);
 typedef NavDetailFunction = void Function(BuildContext context, int orderPk);
 typedef NavListFunction = void Function(BuildContext context, OrderEventStatus fetchMode);
+typedef NavAssignFunction = void Function(BuildContext context, int orderPk);
