@@ -356,6 +356,7 @@ abstract class BaseOrderListPage extends StatelessWidget {
         i18nIn: i18n,
         navFormFunction: navFormFunction,
         navDetailFunction: navDetailFunction,
+        navAssignFunction: navAssignFunction
       );
     }
 

@@ -38,7 +38,6 @@ class UnAssignedListWidget extends OrderListWidget {
 
   @override
   Row getButtonRow(BuildContext context, Order order) {
-    print("order.id: ${order.id}");
     if (!orderPageMetaData.hasBranches! && orderPageMetaData.submodel == 'planning_user') {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
