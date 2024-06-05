@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:my24_flutter_orders/common/widgets.dart';
-import 'package:my24_flutter_orders/models/order/models.dart';
 import '../list.dart';
 
 class UnacceptedListWidget extends OrderListWidget {
@@ -29,11 +28,6 @@ class UnacceptedListWidget extends OrderListWidget {
     );
     return factory.createAppBar();
   }
-
-  // @override
-  // Row getButtonRow(BuildContext context, Order order) {
-  //   return const Row();
-  // }
 
   @override
   handleNew(BuildContext context) {
