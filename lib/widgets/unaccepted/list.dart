@@ -30,10 +30,10 @@ class UnacceptedListWidget extends OrderListWidget {
     return factory.createAppBar();
   }
 
-  @override
-  Row getButtonRow(BuildContext context, Order order) {
-    return const Row();
-  }
+  // @override
+  // Row getButtonRow(BuildContext context, Order order) {
+  //   return const Row();
+  // }
 
   @override
   handleNew(BuildContext context) {
