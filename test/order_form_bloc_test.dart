@@ -133,10 +133,67 @@ void main() {
           .thenAnswer((_) async => http.Response(tokenData, 200));
 
     // return order data with a 200
-    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/order/order/'), headers: anyNamed('headers'), body: anyNamed('body')))
+    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/order/order/'),
+        headers: anyNamed('headers'), body: anyNamed('body')))
           .thenAnswer((_) async => http.Response(order, 201));
 
     Order newOrder = await orderFormBloc.api.insert(orderModel);
     expect(newOrder, isA<Order>());
+  });
+
+  test('Test order accept', () async {
+    final client = MockClient();
+    final orderFormBloc = OrderFormBloc();
+    orderFormBloc.api.httpClient = client;
+
+    // return token request with a 200
+    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/jwt-token/refresh/'),
+        headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response(tokenData, 200));
+
+    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/order/order/1/set_order_accepted/'),
+        headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response('', 200));
+
+    orderFormBloc.stream.listen(
+        expectAsync1((event) {
+          expect(event, isA<OrderAcceptedState>());
+          expect(event.props[0], true);
+        })
+    );
+
+    expectLater(orderFormBloc.stream, emits(isA<OrderAcceptedState>()));
+
+    orderFormBloc.add(
+        const OrderFormEvent(status: OrderFormEventStatus.accept, pk: 1)
+    );
+  });
+
+  test('Test order reject', () async {
+    final client = MockClient();
+    final orderFormBloc = OrderFormBloc();
+    orderFormBloc.api.httpClient = client;
+
+    // return token request with a 200
+    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/jwt-token/refresh/'),
+        headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response(tokenData, 200));
+
+    when(client.post(Uri.parse('https://demo.my24service-dev.com/api/order/order/1/set_order_rejected/'),
+        headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response('', 200));
+
+    orderFormBloc.stream.listen(
+        expectAsync1((event) {
+          expect(event, isA<OrderRejectedState>());
+          expect(event.props[0], true);
+        })
+    );
+
+    expectLater(orderFormBloc.stream, emits(isA<OrderRejectedState>()));
+
+    orderFormBloc.add(
+        const OrderFormEvent(status: OrderFormEventStatus.reject, pk: 1)
+    );
   });
 }

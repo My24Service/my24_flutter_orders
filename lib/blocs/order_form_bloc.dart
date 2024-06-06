@@ -127,10 +127,10 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       _handleRemoveDocumentState(event, emit);
     }
     else if (event.status == OrderFormEventStatus.accept) {
-      _handleAcceptState(event, emit);
+      await _handleAcceptState(event, emit);
     }
     else if (event.status == OrderFormEventStatus.reject) {
-      _handleRejectState(event, emit);
+      await _handleRejectState(event, emit);
     }
   }
 

@@ -119,5 +119,4 @@ void main() {
     orderBloc.add(
         const OrderEvent(status: OrderEventStatus.fetchUnaccepted));
   });
-
 }
