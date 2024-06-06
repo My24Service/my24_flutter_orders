@@ -164,10 +164,14 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
     );
   }
 
+  bool isCustomerUser() {
+    return orderPageMetaData.submodel == 'customer_user' && !orderPageMetaData.hasBranches!;
+  }
+
   Row getButtonRow(BuildContext context, Order order) {
     Row row;
 
-    if (isPlanning() || isBranchEmployee()) {
+    if (isPlanning() || isBranchEmployee() || isCustomerUser()) {
       row = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
