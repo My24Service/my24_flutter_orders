@@ -212,7 +212,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
   }
 
   Future<void> _handleFetchState(OrderFormEvent event, Emitter<OrderFormState> emit) async {
-    // try {
+    try {
       final OrderTypes orderTypes = await api.fetchOrderTypes();
       final Order order = await api.detail(event.pk!);
 
@@ -226,9 +226,9 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       formData = await addQuickCreateSettings(formData);
 
       emit(OrderLoadedState(formData: formData));
-    // } catch (e) {
-    //   emit(OrderFormErrorState(message: e.toString()));
-    // }
+    } catch (e) {
+      emit(OrderFormErrorState(message: e.toString()));
+    }
   }
 
   Future<void> _handleInsertState(OrderFormEvent event, Emitter<OrderFormState> emit) async {
