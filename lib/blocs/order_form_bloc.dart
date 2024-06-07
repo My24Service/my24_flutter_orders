@@ -282,13 +282,13 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       }
 
       for (int i=0; i<event.orderLines!.length; i++) {
+        log.info('orderline.id: ${event.orderLines![i].id}');
         if (event.orderLines![i].id == null) {
           if (event.orderLines![i].order == null) {
             event.orderLines![i].order = event.pk;
           }
           await orderlineApi.insert(event.orderLines![i]);
         } else {
-          // update but we haven't got that yet
           if (event.orderLines![i].order == null) {
             event.orderLines![i].order = event.pk;
           }

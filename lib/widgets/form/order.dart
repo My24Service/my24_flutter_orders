@@ -61,6 +61,7 @@ abstract class BaseOrderFormWidget<
         child: Container(
             alignment: Alignment.center,
             child: SingleChildScrollView(
+              key: const Key('order-scroll'),
                 child: Column(
                   children: [
                     widgetsIn.createHeader(i18nIn.$trans('header_order_details')),
@@ -148,9 +149,21 @@ abstract class BaseOrderFormWidget<
           const Spacer(),
           widgetsIn.createCancelButton(() => Navigator.pop(context)),
           const SizedBox(width: 10),
-          widgetsIn.createSubmitButton(context, () => _doSubmit(context)),
+          submitButton(context),
           const Spacer(),
         ]
+    );
+  }
+
+  Widget submitButton(BuildContext context) {
+    return ElevatedButton(
+      key: const Key('order-submit'),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      onPressed: () => _doSubmit(context),
+      child: Text(My24i18n.tr('generic.button_submit')),
     );
   }
 
