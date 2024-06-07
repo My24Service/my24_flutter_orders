@@ -67,9 +67,13 @@ class _OrderlineFormNoEquipmentState<
       children: <Widget>[
         widget.widgets.wrapGestureDetector(
             context,
-            Text(widget.i18n.$trans('generic.info_equipment'))
+            Text(My24i18n.tr('generic.info_equipment'))
         ),
         TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+            ),
             controller: productController,
             keyboardType: TextInputType.text,
             validator: (value) {
@@ -86,6 +90,10 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_location'))
         ),
         TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+            ),
             controller: locationController,
             keyboardType: TextInputType.text,
             validator: (value) {
@@ -96,9 +104,13 @@ class _OrderlineFormNoEquipmentState<
         ),
         widget.widgets.wrapGestureDetector(
             context,
-            Text(widget.i18n.$trans('generic.info_remarks'))
+            Text(My24i18n.tr('generic.info_remarks'))
         ),
         TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+            ),
             controller: remarksController,
             keyboardType: TextInputType.multiline,
             maxLines: null,

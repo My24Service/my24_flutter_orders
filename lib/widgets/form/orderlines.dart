@@ -222,7 +222,6 @@ class OrderlineForm<
           formData: formData,
           widgets: widgets,
           isPlanning: isPlanning,
-          i18n: i18n,
           orderlineFormData: state.formData,
         );
       }

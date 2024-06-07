@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:my24_flutter_orders/common/widgets.dart';
 import '../list.dart';
 
-class UnacceptedListWidget extends OrderListWidget {
-  UnacceptedListWidget({
+class SalesListWidget extends OrderListWidget {
+  SalesListWidget({
     super.key,
     required super.orderList,
     required super.orderPageMetaData,
@@ -19,19 +19,13 @@ class UnacceptedListWidget extends OrderListWidget {
 
   @override
   SliverAppBar getAppBar(BuildContext context) {
-    UnacceptedOrdersAppBarFactory factory = UnacceptedOrdersAppBarFactory(
+    SalesListOrdersAppBarFactory factory = SalesListOrdersAppBarFactory(
         context: context,
         orderPageMetaData: orderPageMetaData,
         orders: orderList,
-        count: paginationInfo?.count,
+        count: paginationInfo!.count,
         onStretch: doRefresh
     );
     return factory.createAppBar();
   }
-
-  @override
-  handleNew(BuildContext context) {
-    navFormFunction(context, null, fetchEvent);
-  }
-
 }

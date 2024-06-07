@@ -21,6 +21,12 @@ import 'package:my24_flutter_orders/widgets/unaccepted/list.dart';
 
 import '../widgets/empty.dart';
 import '../widgets/list.dart';
+import '../widgets/sales/empty.dart';
+import '../widgets/sales/error.dart';
+import '../widgets/sales/list.dart';
+import '../widgets/unassigned/empty.dart';
+import '../widgets/unassigned/error.dart';
+import '../widgets/unassigned/list.dart';
 
 final log = Logger('orders.pages.list');
 
@@ -32,13 +38,15 @@ abstract class BaseOrderListPage extends StatelessWidget {
   final CoreUtils utils = CoreUtils();
   final NavFormFunction navFormFunction;
   final NavDetailFunction navDetailFunction;
+  final NavAssignFunction? navAssignFunction;
 
   BaseOrderListPage({
     super.key,
     required this.bloc,
     required this.fetchMode,
     required this.navFormFunction,
-    required this.navDetailFunction
+    required this.navDetailFunction,
+    this.navAssignFunction,
   });
 
   Future<Widget?> getDrawerForUserWithSubmodel(
@@ -129,6 +137,14 @@ abstract class BaseOrderListPage extends StatelessWidget {
       bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
       bloc.add(OrderEvent(status: fetchMode));
     }
+
+    if (state is OrderAssignedMeState) {
+      // TODO check translation
+      widgets.createSnackBar(context, i18n.$trans('list.snackbar_assigned'));
+
+      bloc.add(const OrderEvent(status: OrderEventStatus.doAsync));
+      bloc.add(OrderEvent(status: fetchMode));
+    }
   }
 
   Widget? _getBody(context, state, OrderPageMetaData orderPageMetaData) {
@@ -156,6 +172,24 @@ abstract class BaseOrderListPage extends StatelessWidget {
 
         case OrderEventStatus.fetchUnaccepted: {
           return UnacceptedListErrorWidget(
+            widgetsIn: widgets,
+            i18nIn: i18n,
+            error: state.message!,
+            orderPageMetaData: orderPageMetaData,
+          );
+        }
+
+        case OrderEventStatus.fetchSales: {
+          return SalesListErrorWidget(
+            widgetsIn: widgets,
+            i18nIn: i18n,
+            error: state.message!,
+            orderPageMetaData: orderPageMetaData,
+          );
+        }
+
+        case OrderEventStatus.fetchUnassigned: {
+          return UnAssignedErrorWidget(
             widgetsIn: widgets,
             i18nIn: i18n,
             error: state.message!,
@@ -263,9 +297,73 @@ abstract class BaseOrderListPage extends StatelessWidget {
       );
     }
 
+    if(state is OrdersSalesLoadedState) {
+      if (state.orders!.results!.isEmpty) {
+        return SalesListEmptyWidget(
+          fetchEvent: fetchMode,
+          widgetsIn: widgets,
+          i18nIn: i18n,
+          navFormFunction: navFormFunction,
+        );
+      }
+
+      PaginationInfo paginationInfo = PaginationInfo(
+          count: state.orders!.count,
+          next: state.orders!.next,
+          previous: state.orders!.previous,
+          currentPage: state.page ?? 1,
+          pageSize: orderPageMetaData.pageSize
+      );
+
+      return SalesListWidget(
+        orderList: state.orders!.results,
+        orderPageMetaData: orderPageMetaData,
+        fetchEvent: fetchMode,
+        searchQuery: state.query,
+        paginationInfo: paginationInfo,
+        widgetsIn: widgets,
+        i18nIn: i18n,
+        navFormFunction: navFormFunction,
+        navDetailFunction: navDetailFunction,
+      );
+    }
+
+    if(state is OrdersUnassignedLoadedState) {
+      if (state.orders!.results!.isEmpty) {
+        return UnAssignedEmptyWidget(
+          fetchEvent: fetchMode,
+          widgetsIn: widgets,
+          i18nIn: i18n,
+          navFormFunction: navFormFunction,
+        );
+      }
+
+      PaginationInfo paginationInfo = PaginationInfo(
+          count: state.orders!.count,
+          next: state.orders!.next,
+          previous: state.orders!.previous,
+          currentPage: state.page ?? 1,
+          pageSize: orderPageMetaData.pageSize
+      );
+
+      return UnAssignedListWidget(
+        orderList: state.orders!.results,
+        orderPageMetaData: orderPageMetaData,
+        fetchEvent: fetchMode,
+        searchQuery: state.query,
+        paginationInfo: paginationInfo,
+        widgetsIn: widgets,
+        i18nIn: i18n,
+        navFormFunction: navFormFunction,
+        navDetailFunction: navDetailFunction,
+        navAssignFunction: navAssignFunction
+      );
+    }
+
     if (state is OrderLoadingState) {
       return widgets.loadingNotice();
     }
+
     return null;
   }
 }

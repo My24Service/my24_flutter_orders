@@ -120,8 +120,11 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
           return Column(
             children: [
               ListTile(
-                title: createOrderListHeader(order, order.orderDate!),
-                subtitle: createOrderListSubtitle(order),
+                title: OrderListHeaderWidget(
+                    order: order,
+                    date: order.orderDate!
+                ),
+                subtitle: OrderListSubtitleWidget(order: order),
                 onTap: () {
                   navOrderDetail(context, order.id!);
                 } // onTab
@@ -161,10 +164,14 @@ class OrderListWidget extends BaseSliverListStatelessWidget {
     );
   }
 
+  bool isCustomerUser() {
+    return orderPageMetaData.submodel == 'customer_user' && !orderPageMetaData.hasBranches!;
+  }
+
   Row getButtonRow(BuildContext context, Order order) {
     Row row;
 
-    if (isPlanning() || isBranchEmployee()) {
+    if (isPlanning() || isBranchEmployee() || isCustomerUser()) {
       row = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

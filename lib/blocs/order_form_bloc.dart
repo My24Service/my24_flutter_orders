@@ -20,6 +20,8 @@ enum OrderFormEventStatus {
   doAsync,
   fetchDetail,
   newOrder,
+  newOrderFromEquipmentCustomer,
+  newOrderFromEquipmentBranch,
   update,
   insert,
   accept,
@@ -39,6 +41,8 @@ enum OrderFormEventStatus {
 class OrderFormEvent {
   final OrderFormEventStatus? status;
   final int? pk;
+  final String? equipmentUuid;
+  final String? equipmentOrderType;
   final Order? order;
   final dynamic formData;
 
@@ -59,6 +63,8 @@ class OrderFormEvent {
 
   const OrderFormEvent({
     this.pk,
+    this.equipmentUuid,
+    this.equipmentOrderType,
     this.status,
     this.order,
     this.formData,
@@ -121,10 +127,10 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       _handleRemoveDocumentState(event, emit);
     }
     else if (event.status == OrderFormEventStatus.accept) {
-      _handleAcceptState(event, emit);
+      await _handleAcceptState(event, emit);
     }
     else if (event.status == OrderFormEventStatus.reject) {
-      _handleRejectState(event, emit);
+      await _handleRejectState(event, emit);
     }
   }
 

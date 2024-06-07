@@ -4,10 +4,10 @@ import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_core/i18n.dart';
 
-import '../../models/order/models.dart';
+import '../../../models/order/models.dart';
 
-class OrderListErrorWidget extends BaseErrorWidget  {
-  OrderListErrorWidget({
+class SalesListErrorWidget extends BaseErrorWidget {
+  SalesListErrorWidget({
     Key? key,
     required String error,
     required OrderPageMetaData orderPageMetaData,
@@ -18,12 +18,12 @@ class OrderListErrorWidget extends BaseErrorWidget  {
       error: error,
       memberPicture: orderPageMetaData.memberPicture,
       widgetsIn: widgetsIn,
-      i18nIn: i18nIn,
+      i18nIn: i18nIn
   );
 
   @override
   String getAppBarTitle(BuildContext context) {
-    return i18nIn.$trans('list.app_bar_title_error');
+    return i18nIn.$trans('sales.app_bar_title_error');
   }
 
   @override

@@ -15,6 +15,11 @@ class UnacceptedListEmptyWidget extends OrderListEmptyWidget {
   });
 
   @override
+  String getAppBarTitle(BuildContext context) {
+    return i18n.$trans('unaccepted.app_bar_title_empty');
+  }
+
+  @override
   String getEmptyMessage() {
     return i18nIn.$trans('unaccepted.notice_no_order');
   }

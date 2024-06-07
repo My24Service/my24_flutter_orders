@@ -67,6 +67,44 @@ void main() async {
     expect(find.byType(OrderListWidget), findsOneWidget);
   });
 
+  testWidgets('loads main list customer', (tester) async {
+    final client = MockClient();
+    final orderBloc = OrderBloc();
+    orderBloc.api.httpClient = client;
+
+    SharedPreferences.setMockInitialValues({
+      'member_has_branches': false,
+      'submodel': 'customer_user'
+    });
+
+    // return token request with a 200
+    when(
+        client.post(Uri.parse('https://demo.my24service-dev.com/api/jwt-token/refresh/'),
+            headers: anyNamed('headers'),
+            body: anyNamed('body')
+        )
+    ).thenAnswer((_) async => http.Response(tokenData, 200));
+
+    // return order data with a 200
+    const String orders = '{"next": null, "previous": null, "count": 4, "num_pages": 1, "results": [$order]}';
+    when(
+        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/?order_by=-start_date'),
+            headers: anyNamed('headers')
+        )
+    ).thenAnswer((_) async => http.Response(orders, 200));
+
+    OrderListPage widget = OrderListPage(bloc: orderBloc, fetchMode: OrderEventStatus.fetchAll);
+    widget.utils.httpClient = client;
+    await mockNetworkImagesFor(() async => await tester.pumpWidget(
+        createWidget(child: widget))
+    );
+    await mockNetworkImagesFor(() async => await tester.pumpAndSettle());
+
+    expect(find.byType(OrderListErrorWidget), findsNothing);
+    expect(find.byType(OrderListEmptyWidget), findsNothing);
+    expect(find.byType(OrderListWidget), findsOneWidget);
+  });
+
   testWidgets('loads main list empty', (tester) async {
     final client = MockClient();
     final orderBloc = OrderBloc();

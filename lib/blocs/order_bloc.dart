@@ -13,7 +13,10 @@ enum OrderEventStatus {
   fetchAll,
   fetchDetailView,
   fetchUnaccepted,
+  fetchUnassigned,
+  fetchSales,
   fetchPast,
+  assignMe,
 
   delete,
 }
@@ -63,8 +66,27 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
       else if (event.status == OrderEventStatus.delete) {
         await _handleDeleteState(event, emit);
       }
+      else if (event.status == OrderEventStatus.fetchUnassigned) {
+        await _handleFetchUnassignedState(event, emit);
+      }
+      else if (event.status == OrderEventStatus.fetchSales) {
+        await _handleFetchSalesState(event, emit);
+      }
+      else if (event.status == OrderEventStatus.assignMe) {
+        await _handleAssignMeState(event, emit);
+      }
+
     },
     transformer: sequential());
+  }
+
+  Future<void> _handleAssignMeState(OrderEvent event, Emitter<OrderState> emit) async {
+    try {
+      final bool result = await api.doAssignMe(event.pk!);
+      emit(OrderAssignedMeState(result: result));
+    } catch(e) {
+      emit(OrderErrorState(message: e.toString()));
+    }
   }
 
   void _handleDoAsyncState(OrderEvent event, Emitter<OrderState> emit) {
@@ -125,6 +147,28 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           page: event.page,
           query: event.query);
       emit(OrdersPastLoadedState(orders: orders, query: event.query, page: event.page));
+    } catch (e) {
+      emit(OrderErrorState(message: e.toString()));
+    }
+  }
+
+  Future<void> _handleFetchSalesState(OrderEvent event, Emitter<OrderState> emit) async {
+    try {
+      final Orders orders = await api.fetchSalesOrders(
+          page: event.page,
+          query: event.query);
+      emit(OrdersSalesLoadedState(orders: orders, query: event.query, page: event.page));
+    } catch (e) {
+      emit(OrderErrorState(message: e.toString()));
+    }
+  }
+
+  Future<void> _handleFetchUnassignedState(OrderEvent event, Emitter<OrderState> emit) async {
+    try {
+      final Orders orders = await api.fetchOrdersUnAssigned(
+          page: event.page,
+          query: event.query);
+      emit(OrdersUnassignedLoadedState(orders: orders, query: event.query, page: event.page));
     } catch (e) {
       emit(OrderErrorState(message: e.toString()));
     }

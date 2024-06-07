@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
+import 'package:my24_flutter_core/models/base_models.dart';
 import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_equipment/models/equipment/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/models.dart';
@@ -13,9 +14,9 @@ import 'package:my24_flutter_equipment/models/location/models.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/orderline/models.dart';
 
-import '../../blocs/order_form_bloc.dart';
-import '../../blocs/orderline_bloc.dart';
-import '../../models/orderline/form_data.dart';
+import 'package:my24_flutter_orders/blocs/order_form_bloc.dart';
+import 'package:my24_flutter_orders/blocs/orderline_bloc.dart';
+import 'package:my24_flutter_orders/models/orderline/form_data.dart';
 
 final log = Logger('orders.form.orderlines.equipment');
 
@@ -25,7 +26,7 @@ class OrderlineFormEquipment<
   final FormDataClass formData;
   final CoreWidgets widgets;
   final bool isPlanning;
-  final My24i18n i18n;
+  final My24i18n i18n = My24i18n(basePath: "orders.form.orderlines");
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final OrderlineFormData orderlineFormData;
 
@@ -34,7 +35,6 @@ class OrderlineFormEquipment<
     required this.formData,
     required this.widgets,
     required this.isPlanning,
-    required this.i18n,
     required this.orderlineFormData
   });
 
@@ -99,7 +99,6 @@ class _OrderlineFormEquipmentState<
           LocationsPart(
             formData: widget.formData,
             widgets: widget.widgets,
-            i18n: widget.i18n,
             canCreateLocation: _canCreateLocation(),
             orderlineFormData: widget.orderlineFormData,
           ),
@@ -118,6 +117,10 @@ class _OrderlineFormEquipmentState<
           TextFormField(
               controller: remarksController,
               keyboardType: TextInputType.multiline,
+              decoration: const InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+              ),
               maxLines: null,
               validator: (value) {
                 return null;
@@ -286,12 +289,14 @@ class _EquipmentPartState extends State<EquipmentPart> {
             textFieldConfiguration: TextFieldConfiguration(
                 controller: widget.typeAheadControllerEquipment,
                 decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
                     labelText:
                     widget.i18n.$trans('typeahead_label_search_equipment')
                 )
             ),
             suggestionsCallback: (String pattern) async {
-              return await equipmentApi.equipmentTypeAhead(
+              return await equipmentApi.typeAhead(
                   pattern, widget.formData.branch);
             },
             itemBuilder: (context, suggestion) {
@@ -385,6 +390,10 @@ class _EquipmentPartState extends State<EquipmentPart> {
                     children: [
                       SizedBox(width: 260,
                           child: TextFormField(
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                              ),
                               controller: widget.productController,
                               keyboardType: TextInputType.text,
                               focusNode: widget.equipmentCreateFocusNode,
@@ -447,17 +456,18 @@ class LocationsPart<FormDataClass extends BaseOrderFormData> extends StatefulWid
   final EquipmentLocationApi locationApi = EquipmentLocationApi();
   final FormDataClass formData;
   final CoreWidgets widgets;
-  final My24i18n i18n;
+  final My24i18n i18n = My24i18n(basePath: "orders.form.orderlines");
   final bool canCreateLocation;
   final OrderlineFormData orderlineFormData;
+  final Function? onLocationSelected;
 
   LocationsPart({
     super.key,
     required this.formData,
     required this.widgets,
-    required this.i18n,
     required this.canCreateLocation,
-    required this.orderlineFormData
+    required this.orderlineFormData,
+    this.onLocationSelected
   });
 
   @override
@@ -493,7 +503,7 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
       });
     }
 
-    widget.locationController.text = widget.orderlineFormData.location!;
+    widget.locationController.text = checkNull(widget.orderlineFormData.location);
 
     // we need the top level context is the dialog call
     BuildContext mainContext = context;
@@ -509,11 +519,13 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                   controller: widget.typeAheadControllerEquipmentLocation,
                   decoration: InputDecoration(
                       labelText:
-                      widget.i18n.$trans('typeahead_label_search_location')
+                      widget.i18n.$trans('typeahead_label_search_location'),
+                    filled: true,
+                    fillColor: Colors.white,
                   )
               ),
               suggestionsCallback: (String pattern) async {
-                return await widget.equipmentLocationApi.locationTypeAhead(pattern, widget.formData.branch);
+                return await widget.equipmentLocationApi.typeAhead(pattern, widget.formData.branch);
               },
               itemBuilder: (context, suggestion) {
                 String text = suggestion.identifier != null && suggestion.identifier != '' ?
@@ -564,7 +576,13 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                 widget.orderlineFormData.equipmentLocation = suggestion.id!;
                 widget.orderlineFormData.location = suggestion.name!;
 
-                // _updateFormData();
+                setState(() {
+
+                });
+
+                if (widget.onLocationSelected != null) {
+                  widget.onLocationSelected!(suggestion);
+                }
               },
               validator: (value) {
                 return null;
@@ -598,6 +616,10 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
                               controller: widget.locationController,
                               keyboardType: TextInputType.text,
                               focusNode: widget.equipmentLocationCreateFocusNode,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                              ),
                               readOnly: true,
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -625,6 +647,10 @@ class _LocationsPartState<FormDataClass extends BaseOrderFormData> extends State
     }
 
     return DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+        ),
         value: "${widget.orderlineFormData.equipmentLocation}",
         items: locations.map((EquipmentLocation location) {
           return DropdownMenuItem<String>(

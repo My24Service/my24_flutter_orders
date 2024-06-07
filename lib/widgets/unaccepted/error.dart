@@ -22,6 +22,11 @@ class UnacceptedListErrorWidget extends BaseErrorWidget {
   );
 
   @override
+  String getAppBarTitle(BuildContext context) {
+    return i18nIn.$trans('unaccepted.app_bar_title_error');
+  }
+
+  @override
   Widget getBottomSection(BuildContext context) {
     return const SizedBox(height: 1);
   }

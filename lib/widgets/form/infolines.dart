@@ -203,6 +203,10 @@ class _InfolineFormState<
             TextFormField(
                 controller: infoController,
                 keyboardType: TextInputType.multiline,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
                 maxLines: null,
                 validator: (value) {
                   if (value!.isEmpty) {

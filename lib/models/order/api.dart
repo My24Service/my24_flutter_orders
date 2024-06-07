@@ -95,16 +95,30 @@ class OrderApi extends BaseCrud<Order, Orders> {
     return await super.insertCustom(body, basePathAddition);
   }
 
-  Future<Orders> fetchAllForEquipmentOrders({required int equipmentPk, page=1}) async {
+  Future<Orders> fetchAllForEquipmentOrders({required int equipmentPk, page=1, String? query}) async {
+    Map<String, dynamic> filters = { 'equipment': equipmentPk, 'page': page };
+    if (query != null) {
+      filters['q'] = query;
+    }
     return super.list(
-        filters: { 'equipment': equipmentPk, 'page': page },
+        filters: filters,
         basePathAddition: 'all_for_equipment_location/');
   }
 
-  Future<Orders> fetchAllForLocationOrders({required int locationPk, page=1}) async {
+  Future<Orders> fetchAllForLocationOrders({required int locationPk, page=1, String? query}) async {
+    Map<String, dynamic> filters = { 'location': locationPk, 'page': page };
+    if (query != null) {
+      filters['q'] = query;
+    }
     return super.list(
-        filters: { 'location': locationPk, 'page': page },
+        filters: filters,
         basePathAddition: 'all_for_equipment_location/');
+  }
+
+  Future<bool> doAssignMe(int orderPk) async {
+    final Map body = {};
+    String basePathAddition = '$orderPk/assign_me/';
+    return await super.insertCustom(body, basePathAddition);
   }
 }
 

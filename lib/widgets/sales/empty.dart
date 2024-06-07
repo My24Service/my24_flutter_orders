@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:my24_flutter_core/widgets/slivers/base_widgets.dart';
+import '../../../blocs/order_bloc.dart';
+import '../empty.dart';
 
-import '../../blocs/order_bloc.dart';
-import '../pages/types.dart';
-
-class OrderListEmptyWidget extends BaseEmptyWidget {
-  final OrderEventStatus fetchEvent;
-  final TextEditingController searchController = TextEditingController();
-  final NavFormFunction navFormFunction;
-
-  OrderListEmptyWidget({
+class SalesListEmptyWidget extends OrderListEmptyWidget {
+  SalesListEmptyWidget({
     super.key,
     super.memberPicture,
     required super.widgetsIn,
     required super.i18nIn,
-    required this.fetchEvent,
-    required this.navFormFunction
+    required super.fetchEvent,
+    required super.navFormFunction,
   });
 
   @override
   String getAppBarTitle(BuildContext context) {
-    return i18n.$trans('list.app_bar_title_empty');
+    return i18n.$trans('sales.app_bar_title_empty');
   }
 
   @override
   String getEmptyMessage() {
-    return i18nIn.$trans('list.notice_no_order');
+    return i18nIn.$trans('sales.notice_no_order');
   }
 
   @override
@@ -41,16 +35,17 @@ class OrderListEmptyWidget extends BaseEmptyWidget {
   @override
   Widget getBottomSection(BuildContext context) {
     return widgets.showPaginationSearchNewSection(
-      context,
-      null,
-      searchController,
-      () {  },
-      () {  },
-      doSearch,
-      handleNew
+        context,
+        null,
+        searchController,
+            () {  },
+            () {  },
+        doSearch,
+        handleNew
     );
   }
 
+  @override
   doSearch(BuildContext context) {
     final bloc = BlocProvider.of<OrderBloc>(context);
 
@@ -61,9 +56,5 @@ class OrderListEmptyWidget extends BaseEmptyWidget {
         query: searchController.text,
         page: 1
     ));
-  }
-
-  handleNew(BuildContext context, {OrderEventStatus? fetchMode}) {
-    navFormFunction(context, null, fetchMode ?? fetchEvent);
   }
 }
