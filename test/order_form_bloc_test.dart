@@ -132,7 +132,6 @@ void main() {
           status: OrderFormEventStatus.update,
           order: orderModel,
           pk: 1,
-          // TODO add infolines and orderlines
           infoLines: [],
           orderLines: [orderline1, orderline2],
           documents: [],
