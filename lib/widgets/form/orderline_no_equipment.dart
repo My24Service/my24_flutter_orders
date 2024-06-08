@@ -70,6 +70,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_equipment'))
         ),
         TextFormField(
+            key: const Key("product-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -90,6 +91,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_location'))
         ),
         TextFormField(
+            key: const Key("location-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -107,6 +109,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_remarks'))
         ),
         TextFormField(
+            key: const Key("remarks-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -120,12 +123,29 @@ class _OrderlineFormNoEquipmentState<
         const SizedBox(
           height: 10.0,
         ),
-        widget.widgets.createElevatedButtonColored(
-            widget.i18n.$trans('button_add'),
-            () { _addOrderLine(context); }
+        addOrderlineButton(
+          widget.i18n.$trans('button_add'),
+          () { _addOrderLine(context); }
         )
+        // widget.widgets.createElevatedButtonColored(
+        //     widget.i18n.$trans('button_add'),
+        //     () { _addOrderLine(context); }
+        // )
       ],
     ));
+  } // key: const Key("product-form-field"),
+
+  ElevatedButton addOrderlineButton(String text, Function callback,
+      {foregroundColor = Colors.white, backgroundColor = Colors.blue}) {
+    return ElevatedButton(
+      key: const Key("add-orderline-button"),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: foregroundColor,
+        backgroundColor: backgroundColor,
+      ),
+      onPressed: callback as void Function()?,
+      child: Text(text),
+    );
   }
 
   _addListeners() {
@@ -163,8 +183,6 @@ class _OrderlineFormNoEquipmentState<
       this.formKey.currentState!.save();
 
       Orderline orderline = widget.orderlineFormData.toModel();
-
-      widget.formData.orderLines!.add(orderline);
 
       remarksController.text = '';
       locationController.text = '';

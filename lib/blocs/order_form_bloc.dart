@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_equipment/models/location/api.dart';
 import 'package:my24_flutter_equipment/models/equipment/api.dart';
@@ -15,6 +16,8 @@ import '../models/order/form_data.dart';
 import '../models/orderline/api.dart';
 import '../models/orderline/models.dart';
 import 'order_form_states.dart';
+
+final log = Logger('orders.blocs.order_form_bloc');
 
 enum OrderFormEventStatus {
   doAsync,
@@ -227,6 +230,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
 
       emit(OrderLoadedState(formData: formData));
     } catch (e) {
+      log.severe("error detail: $e");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -266,6 +270,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
 
       emit(OrderInsertedState(order: order));
     } catch(e) {
+      log.severe("error create: $e");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -282,7 +287,6 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       }
 
       for (int i=0; i<event.orderLines!.length; i++) {
-        log.info('orderline.id: ${event.orderLines![i].id}');
         if (event.orderLines![i].id == null) {
           if (event.orderLines![i].order == null) {
             event.orderLines![i].order = event.pk;
@@ -348,6 +352,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
 
       emit(OrderUpdatedState(order: order));
     } catch(e) {
+      log.severe("error update: $e");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -357,6 +362,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       final bool result = await api.acceptOrder(event.pk!);
       emit(OrderAcceptedState(result: result));
     } catch (e) {
+      log.severe("error accept: $e");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -366,6 +372,7 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       final bool result = await api.rejectOrder(event.pk!);
       emit(OrderRejectedState(result: result));
     } catch (e) {
+      log.severe("error reject: $e");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
