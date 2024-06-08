@@ -227,25 +227,13 @@ class _InfolineFormState<
             const SizedBox(
               height: 10.0,
             ),
-            addInfoLineButton(
+            widget.widgets.createElevatedButtonColored(
+                key: "add-infoline-button",
                 widget.i18n.$trans('button_add'),
                 () { _addInfoLine(context); }
             )
           ],
         )
-    );
-  }
-
-  ElevatedButton addInfoLineButton(String text, Function callback,
-      {foregroundColor = Colors.white, backgroundColor = Colors.blue}) {
-    return ElevatedButton(
-      key: const Key("add-infoline-button"),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor,
-      ),
-      onPressed: callback as void Function()?,
-      child: Text(text),
     );
   }
 

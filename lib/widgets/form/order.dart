@@ -149,21 +149,13 @@ abstract class BaseOrderFormWidget<
           const Spacer(),
           widgetsIn.createCancelButton(() => Navigator.pop(context)),
           const SizedBox(width: 10),
-          submitButton(context),
+          widgetsIn.createSubmitButton(
+            context,
+            () => _doSubmit(context),
+            key: 'order-submit'
+          ),
           const Spacer(),
         ]
-    );
-  }
-
-  Widget submitButton(BuildContext context) {
-    return ElevatedButton(
-      key: const Key('order-submit'),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-      onPressed: () => _doSubmit(context),
-      child: Text(My24i18n.tr('generic.button_submit')),
     );
   }
 

@@ -123,7 +123,8 @@ class _OrderlineFormNoEquipmentState<
         const SizedBox(
           height: 10.0,
         ),
-        addOrderlineButton(
+        widget.widgets.createElevatedButtonColored(
+          key: "add-orderline-button",
           widget.i18n.$trans('button_add'),
           () { _addOrderLine(context); }
         )
@@ -134,19 +135,6 @@ class _OrderlineFormNoEquipmentState<
       ],
     ));
   } // key: const Key("product-form-field"),
-
-  ElevatedButton addOrderlineButton(String text, Function callback,
-      {foregroundColor = Colors.white, backgroundColor = Colors.blue}) {
-    return ElevatedButton(
-      key: const Key("add-orderline-button"),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor,
-      ),
-      onPressed: callback as void Function()?,
-      child: Text(text),
-    );
-  }
 
   _addListeners() {
     locationController.addListener(_locationListen);
