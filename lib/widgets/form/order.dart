@@ -117,9 +117,10 @@ abstract class BaseOrderFormWidget<
                 children: [
                   const SizedBox(width: 10),
                   widgetsIn.createDefaultElevatedButton(
-                      context,
-                      i18nIn.$trans('form.button_accept'),
-                      () => _doAccept(context)
+                    context,
+                    i18nIn.$trans('form.button_accept'),
+                    () => _doSubmit(context, withAccept: true),
+                    key: 'order-edit-accept-button'
                   ),
                   const SizedBox(width: 10),
                   widgetsIn.createElevatedButtonColored(
@@ -157,13 +158,6 @@ abstract class BaseOrderFormWidget<
           const Spacer(),
         ]
     );
-  }
-
-  void _doAccept(BuildContext context) {
-    final BlocClass bloc = BlocProvider.of<BlocClass>(context);
-
-    bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
-    bloc.add(OrderFormEvent(status: OrderFormEventStatus.accept, pk: formData!.id));
   }
 
   void _doReject(BuildContext context) {
@@ -266,28 +260,6 @@ abstract class BaseOrderFormWidget<
   }
 
   TableRow getFirstElement(BuildContext context) {
-    // var firstElement;
-    //
-    // // only show the typeahead when creating a new order
-    // if (!orderPageMetaData.hasBranches!) {
-    //   if (isPlanning() && formData!.id == null) {
-    //     firstElement = _getCustomerTypeAhead(context);
-    //   } else {
-    //     firstElement = _getCustomerNameTextField();
-    //   }
-    // } else {
-    //   if (isPlanning() && formData!.id == null) {
-    //     firstElement = _getBranchTypeAhead(context);
-    //   } else {
-    //     firstElement = _getBranchNameTextField();
-    //   }
-    // }
-    // return TableRow(
-    //     children: [
-    //       SizedBox(height: 1),
-    //       SizedBox(height: 1),
-    //     ]
-    // );
     throw UnimplementedError("getFirstElement should be implemented");
   }
 
@@ -675,7 +647,7 @@ abstract class BaseOrderFormWidget<
     ));
   }
 
-  Future<void> _doSubmit(BuildContext context) async {
+  Future<void> _doSubmit(BuildContext context, {withAccept = false}) async {
     if (this.formKey.currentState!.validate()) {
       if (!formData!.isValid()) {
         if (formData!.orderType == null) {
@@ -706,6 +678,10 @@ abstract class BaseOrderFormWidget<
           deletedDocuments: formData!.deletedDocuments!,
           equipmentLocationUpdates: formData!.equipmentLocationUpdates
         ));
+
+        if (withAccept) {
+          bloc.add(OrderFormEvent(status: OrderFormEventStatus.accept, pk: formData!.id));
+        }
       } else {
         if (!orderPageMetaData.hasBranches! && orderPageMetaData.submodel == 'planning_user') {
           formData!.customerOrderAccepted = true;
