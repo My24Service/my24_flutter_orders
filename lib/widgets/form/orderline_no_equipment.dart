@@ -128,13 +128,9 @@ class _OrderlineFormNoEquipmentState<
           widget.i18n.$trans('button_add'),
           () { _addOrderLine(context); }
         )
-        // widget.widgets.createElevatedButtonColored(
-        //     widget.i18n.$trans('button_add'),
-        //     () { _addOrderLine(context); }
-        // )
       ],
     ));
-  } // key: const Key("product-form-field"),
+  }
 
   _addListeners() {
     locationController.addListener(_locationListen);
