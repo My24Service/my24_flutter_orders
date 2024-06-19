@@ -415,6 +415,10 @@ abstract class BaseOrderFormWidget<
                     )
                 ),
                 DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   value: formData!.orderCountryCode,
                   items: ['NL', 'BE', 'LU', 'FR', 'DE'].map((String value) {
                     return DropdownMenuItem<String>(
@@ -547,6 +551,10 @@ abstract class BaseOrderFormWidget<
                 ),
                 DropdownButtonFormField<String>(
                   isExpanded: true,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   value: formData!.orderType,
                   items: formData!.orderTypes == null ? [] : formData!.orderTypes!.orderTypes!.map((String value) {
                     return DropdownMenuItem<String>(
