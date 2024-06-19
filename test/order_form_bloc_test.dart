@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
+import 'package:my24_flutter_core/dev_logging.dart';
+import 'package:my24_flutter_orders/models/orderline/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:my24_flutter_core/tests/http_client.mocks.dart';
@@ -14,6 +18,7 @@ import 'order_models.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues({});
+  setUpLogging();
 
   test('Test fetch order detail', () async {
     final client = MockClient();
@@ -64,19 +69,33 @@ void main() {
     final client = MockClient();
     final orderFormBloc = OrderFormBloc();
     orderFormBloc.api.httpClient = client;
-    // orderBloc.customerApi.httpClient = client;
-    // orderBloc.locationApi.httpClient = client;
-    // orderBloc.equipmentApi.httpClient = client;
+    orderFormBloc.orderlineApi.httpClient = client;
+    orderFormBloc.infolineApi.httpClient = client;
+    orderFormBloc.orderDocumentApi.httpClient = client;
+    orderFormBloc.infolineApi.httpClient = client;
+    orderFormBloc.locationApi.httpClient = client;
+    orderFormBloc.equipmentApi.httpClient = client;
     orderFormBloc.privateMemberApi.httpClient = client;
 
     Order orderModel = Order(
       id: 1,
       customerId: '123465',
       orderId: '987654',
-      serviceNumber: '132789654',
-      orderLines: [],
-      infoLines: [],
-      documents: []
+      serviceNumber: '132789654'
+    );
+
+    Orderline orderline1 = Orderline(
+      id: 1,
+      order: 1,
+      product: "Wheel-lock 1",
+      location: "Loods 3"
+    );
+
+    Orderline orderline2 = Orderline(
+        id: 2,
+        order: 1,
+        product: "Wheel-lock 2",
+        location: "Loods 3"
     );
 
     // return token request with a 200
@@ -86,6 +105,14 @@ void main() {
     // return order data with a 200
     when(client.patch(Uri.parse('https://demo.my24service-dev.com/api/order/order/1/'), headers: anyNamed('headers'), body: anyNamed('body')))
           .thenAnswer((_) async => http.Response(order, 200));
+
+    // return orderline data with a 200
+    when(client.patch(Uri.parse('https://demo.my24service-dev.com/api/order/orderline/1/'), headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response(orderLine1, 200));
+
+    // return orderline data with a 200
+    when(client.patch(Uri.parse('https://demo.my24service-dev.com/api/order/orderline/2/'), headers: anyNamed('headers'), body: anyNamed('body')))
+        .thenAnswer((_) async => http.Response(orderLine2, 200));
 
     // return member settings data with a 200
     when(client.get(Uri.parse('https://demo.my24service-dev.com/api/member/member/get_my_settings/'), headers: anyNamed('headers')))
@@ -106,7 +133,7 @@ void main() {
           order: orderModel,
           pk: 1,
           infoLines: [],
-          orderLines: [],
+          orderLines: [orderline1, orderline2],
           documents: [],
           deletedInfoLines: [],
           deletedOrderLines: [],
@@ -195,5 +222,39 @@ void main() {
     orderFormBloc.add(
         const OrderFormEvent(status: OrderFormEventStatus.reject, pk: 1)
     );
+  });
+
+  test("Test add orderline", () async {
+    final orderFormBloc = OrderFormBloc();
+    final Order orderModel = Order.fromJson(jsonDecode(order));
+    final Orderline orderline1 = Orderline(
+        order: 1,
+        product: "Wheel-lock 1",
+        location: "Loods 3"
+    );
+
+    orderFormBloc.stream.listen(
+        expectAsync1((event) {
+          if (event is OrderLineAddedState) {
+            expect(event, isA<OrderLineAddedState>());
+          }
+          if (event is OrderLoadedState) {
+            expect(event, isA<OrderLoadedState>());
+            expect(event.props[0], isA<OrderFormData>());
+            expect(event.formData.orderLines!.length, 2);
+            expect(event.formData.orderLines![0].id, 1);
+            expect(event.formData.orderLines![1].id, null);
+          }
+        }, count: 2)
+    );
+
+    final OrderTypes orderTypesObj = OrderTypes.fromJson(jsonDecode(orderTypes));
+    final OrderFormData formData = OrderFormData.createFromModel(orderModel, orderTypesObj);
+
+    orderFormBloc.add(OrderFormEvent(
+        status: OrderFormEventStatus.addOrderLine,
+        formData: formData,
+        orderline: orderline1
+    ));
   });
 }

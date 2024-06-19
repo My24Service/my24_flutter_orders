@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import 'package:my24_flutter_core/i18n.dart';
 import 'package:my24_flutter_core/utils.dart';
@@ -8,6 +9,8 @@ import 'package:my24_flutter_core/widgets/widgets.dart';
 import 'package:my24_flutter_orders/models/order/form_data.dart';
 import 'package:my24_flutter_orders/models/infoline/models.dart';
 import '../../blocs/order_form_bloc.dart';
+
+final log = Logger('orders.widgets.form.infolines');
 
 class InfolinesWidget<
   FormDataClass extends BaseOrderFormData
@@ -159,6 +162,10 @@ class _InfolineFormState<
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController infoController = TextEditingController();
 
+  _addListeners() {
+    infoController.addListener(_infoListen);
+  }
+
   void _infoListen() {
     if (infoController.text.isEmpty) {
       widget.formData.infolineFormData!.info = "";
@@ -178,7 +185,7 @@ class _InfolineFormState<
 
   @override
   void initState() {
-    _infoListen();
+    _addListeners();
     widget.formData.infolineFormData!.order = widget.formData.id;
     super.initState();
   }
@@ -201,6 +208,7 @@ class _InfolineFormState<
                 Text(widget.i18n.$trans('info_infoline'))
             ),
             TextFormField(
+                key: const Key("infoline-info-form-field"),
                 controller: infoController,
                 keyboardType: TextInputType.multiline,
                 decoration: const InputDecoration(
@@ -220,6 +228,7 @@ class _InfolineFormState<
               height: 10.0,
             ),
             widget.widgets.createElevatedButtonColored(
+                key: "add-infoline-button",
                 widget.i18n.$trans('button_add'),
                 () { _addInfoLine(context); }
             )
@@ -234,7 +243,13 @@ class _InfolineFormState<
 
       Infoline infoline = widget.formData.infolineFormData!.toModel();
 
-      widget.formData.infoLines!.add(infoline);
+      final bloc = BlocProvider.of<BlocClass>(context);
+      bloc.add(const OrderFormEvent(status: OrderFormEventStatus.doAsync));
+      bloc.add(OrderFormEvent(
+          status: OrderFormEventStatus.addInfoLine,
+          formData: widget.formData,
+          infoline: infoline
+      ));
 
       // reset fields
       infoController.text = '';

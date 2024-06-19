@@ -70,6 +70,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_equipment'))
         ),
         TextFormField(
+            key: const Key("product-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -90,6 +91,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_location'))
         ),
         TextFormField(
+            key: const Key("location-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -107,6 +109,7 @@ class _OrderlineFormNoEquipmentState<
             Text(My24i18n.tr('generic.info_remarks'))
         ),
         TextFormField(
+            key: const Key("remarks-form-field"),
             decoration: const InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -121,8 +124,9 @@ class _OrderlineFormNoEquipmentState<
           height: 10.0,
         ),
         widget.widgets.createElevatedButtonColored(
-            widget.i18n.$trans('button_add'),
-            () { _addOrderLine(context); }
+          key: "add-orderline-button",
+          widget.i18n.$trans('button_add'),
+          () { _addOrderLine(context); }
         )
       ],
     ));
@@ -163,8 +167,6 @@ class _OrderlineFormNoEquipmentState<
       this.formKey.currentState!.save();
 
       Orderline orderline = widget.orderlineFormData.toModel();
-
-      widget.formData.orderLines!.add(orderline);
 
       remarksController.text = '';
       locationController.text = '';
