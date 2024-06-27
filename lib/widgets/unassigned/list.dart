@@ -42,6 +42,8 @@ class UnAssignedListWidget extends OrderListWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          getEditButton(context, order.id!),
+          const SizedBox(width: 10),
           widgets.createDefaultElevatedButton(
               context,
               i18n.$trans('button_assign'),
