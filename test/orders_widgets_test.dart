@@ -52,7 +52,7 @@ void main() async {
     // return order data with a 200
     const String orders = '{"next": null, "previous": null, "count": 4, "num_pages": 1, "results": [$order]}';
     when(
-        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/?order_by=-start_date'),
+        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/'),
             headers: anyNamed('headers')
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
@@ -90,7 +90,7 @@ void main() async {
     // return order data with a 200
     const String orders = '{"next": null, "previous": null, "count": 4, "num_pages": 1, "results": [$order]}';
     when(
-        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/?order_by=-start_date'),
+        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/'),
             headers: anyNamed('headers')
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
@@ -128,7 +128,7 @@ void main() async {
     // return nothing with a 200
     const String orders = '{"next": null, "previous": null, "count": 0, "num_pages": 1, "results": []}';
     when(
-        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/?order_by=-start_date'),
+        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/'),
             headers: anyNamed('headers')
         )
     ).thenAnswer((_) async => http.Response(orders, 200));
@@ -166,7 +166,7 @@ void main() async {
     // return a 500
     const String orders = '{"next": null, "previous": null, "count": 0, "num_pages": 1, "results": []}';
     when(
-        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/?order_by=-start_date'),
+        client.get(Uri.parse('https://demo.my24service-dev.com/api/order/order/'),
             headers: anyNamed('headers')
         )
     ).thenAnswer((_) async => http.Response(orders, 500));
