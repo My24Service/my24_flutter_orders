@@ -116,7 +116,6 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
   Future<void> _handleFetchAllState(OrderEvent event, Emitter<OrderState> emit) async {
     try {
       final Orders orders = await api.list(filters: {
-        'order_by': '-start_date',
         'q': event.query,
         'page': event.page
       });
