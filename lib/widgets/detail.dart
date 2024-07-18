@@ -46,7 +46,7 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
     return Column(
         children: [
             // createHeader(i18nIn.$trans('info_order')),
-            widgetsIn.buildOrderInfoCard(context, order!),
+            widgetsIn.buildOrderInfoCard(context, order!, isCustomer: _isCustomer()),
             widgetsIn.getMy24Divider(context),
             if (!orderPageMetaData.hasBranches!)
               _createAssignedInfoSection(context),
@@ -63,6 +63,10 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
 
   bool _isCustomerOrBranch() {
     return orderPageMetaData.submodel == 'customer_user' || orderPageMetaData.hasBranches!;
+  }
+
+  bool _isCustomer() {
+    return orderPageMetaData.submodel == 'customer_user';
   }
 
   Widget _createWorkorderWidget(BuildContext context) {
