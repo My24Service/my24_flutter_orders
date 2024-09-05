@@ -543,7 +543,6 @@ abstract class BaseOrderFormWidget<
                     if (newValue != formData!.orderType) {
                       formData!.orderType = newValue;
                       updateFormData(context);
-
                     }
                   },
                 ),

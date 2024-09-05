@@ -28,7 +28,7 @@ dependencies:
     git:
       url: https://github.com/My24Service/my24_flutter_equipment.git
   my24_flutter_member_models:
-    #    path: ../my24_flutter_member_models
+#        path: ../my24_flutter_member_models
     git:
       url: https://github.com/My24Service/my24_flutter_member_models.git
   flutter:

@@ -116,6 +116,31 @@ class OrderAssignedUserInfo extends BaseModel {
   }
 }
 
+class RelatedOrderModel extends BaseModel {
+  final String? companycode;
+  final String? orderId;
+
+  RelatedOrderModel({
+    this.companycode,
+    this.orderId
+  });
+
+  factory RelatedOrderModel.fromJson(Map<String, dynamic> parsedJson) {
+    return RelatedOrderModel(
+        companycode: parsedJson['companycode'],
+        orderId: parsedJson['order_id']
+    );
+  }
+
+  @override
+  String toJson() {
+    Map body = {
+    };
+
+    return json.encode(body);
+  }
+}
+
 class Order extends BaseModel {
   final int? id;
   final String? customerId;
@@ -149,8 +174,11 @@ class Order extends BaseModel {
   final String? totalPricePurchase;
   final String? totalPriceSelling;
   final String? workorderPdfUrl;
+  final String? workorderPdfUrlPartner;
   final bool? customerOrderAccepted;
   final int? branch;
+  final RelatedOrderModel? parentOrderData;
+  final List<RelatedOrderModel>? copiedOrderData;
   final List<Orderline>? orderLines;
   final List<Infoline>? infoLines;
   final List<Status>? statuses;
@@ -191,8 +219,11 @@ class Order extends BaseModel {
     this.orderDate,
     this.orderEmail,
     this.workorderPdfUrl,
+    this.workorderPdfUrlPartner,
     this.customerOrderAccepted,
     this.branch,
+    this.parentOrderData,
+    this.copiedOrderData,
     this.orderLines,
     this.infoLines,
     this.statuses,
@@ -249,6 +280,21 @@ class Order extends BaseModel {
       assignedUserInfo = assignedUserInfo.map((i) => OrderAssignedUserInfo.fromJson(i)).toList();
     }
 
+    // parent order data
+    var parentOrderData = parsedJson['parent_order_data'];
+
+    if (parentOrderData != null) {
+      parentOrderData = RelatedOrderModel.fromJson(parentOrderData);
+    }
+
+    // copied order data
+    List<RelatedOrderModel>? copiedOrderData;
+    var copiedOrderDataJson = parsedJson['copied_order_data'] as List?;
+
+    if (copiedOrderDataJson != null) {
+      copiedOrderData = copiedOrderDataJson.map((i) => RelatedOrderModel.fromJson(i)).toList();
+    }
+
     return Order(
       id: parsedJson['id'],
       customerId: parsedJson['customer_id'],
@@ -282,8 +328,11 @@ class Order extends BaseModel {
       orderEmail: parsedJson['order_email'],
       orderDate: parsedJson['order_date'],
       workorderPdfUrl: parsedJson['workorder_pdf_url'],
+      workorderPdfUrlPartner: parsedJson['workorder_pdf_url_partner'],
       customerOrderAccepted: parsedJson['customer_order_accepted'],
       branch: parsedJson['branch'],
+      parentOrderData: parentOrderData,
+      copiedOrderData: copiedOrderData,
       orderLines: orderlines,
       infoLines: infolines,
       statuses: statuses,

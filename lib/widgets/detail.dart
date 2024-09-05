@@ -47,6 +47,10 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
         children: [
             // createHeader(i18nIn.$trans('info_order')),
             widgetsIn.buildOrderInfoCard(context, order!, isCustomer: _isCustomer()),
+            if (orderPageMetaData.submodel == 'planning_user' && order!.parentOrderData != null)
+              _createParentOrderDataSection(context),
+            if (orderPageMetaData.submodel == 'planning_user' && order!.copiedOrderData != null)
+              _createCopiedOrderDataSection(context),
             widgetsIn.getMy24Divider(context),
             if (!orderPageMetaData.hasBranches!)
               _createAssignedInfoSection(context),
@@ -70,10 +74,19 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
   }
 
   Widget _createWorkorderWidget(BuildContext context) {
-    Widget result = widgetsIn.createViewWorkOrderButton(order!.workorderPdfUrl, context);
+    Widget result = widgetsIn.createViewWorkOrderButton(
+        order!.workorderPdfUrl, context);
+    Widget resultPartner = widgetsIn.createViewWorkOrderPartnerButton(
+        order!.workorderPdfUrlPartner, context);
 
     return Center(
-        child: result
+        child: Column(
+          children: [
+            result,
+            const SizedBox(height: 10),
+            resultPartner
+          ],
+        )
     );
   }
 
@@ -93,6 +106,54 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
           return <Widget>[];
         },
         noResultsString: i18nIn.$trans('info_no_one_else_assigned', pathOverride: 'assigned_orders.detail')
+    );
+  }
+
+  Widget _createCopiedOrderDataSection(BuildContext context) {
+    return widgetsIn.buildItemsSection(
+        context,
+        i18nIn.$trans('header_copied_orders'),
+        order!.copiedOrderData,
+        (RelatedOrderModel item) {
+          return <Widget>[
+            ...widgetsIn.buildItemListKeyValueList(
+              i18nIn.$trans('info_partner', pathOverride: 'generic'),
+              item.companycode
+            ),
+            ...widgetsIn.buildItemListKeyValueList(
+              i18nIn.$trans('info_order_id', pathOverride: 'generic'),
+              item.orderId
+            )
+          ];
+        },
+        (item) {
+          return <Widget>[];
+        },
+        noResultsString: i18nIn.$trans('info_no_copied_orders')
+    );
+  }
+
+  Widget _createParentOrderDataSection(BuildContext context) {
+    return widgetsIn.buildItemsSection(
+        context,
+        i18nIn.$trans('header_original_order'),
+        [order!.parentOrderData],
+            (RelatedOrderModel item) {
+          return <Widget>[
+            ...widgetsIn.buildItemListKeyValueList(
+                i18nIn.$trans('info_partner', pathOverride: 'generic'),
+                item.companycode
+            ),
+            ...widgetsIn.buildItemListKeyValueList(
+                i18nIn.$trans('info_order_id', pathOverride: 'generic'),
+                item.orderId
+            )
+          ];
+        },
+            (item) {
+          return <Widget>[];
+        },
+        noResultsString: i18nIn.$trans('info_no_parent_order')
     );
   }
 
