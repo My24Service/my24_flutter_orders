@@ -74,6 +74,14 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
   }
 
   Widget _createWorkorderWidget(BuildContext context) {
+    if (orderPageMetaData.hasBranches!) {
+      Widget result = widgetsIn.createViewWorkOrderPartnerButton(
+          order!.workorderPdfUrlPartner, context);
+      return Center(
+          child: result
+      );
+    }
+    
     Widget result = widgetsIn.createViewWorkOrderButton(
         order!.workorderPdfUrl, context);
     Widget resultPartner = widgetsIn.createViewWorkOrderPartnerButton(
