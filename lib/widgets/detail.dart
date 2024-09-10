@@ -49,8 +49,6 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
             widgetsIn.buildOrderInfoCard(context, order!, isCustomer: _isCustomer()),
             if (!_isCustomer() && order!.parentOrderData != null)
               _createParentOrderDataSection(context),
-            if (!_isCustomer() && order!.parentOrderData != null)
-              widgetsIn.getMy24Divider(context),
             if (!_isCustomer() && order!.copiedOrderData != null)
               _createCopiedOrderDataSection(context),
             if (!orderPageMetaData.hasBranches!)
