@@ -135,6 +135,33 @@ class RelatedOrderModel extends BaseModel {
   @override
   String toJson() {
     Map body = {
+      'companycode': companycode,
+      'order_id': orderId
+    };
+
+    return json.encode(body);
+  }
+}
+
+class WorkorderPdfPartnerModel extends BaseModel {
+  final String? companycode;
+  final String? url;
+
+  WorkorderPdfPartnerModel({
+    this.companycode,
+    this.url
+  });
+
+  factory WorkorderPdfPartnerModel.fromJson(Map<String, dynamic> parsedJson) {
+    return WorkorderPdfPartnerModel(
+        companycode: parsedJson['companycode'],
+        url: parsedJson['url']
+    );
+  }
+
+  @override
+  String toJson() {
+    Map body = {
     };
 
     return json.encode(body);
@@ -174,7 +201,7 @@ class Order extends BaseModel {
   final String? totalPricePurchase;
   final String? totalPriceSelling;
   final String? workorderPdfUrl;
-  final String? workorderPdfUrlPartner;
+  final List<WorkorderPdfPartnerModel>? workorderPdfsUrlPartner;
   final bool? customerOrderAccepted;
   final int? branch;
   final RelatedOrderModel? parentOrderData;
@@ -219,7 +246,7 @@ class Order extends BaseModel {
     this.orderDate,
     this.orderEmail,
     this.workorderPdfUrl,
-    this.workorderPdfUrlPartner,
+    this.workorderPdfsUrlPartner,
     this.customerOrderAccepted,
     this.branch,
     this.parentOrderData,
@@ -281,10 +308,13 @@ class Order extends BaseModel {
     }
 
     // parent order data
-    var parentOrderData = parsedJson['parent_order_data'];
+    RelatedOrderModel? parentOrderData;
+    var parentOrderDataJson = parsedJson['parent_order_data'];
 
-    if (parentOrderData != null) {
-      parentOrderData = RelatedOrderModel.fromJson(parentOrderData);
+    if (parentOrderDataJson != null) {
+      if (parentOrderDataJson['companycode'] != null || parentOrderDataJson['order_id'] != null) {
+        parentOrderData = RelatedOrderModel.fromJson(parentOrderDataJson);
+      }
     }
 
     // copied order data
@@ -293,6 +323,14 @@ class Order extends BaseModel {
 
     if (copiedOrderDataJson != null) {
       copiedOrderData = copiedOrderDataJson.map((i) => RelatedOrderModel.fromJson(i)).toList();
+    }
+
+    // workorder PDFs partner
+    List<WorkorderPdfPartnerModel>? workorderPdfsPartner;
+
+    if (parsedJson['workorder_pdf_url_partner'] != null) {
+      var workorderPdfsPartnerDataJson = parsedJson['workorder_pdf_url_partner'] as List;
+      workorderPdfsPartner = workorderPdfsPartnerDataJson.map((i) => WorkorderPdfPartnerModel.fromJson(i)).toList();
     }
 
     return Order(
@@ -328,7 +366,7 @@ class Order extends BaseModel {
       orderEmail: parsedJson['order_email'],
       orderDate: parsedJson['order_date'],
       workorderPdfUrl: parsedJson['workorder_pdf_url'],
-      workorderPdfUrlPartner: parsedJson['workorder_pdf_url_partner'],
+      workorderPdfsUrlPartner: workorderPdfsPartner,
       customerOrderAccepted: parsedJson['customer_order_accepted'],
       branch: parsedJson['branch'],
       parentOrderData: parentOrderData,

@@ -49,9 +49,10 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
             widgetsIn.buildOrderInfoCard(context, order!, isCustomer: _isCustomer()),
             if (orderPageMetaData.submodel == 'planning_user' && order!.parentOrderData != null)
               _createParentOrderDataSection(context),
+            if (orderPageMetaData.submodel == 'planning_user' && order!.parentOrderData != null)
+              widgetsIn.getMy24Divider(context),
             if (orderPageMetaData.submodel == 'planning_user' && order!.copiedOrderData != null)
               _createCopiedOrderDataSection(context),
-            widgetsIn.getMy24Divider(context),
             if (!orderPageMetaData.hasBranches!)
               _createAssignedInfoSection(context),
             _createOrderlinesSection(context),
@@ -75,17 +76,15 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
 
   Widget _createWorkorderWidget(BuildContext context) {
     if (orderPageMetaData.hasBranches!) {
-      Widget result = widgetsIn.createViewWorkOrderPartnerButton(
-          order!.workorderPdfUrlPartner, context);
+      final DataTable table = _createWorkorderPdfsPartnerSection(context);
       return Center(
-          child: result
+          child: table
       );
     }
     
     Widget result = widgetsIn.createViewWorkOrderButton(
         order!.workorderPdfUrl, context);
-    Widget resultPartner = widgetsIn.createViewWorkOrderPartnerButton(
-        order!.workorderPdfUrlPartner, context);
+    Widget resultPartner = _createWorkorderPdfsPartnerSection(context);
 
     return Center(
         child: Column(
@@ -95,6 +94,37 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
             resultPartner
           ],
         )
+    );
+  }
+
+  DataTable _createWorkorderPdfsPartnerSection(BuildContext context) {
+    final List<String> headerKeys = [
+      i18nIn.$trans('info_partner', pathOverride: 'generic'),
+      ""
+    ];
+
+    final List<DataColumn> header = headerKeys.map((key) =>
+        DataColumn(
+          label: Expanded(
+            child: Text(
+              key,
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ),
+        )
+    ).toList();
+
+    final List<DataRow> rows = order!.workorderPdfsUrlPartner!.map((m) =>
+        DataRow(
+          cells: <DataCell>[
+            DataCell(Text("${m.companycode}")),
+            DataCell(widgetsIn.createViewWorkOrderPartnerButton(m.url, context)),
+          ],
+        )).toList();
+
+    return DataTable(
+        columns: header,
+        rows: rows
     );
   }
 
@@ -129,7 +159,7 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
               item.companycode
             ),
             ...widgetsIn.buildItemListKeyValueList(
-              i18nIn.$trans('info_order_id', pathOverride: 'generic'),
+              i18nIn.$trans('info_order_id'),
               item.orderId
             )
           ];
@@ -146,14 +176,14 @@ class OrderDetailWidget extends BaseSliverPlainStatelessWidget {
         context,
         i18nIn.$trans('header_original_order'),
         [order!.parentOrderData],
-            (RelatedOrderModel item) {
+        (RelatedOrderModel item) {
           return <Widget>[
             ...widgetsIn.buildItemListKeyValueList(
                 i18nIn.$trans('info_partner', pathOverride: 'generic'),
                 item.companycode
             ),
             ...widgetsIn.buildItemListKeyValueList(
-                i18nIn.$trans('info_order_id', pathOverride: 'generic'),
+                i18nIn.$trans('info_order_id'),
                 item.orderId
             )
           ];

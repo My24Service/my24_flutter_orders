@@ -1,10 +1,13 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 
 import '../models/order/api.dart';
 import '../blocs/order_states.dart';
 import '../models/order/models.dart';
 import '../models/order/form_data.dart';
+
+final log = Logger('orders.blocs.order_bloc');
 
 enum OrderEventStatus {
   doAsync,
@@ -104,11 +107,13 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
   FormData createFromModel(Order order, OrderTypes orderTypes) {
     throw UnimplementedError("create from model should be implemented");
   }
+
   Future<void> _handleFetchViewState(OrderEvent event, Emitter<OrderState> emit) async {
     try {
       final Order order = await api.detail(event.pk!);
       emit(OrderLoadedViewState(order: order));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch detail error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -124,7 +129,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           query: event.query,
           page: event.page
       ));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch all error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -135,7 +141,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           page: event.page,
           query: event.query);
       emit(OrdersUnacceptedLoadedState(orders: orders, query: event.query, page: event.page));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch unaccepted error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -146,7 +153,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           page: event.page,
           query: event.query);
       emit(OrdersPastLoadedState(orders: orders, query: event.query, page: event.page));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch past error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -157,7 +165,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           page: event.page,
           query: event.query);
       emit(OrdersSalesLoadedState(orders: orders, query: event.query, page: event.page));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch sales error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -168,7 +177,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
           page: event.page,
           query: event.query);
       emit(OrdersUnassignedLoadedState(orders: orders, query: event.query, page: event.page));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("fetch unassigned error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
@@ -177,7 +187,8 @@ class OrderBloc<FormData extends BaseOrderFormData> extends Bloc<OrderEvent, Ord
     try {
       final bool result = await api.delete(event.pk!);
       emit(OrderDeletedState(result: result));
-    } catch (e) {
+    } catch (e, stack_trace) {
+      log.severe("delete error: $e\n$stack_trace");
       emit(OrderErrorState(message: e.toString()));
     }
   }
