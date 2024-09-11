@@ -229,8 +229,8 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       formData = await addQuickCreateSettings(formData);
 
       emit(OrderLoadedState(formData: formData));
-    } catch (e) {
-      log.severe("error detail: $e");
+    } catch (e, trace) {
+      log.severe("error detail: $e\n$trace");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -269,8 +269,8 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       }
 
       emit(OrderInsertedState(order: order));
-    } catch(e) {
-      log.severe("error create: $e");
+    } catch(e, trace) {
+      log.severe("error create: $e\n$trace");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -351,8 +351,8 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
       }
 
       emit(OrderUpdatedState(order: order));
-    } catch(e) {
-      log.severe("error update: $e");
+    } catch(e, trace) {
+      log.severe("error update: $e\n$trace");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -361,8 +361,8 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
     try {
       final bool result = await api.acceptOrder(event.pk!);
       emit(OrderAcceptedState(result: result));
-    } catch (e) {
-      log.severe("error accept: $e");
+    } catch (e, trace) {
+      log.severe("error accept: $e\n$trace");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
@@ -371,8 +371,8 @@ abstract class OrderFormBlocBase<FormData extends BaseOrderFormData> extends Blo
     try {
       final bool result = await api.rejectOrder(event.pk!);
       emit(OrderRejectedState(result: result));
-    } catch (e) {
-      log.severe("error reject: $e");
+    } catch (e, trace) {
+      log.severe("error reject: $e\n$trace");
       emit(OrderFormErrorState(message: e.toString()));
     }
   }
