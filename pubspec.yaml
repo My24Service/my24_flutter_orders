@@ -6,6 +6,7 @@ publish_to: none
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
+  flutter: ">=1.17.0"
 
 dependencies:
   http: ^1.2.0
@@ -13,8 +14,8 @@ dependencies:
   flutter_bloc: ^8.0.1
   bloc_concurrency: ^0.2.0
   equatable: ^2.0.0
-  image_picker: ^0.8.5+3
-  file_picker: '>=5.2.10'
+  image_picker: ^1.1.2
+  file_picker: ^8.1.7
   flutter_typeahead: ^4.0.0
   easy_localization: ^3.0.1
   cached_network_image: ^3.2.1
