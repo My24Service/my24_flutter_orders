@@ -15,7 +15,7 @@ dependencies:
   bloc_concurrency: ^0.2.0
   equatable: ^2.0.0
   image_picker: ^1.1.2
-  file_picker: ^8.1.7
+  file_picker: ^9.0.0
   flutter_typeahead: ^4.0.0
   easy_localization: ^3.0.1
   cached_network_image: ^3.2.1
